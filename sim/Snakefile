@@ -1,0 +1,49 @@
+LOCI, = glob_wildcards("{locus}.sim")
+
+ts = "/proj/milovelab/love/bin/twas_sim"
+plink = "/proj/milovelab/bin/plink/plink"
+okg = "/proj/milovelab/anno/1000G_EUR_Phase3_plink"
+
+rule all:
+    input: expand("out/{locus}.scan.tsv", locus=LOCI)
+
+rule sample_genes:
+    input:
+        "{locus}.sim"
+    output:
+        list = "out/gene.{locus}.list",
+        txt = "out/locus.{locus}.txt"
+    shell:
+        "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
+        "-l 5 -u 20 -o {output.list} --loc_output {output.txt}"
+
+rule plink:
+    input:
+        "out/locus.{locus}.txt"
+    output:
+        "out/{locus}.bim"
+    params:
+        path = "out/{locus}"
+    shell:
+        """
+        numchr=$(cut -d ' ' -f 1 {input} | sed 's/chr//')
+        locus_start=$(cut -d ' ' -f 2 {input})
+        locus_stop=$(cut -d ' ' -f 3 {input})
+        {plink} --bfile {okg}/1000G.EUR.QC.$numchr --chr $numchr \
+        --from-bp $locus_start --to-bp $locus_stop --make-bed \
+        --out {params.path} --snps-only --hwe midp 1e-5 \
+        --geno 0.01 --maf 0.01 --allow-no-sex --memory 2048 \
+        --keep {ts}/EUR.samples --extract {ts}/HAPMAP_SNPS/hm.$numchr.snp --silent
+        """
+
+rule sim:
+    input:
+        "out/{rep}_{model}model_{h2g}h2g_{ve}ve.bim"
+    output:
+        "out/{rep}_{model}model_{h2g}h2g_{ve}ve.scan.tsv"
+    params:
+        path = "out/{rep}_{model}model_{h2g}h2g_{ve}ve"
+    shell:
+        "python {ts}/sim.py {params.path} --ngwas 100000 --nqtl 500 --model {wildcards.model} "
+        "--eqtl-h2 {wildcards.h2g} --var-explained {wildcards.ve} --output {params.path} "
+        "--seed {wildcards.rep}"
