@@ -1,25 +1,26 @@
-LOCI, = glob_wildcards("{locus}.sim")
+SIMS, = glob_wildcards("{sim}.sim")
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
 okg = "/proj/milovelab/anno/1000G_EUR_Phase3_plink"
 
 rule all:
-    input: expand("out/{locus}.scan.tsv", locus=LOCI)
+    input: expand("out/{sim}.scan.tsv", sim=SIMS)
 
 rule sample_genes:
     input:
-        "{locus}.sim"
+        "{rep}_{model}model_{h2g}h2g_{ve}ve.sim"
     output:
-        list = "out/gene.{locus}.list",
-        txt = "out/locus.{locus}.txt"
+        list = "out/{rep}_{model}model_{h2g}h2g_{ve}ve.gene.list",
+        txt = "out/{rep}_{model}model_{h2g}h2g_{ve}ve.locus.txt"
     shell:
         "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
-        "-l 5 -u 20 -o {output.list} --loc_output {output.txt}"
+        "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
+        "--seed {wildcards.rep}"
 
 rule plink:
     input:
-        "out/locus.{locus}.txt"
+        "out/{locus}.locus.txt"
     output:
         "out/{locus}.bim"
     params:
