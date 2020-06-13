@@ -45,6 +45,6 @@ rule sim:
     params:
         path = "out/{rep}_{model}model_{h2g}h2g_{ve}ve"
     shell:
-        "python {ts}/sim.py {params.path} --ngwas 100000 --nqtl 500 --model {wildcards.model} "
+        "python {ts}/sim.py {params.path} --ngwas 100000 --nqtl 1000 --model {wildcards.model} "
         "--eqtl-h2 {wildcards.h2g} --var-explained {wildcards.ve} --output {params.path} "
         "--seed {wildcards.rep}"
