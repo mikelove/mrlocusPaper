@@ -1,4 +1,4 @@
-dir <- file.path("Artery_Tibial","PHACTR1")
+dir <- file.path("Artery_Tibial","MRAS")
 cond.files <- sub(".tsv","",list.files(dir, ".tsv"))
 ncond <- length(cond.files)
 ld.mat <- list()
@@ -32,7 +32,6 @@ for (j in 1:3) {
 pheatmap(ld.mat[[3]])
 
 nsnp <- sapply(sum.stats, nrow)
-ncond <- 3
 Sigma_a <- list()
 beta_hat_a <- list()
 beta_hat_b <- list()
