@@ -1,70 +1,62 @@
-dir <- file.path("Artery_Tibial","MRAS")
+dir <- file.path("Artery_Tibial","PHACTR1")
 cond.files <- sub(".tsv","",list.files(dir, ".tsv"))
-ncond <- length(cond.files)
-ld.mat <- list()
-sum.stats <- list()
-for (j in 1:ncond) {
+nclust <- length(cond.files)
+ld_mat <- list()
+sum_stat <- list()
+for (j in 1:nclust) {
   filename <- file.path(dir,paste0(cond.files[j], ".ld"))
-  ld.mat[[j]] <- as.matrix(read.delim(filename,header=FALSE))
+  ld_mat[[j]] <- as.matrix(read.delim(filename,header=FALSE))
   filename <- file.path(dir,paste0(cond.files[j], ".tsv"))
-  sum.stats[[j]] <- read.delim(filename)
-  sum.stats[[j]] <- sum.stats[[j]][order(sum.stats[[j]]$pos),]
+  sum_stat[[j]] <- read.delim(filename)
+  sum_stat[[j]] <- sum_stat[[j]][order(sum_stat[[j]]$pos),]
 }
 
-ld.mat <- ld.mat[2:4]
-sum.stats <- sum.stats[2:4]
+ld_mat <- ld_mat[2:4]
+sum_stat <- sum_stat[2:4]
 
-sapply(sum.stats, nrow)
+sapply(sum_stat, nrow)
 
 library(pheatmap)
-for (j in 1:3) {
-  pheatmap(ld.mat[[j]])
-  hc <- hclust(as.dist(2-ld.mat[[j]]))
-  thresh <- .05
-  plot(hc); abline(h=1+thresh,col="red")
-  clusters <- cutree(hc, h=1+thresh)
-  nclust <- max(clusters)
-  idx <- match(seq_len(nclust), clusters)
-  ld.mat[[j]] <- ld.mat[[j]][idx,idx]
-  sum.stats[[j]] <- sum.stats[[j]][idx,]
-}
+library(gridExtra)
+load_all("../../mrlocus")
+out <- collapseHighCorSNPs(sum_stat, ld_mat)
+sum_stat <- out$sum_stat
+ld_mat <- out$ld_mat
 
-pheatmap(ld.mat[[3]])
-
-nsnp <- sapply(sum.stats, nrow)
-Sigma_a <- list()
-beta_hat_a <- list()
-beta_hat_b <- list()
-se_a <- list()
-se_b <- list()
-for (j in 1:3) {
-  idx <- with(sum.stats[[j]], which.max(abs(beta_eQTL/se_eQTL)))
-  print(idx)
-  with(sum.stats[[j]], stopifnot(Ref_GWAS == Ref_eQTL | Ref_GWAS == Effect_eQTL))
-  with(sum.stats[[j]], table(Ref_GWAS == Ref_eQTL))
-  flip <- with(sum.stats[[j]], which(Ref_GWAS != Ref_eQTL))
-  # flip GWAS so that same allele is described for GWAS as for eQTL
-  sum.stats[[j]]$beta_GWAS_flipped <- sum.stats[[j]]$beta_GWAS
-  sum.stats[[j]]$beta_GWAS_flipped[flip] <- -1 * sum.stats[[j]]$beta_GWAS[flip]
-  ld.sign <- sign(ld.mat[[j]][,idx])
-  beta_a <- with(sum.stats[[j]], ifelse(Major_plink == Ref_eQTL, 1, -1) * ld.sign * beta_eQTL)
-  beta_b <- with(sum.stats[[j]], ifelse(Major_plink == Ref_eQTL, 1, -1) * ld.sign * beta_GWAS_flipped)
-  # flip signs so that effect size is in terms of expression increasing allele in eQTL
-  if (beta_a[idx] < 0) {
-    beta_a <- beta_a * -1
-    beta_b <- beta_b * -1
+flipAlleles <- function(sum_stat, ld_mat) {
+  Sigma <- list()
+  beta_hat_a <- list()
+  beta_hat_b <- list()
+  se_a <- list()
+  se_b <- list()
+  for (j in seq_along(sum_stat)) {
+    # the index SNP in the signal cluster for A (eQTL)
+    idx <- with(sum_stat[[j]], which.max(abs(beta_eQTL/se_eQTL)))
+    # reference B (GWAS) allele must be either reference or effect allele in A (eQTL)
+    with(sum_stat[[j]], stopifnot(Ref_GWAS == Ref_eQTL | Ref_GWAS == Effect_eQTL))
+    # flip B (GWAS) so that same allele is described for B (GWAS) as for A (eQTL)
+    flip <- with(sum_stat[[j]], which(Ref_GWAS != Ref_eQTL))
+    sum_stat[[j]]$beta_GWAS_flipped <- sum_stat[[j]]$beta_GWAS
+    sum_stat[[j]]$beta_GWAS_flipped[flip] <- -1 * sum_stat[[j]]$beta_GWAS[flip]
+    # flip alleles other than the index so they have positive correlation (LD) with index
+    ld.sign <- sign(ld_mat[[j]][,idx])
+    beta_a <- with(sum_stat[[j]], ifelse(Major_plink == Ref_eQTL, 1, -1) * ld.sign * beta_eQTL)
+    beta_b <- with(sum_stat[[j]], ifelse(Major_plink == Ref_eQTL, 1, -1) * ld.sign * beta_GWAS_flipped)
+    ld.flipped <- t(t(ld_mat[[j]]) * ld.sign) * ld.sign
+    Sigma[[j]] <- ld.flipped
+    # flip alleles so that effect size is positive for index SNP for A (eQTL)
+    if (beta_a[idx] < 0) {
+      beta_a <- beta_a * -1
+      beta_b <- beta_b * -1
+    }
+    beta_hat_a[[j]] <- beta_a
+    beta_hat_b[[j]] <- beta_b
+    se_a[[j]] <- sum_stat[[j]]$se_eQTL
+    se_b[[j]] <- sum_stat[[j]]$se_GWAS
   }
-  #plot(beta_a, beta_b)
-  beta_hat_a[[j]] <- beta_a
-  beta_hat_b[[j]] <- beta_b
-  se_a[[j]] <- sum.stats[[j]]$se_eQTL
-  se_b[[j]] <- sum.stats[[j]]$se_GWAS
-  # flip LD matrix so that alleles are positively correlated with eQTL index
-  ld.sign <- sign(ld.mat[[j]][,idx])
-  ld.flipped <- t(t(ld.mat[[j]]) * ld.sign) * ld.sign
-  Sigma_a[[j]] <- ld.flipped
 }
 
+nsnp <- sapply(sum_stat, nrow)
 plot(unlist(beta_hat_a), unlist(beta_hat_b), col=rep(1:3,nsnp))
 
 library(Matrix)
