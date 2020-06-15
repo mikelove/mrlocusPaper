@@ -18,16 +18,12 @@ library(pheatmap)
 library(gridExtra)
 load_all("../../mrlocus")
 out1 <- collapseHighCorSNPs(sum_stat, ld_mat)
-sum_stat <- out1$sum_stat
-ld_mat <- out1$ld_mat
-
-nsnp <- sapply(sum_stat, nrow)
-out2 <- flipAllelesAndGather(sum_stat, ld_mat,
+out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                             a="eQTL", b="GWAS",
                             ref="Ref", eff="Effect",
                             beta="beta", se="se",
                             major_plink="Major_plink",
-                            sep="_", ab_last=TRUE)
+                            snp_id="SNP", sep="_", ab_last=TRUE)
 
 library(Matrix)
 Sigma_npd <- out2$Sigma
@@ -36,6 +32,7 @@ for (j in seq_along(out2$Sigma)) {
 }
 Sigma_b <- Sigma_a <- Sigma_npd
 
+nsnp <- lengths(out2$beta_hat_a)
 
 plotInitEstimates(out2)
 
