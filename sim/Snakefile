@@ -1,4 +1,5 @@
-SIMS, = glob_wildcards("{sim}.sim")
+SIMS, = glob_wildcards("sim/{sim}.sim")
+FORMATS = ["ptwas", "clumped"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -7,11 +8,12 @@ dap = "/proj/milovelab/love/bin/dap/dap_src/dap-g"
 ptwas = "/proj/milovelab/love/bin/ptwas/PTWAS_est/PTWAS_est"
 
 rule all:
-    input: expand("out/{sim}.ptwas", sim=SIMS)
+    input: 
+        expand("out/{sim}.{ext}", sim=SIMS, ext=FORMATS),
 
 rule sample_genes:
     input:
-        "{rep}_{model}model_{h2g}h2g_{ve}ve.sim"
+        "sim/{rep}_{model}model_{h2g}h2g_{ve}ve.sim"
     output:
         list = "out/{rep}_{model}model_{h2g}h2g_{ve}ve.gene.list",
         txt = "out/{rep}_{model}model_{h2g}h2g_{ve}ve.locus.txt"
@@ -20,7 +22,7 @@ rule sample_genes:
         "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
         "--seed {wildcards.rep}"
 
-rule plink:
+rule twas_sim_plink:
     input:
         "out/{locus}.locus.txt"
     output:
@@ -50,6 +52,16 @@ rule sim:
         "python {ts}/sim.py {params.path} --ngwas 100000 --nqtl 1000 --model {wildcards.model} "
         "--eqtl-h2 {wildcards.h2g} --var-explained {wildcards.ve} --output {params.path} "
         "--seed {wildcards.rep}"
+
+rule add_p:
+    input:
+        "out/{locus}.scan.tsv"
+    output:
+        "out/{locus}.scan.p.tsv"
+    shell:
+        """
+        Rscript -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{output}", quote=FALSE, row.names=FALSE, sep="\\t")'
+        """
 
 rule ld:
      input:
@@ -92,3 +104,15 @@ rule ptwas:
         Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
         {ptwas} -d {params.path}.eqtl.gwas --cluster_info > {output}
         """
+
+rule clump:
+    input:
+        "out/{locus}.scan.p.tsv"
+    output:
+        "out/{locus}.clumped"
+    params:
+        path = "out/{locus}"
+    shell:
+        "{plink} --bfile {params.path} --clump {input} --clump-snp-field snp \
+        --clump-p1 0.001 --clump-p2 1 --clump-r2 0.2 --clump-kb 500 \
+        --clump-field eqtl.p --out {params.path} --silent"
