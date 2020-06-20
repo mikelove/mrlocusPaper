@@ -4,9 +4,10 @@ ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
 okg = "/proj/milovelab/anno/1000G_EUR_Phase3_plink"
 dap = "/proj/milovelab/love/bin/dap/dap_src/dap-g"
+ptwas = "/proj/milovelab/love/bin/ptwas/PTWAS_est/PTWAS_est"
 
 rule all:
-    input: expand("out/{sim}.dap", sim=SIMS)
+    input: expand("out/{sim}.ptwas", sim=SIMS)
 
 rule sample_genes:
     input:
@@ -58,7 +59,8 @@ rule ld:
      params:
         path = "out/{locus}"
      shell:
-         "{plink} --bfile {params.path} --r square --keep-allele-order --out {params.path}"
+         "{plink} --bfile {params.path} --r square --keep-allele-order \
+          --memory 2048 --out {params.path} --silent"
 
 rule dap:
     input:
@@ -71,5 +73,22 @@ rule dap:
     shell:
         """
         tail -n +2 {input.scan} | awk '{{ print $2,$11,$12 }}' > {params.path}.eqtl
-        {dap} -d_est {params.path}.eqtl -d_ld {input.ld} -d_n 1000 -d_syy 1000 --output_all -o {output} 
+        {dap} -d_est {params.path}.eqtl -d_ld {input.ld} \
+        -d_n 1000 -d_syy 1000 --output_all \
+        -o {output} -l {params.path}.dap.log || true
+        """
+
+rule ptwas:
+    input:
+        scan = "out/{locus}.scan.tsv",
+        dap = "out/{locus}.dap"
+    output:
+        "out/{locus}.ptwas"
+    params:
+        path = "out/{locus}"
+    shell:
+        """
+        grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
+        Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
+        {ptwas} -d {params.path}.eqtl.gwas --cluster_info > {output}
         """
