@@ -1,5 +1,5 @@
 SIMS, = glob_wildcards("sim/{sim}.sim")
-FORMATS = ["ptwas", "clumped"]
+FORMATS = ["ptwas", "twmr"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -116,3 +116,14 @@ rule clump:
         "{plink} --bfile {params.path} --clump {input} --clump-snp-field snp \
         --clump-p1 0.001 --clump-p2 1 --clump-r2 0.2 --clump-kb 500 \
         --clump-field eqtl.p --out {params.path} --silent"
+
+rule twmr:
+    input:
+        clump = "{locus}.clumped",
+        scan = "{locus}.scan.tsv",
+        ld = "{locus}.ld"
+    output:
+        "{locus}.twmr"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{input.ld} {output}' twmr.R"
