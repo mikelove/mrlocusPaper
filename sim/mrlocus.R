@@ -41,15 +41,17 @@ library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
 library(matrixStats)
-options(mc.cores=1)
+options(mc.cores=2)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
 se_a <- list()
 se_b <- list()
+save(out1, out2, Sigma, file="mrlocus_input.rda")
+
 for (j in seq_along(nsnp)) {
   if (nsnp[j] > 1) {
-    suppressWarnings({
+    system.time({
       fit1 <- fitBetaEcaviar(nsnp=nsnp[j],
                              beta_hat_a=out2$beta_hat_a[[j]],
                              beta_hat_b=out2$beta_hat_b[[j]],
@@ -62,8 +64,8 @@ for (j in seq_along(nsnp)) {
                              show_messages=FALSE,
                              refresh=-1)
     })
-    rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
-    rstan::stan_plot(fit1, pars=paste0("beta_b[",1:nsnp[j],"]"))
+    #rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
+    #rstan::stan_plot(fit1, pars=paste0("beta_b[",1:nsnp[j],"]"))
     coefs1 <- rstan::extract(fit1)
     beta_hat_a[[j]] <- colMeans(coefs1$beta_a)
     beta_hat_b[[j]] <- colMeans(coefs1$beta_b)
