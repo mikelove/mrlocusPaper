@@ -10,19 +10,19 @@ out <- c("gene","alpha","SE","P","Nsnps","Ngene")
 # arg 4 is output
 
 clumped <- read.table(cmd_args[1], header=TRUE)[,-12]
-sumstat <- read.table(cmd_args[2], header=TRUE)
-ld.mat <- as.matrix(read.table(cmd_args[3]))
+sum_stat <- read.table(cmd_args[2], header=TRUE)
+ld_mat <- as.matrix(read.table(cmd_args[3]))
 
-idx <- sumstat$snp %in% clumped$SNP
+idx <- sum_stat$snp %in% clumped$SNP
 
 # beta is a matrix of gene effect sizes
-beta <- as.matrix(sumstat$eqtl.beta[idx], ncol=1)
+beta <- as.matrix(sum_stat$eqtl.beta[idx], ncol=1)
 
 # gamma is a matrix of GWAS effect sizes
-gamma <- as.matrix(sumstat$gwas.beta[idx], ncol=1)
+gamma <- as.matrix(sum_stat$gwas.beta[idx], ncol=1)
 
 # C is the LD matrix
-C <- ld.mat[idx,idx]
+C <- ld_mat[idx,idx]
 
 S<-t(beta)%*%solve(C)%*%beta
 H<-(1-1/sqrt(3781))*S+(1/sqrt(3781))*diag(length(S[,1]))

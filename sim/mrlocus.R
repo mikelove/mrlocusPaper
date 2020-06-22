@@ -1,0 +1,80 @@
+clumped <- read.table("out/1_1pctmodel_0.1h2g_0.001ve.clumped", strings=FALSE, header=TRUE)
+big_sum_stat <- read.delim("out/1_1pctmodel_0.1h2g_0.001ve.scan.tsv", strings=FALSE)
+big_ld_mat <- as.matrix(read.table("out/1_1pctmodel_0.1h2g_0.001ve.ld"))
+
+noparen <- function(z) sub("\\(1\\)","",z)
+clumps <- lapply(strsplit(clumped$SP2,split=","), noparen)
+# add index SNP to clumps
+clumps <- lapply(seq_along(clumps), function(j) c(clumped$SNP[j], clumps[[j]]))
+
+ld_mat <- lapply(clumps, function(x) {
+  idx <- big_sum_stat$snp %in% x
+  unname(big_ld_mat[idx,idx])
+})
+sapply(ld_mat, nrow)
+sum_stat <- lapply(clumps, function(x) {
+  z <- big_sum_stat[big_sum_stat$snp %in% x,]
+  z$abs.z <- abs(z$eqtl.beta/z$eqtl.se)
+  z
+})
+
+devtools::load_all("../../mrlocus")
+
+library(pheatmap)
+sapply(sum_stat, function(x) any(x$eqtl.true != 0))
+eqtl.true <- sapply(sum_stat, function(x) if (any(x$eqtl.true != 0))
+                                            x$eqtl.true[x$eqtl.true != 0] else NA)
+out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z")
+sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
+
+out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
+                             a="eqtl", b="gwas",
+                             ref="a0", eff="a1",
+                             beta="beta", se="se",
+                             a2_plink="a0",
+                             snp_id="snp", sep=".",
+                             ab_last=FALSE, alleles_same=TRUE)
+
+plotInitEstimates(out2)
+
+library(Matrix)
+Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
+
+library(matrixStats)
+options(mc.cores=1)
+nsnp <- lengths(out2$beta_hat_a)
+beta_hat_a <- list()
+beta_hat_b <- list()
+se_a <- list()
+se_b <- list()
+for (j in seq_along(nsnp)) {
+  if (nsnp[j] > 1) {
+    suppressWarnings({
+      fit1 <- fitBetaEcaviar(nsnp=nsnp[j],
+                             beta_hat_a=out2$beta_hat_a[[j]],
+                             beta_hat_b=out2$beta_hat_b[[j]],
+                             se_a=out2$se_a[[j]],
+                             se_b=out2$se_b[[j]],
+                             Sigma_a=Sigma[[j]],
+                             Sigma_b=Sigma[[j]],
+                             verbose=FALSE,
+                             open_progress=FALSE,
+                             show_messages=FALSE,
+                             refresh=-1)
+    })
+    rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
+    rstan::stan_plot(fit1, pars=paste0("beta_b[",1:nsnp[j],"]"))
+    coefs1 <- rstan::extract(fit1)
+    beta_hat_a[[j]] <- colMeans(coefs1$beta_a)
+    beta_hat_b[[j]] <- colMeans(coefs1$beta_b)
+    se_a[[j]] <- colSds(coefs1$beta_a)
+    se_b[[j]] <- colSds(coefs1$beta_b)
+  } else {
+    beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
+    beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
+    se_a[[j]] <- out2$se_a[[j]]
+    se_b[[j]] <- out2$se_b[[j]]
+  }
+}
+
+save(beta_hat_a, beta_hat_b, se_a, se_b, file="mrlocus_part1.rda")
