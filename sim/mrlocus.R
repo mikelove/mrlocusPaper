@@ -49,7 +49,7 @@ beta_hat_a <- list()
 beta_hat_b <- list()
 se_a <- list()
 se_b <- list()
-save(out1, out2, Sigma, file="mrlocus_input.rda")
+#save(out1, out2, Sigma, file="mrlocus_input.rda")
 
 for (j in seq_along(nsnp)) {
   if (nsnp[j] > 1) {
@@ -64,9 +64,9 @@ for (j in seq_along(nsnp)) {
                              verbose=FALSE,
                              open_progress=FALSE,
                              show_messages=FALSE,
-                             refresh=-1)
+                             refresh=-1, iter=10000)
     })
-    #rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
+    rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
     #rstan::stan_plot(fit1, pars=paste0("beta_b[",1:nsnp[j],"]"))
     coefs1 <- rstan::extract(fit1)
     beta_hat_a[[j]] <- colMeans(coefs1$beta_a)
@@ -82,3 +82,32 @@ for (j in seq_along(nsnp)) {
 }
 
 save(beta_hat_a, beta_hat_b, se_a, se_b, file="mrlocus_part1.rda")
+
+plotInitEstimates(out2)
+
+nsnp <- lengths(beta_hat_a)
+plot(unlist(beta_hat_a), unlist(beta_hat_b), col=rep(1:5,nsnp))
+beta_hat_a <- unlist(beta_hat_a)
+beta_hat_b <- unlist(beta_hat_b)
+sd_a <- unlist(se_a)
+sd_b <- unlist(se_b)
+idx <- beta_hat_a > .05
+n <- sum(idx)
+
+fit2 <- fitBetaNonzero(beta_hat_a[idx],
+                       beta_hat_b[idx],
+                       sd_a[idx], sd_b[idx],
+                       iter=4000)
+
+rstan::stan_plot(fit2, pars=c("alpha","sigma"))
+print(fit2, pars=c("alpha","sigma"), digits=3)
+
+coefs2 <- rstan::extract(fit2)
+
+plot(beta_hat_a[idx], beta_hat_b[idx],
+     xlim=c(0,max(beta_hat_a[idx])),
+     ylim=c(0,max(beta_hat_b[idx])))
+abline(0, mean(coefs2$alpha), lwd=2)
+abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+
