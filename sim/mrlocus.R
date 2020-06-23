@@ -1,6 +1,8 @@
-clumped <- read.table("out/1_1pctmodel_0.1h2g_0.001ve.clumped", strings=FALSE, header=TRUE)
-big_sum_stat <- read.delim("out/1_1pctmodel_0.1h2g_0.001ve.scan.tsv", strings=FALSE)
-big_ld_mat <- as.matrix(read.table("out/1_1pctmodel_0.1h2g_0.001ve.ld"))
+files <- sub(".clumped","",list.files("out",pattern=".clumped"))
+i <- 3
+clumped <- read.table(paste0("out/",files[i],".clumped"), strings=FALSE, header=TRUE)
+big_sum_stat <- read.delim(paste0("out/",files[i],".scan.tsv"), strings=FALSE)
+big_ld_mat <- as.matrix(read.table(paste0("out/",files[i],".ld")))
 
 noparen <- function(z) sub("\\(1\\)","",z)
 clumps <- lapply(strsplit(clumped$SP2,split=","), noparen)
@@ -41,7 +43,7 @@ library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
 library(matrixStats)
-options(mc.cores=2)
+options(mc.cores=1)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
