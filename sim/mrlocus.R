@@ -26,7 +26,7 @@ library(pheatmap)
 sapply(sum_stat, function(x) any(x$eqtl.true != 0))
 eqtl.true <- sapply(sum_stat, function(x) if (any(x$eqtl.true != 0))
                                             x$eqtl.true[x$eqtl.true != 0] else NA)
-out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z")
+out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE)
 sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
 
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
@@ -43,7 +43,7 @@ library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
 library(matrixStats)
-options(mc.cores=1)
+options(mc.cores=2)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
@@ -54,25 +54,25 @@ se_b <- list()
 for (j in seq_along(nsnp)) {
   if (nsnp[j] > 1) {
     system.time({
-      fit1 <- fitBetaEcaviar(nsnp=nsnp[j],
-                             beta_hat_a=out2$beta_hat_a[[j]],
-                             beta_hat_b=out2$beta_hat_b[[j]],
-                             se_a=out2$se_a[[j]],
-                             se_b=out2$se_b[[j]],
-                             Sigma_a=Sigma[[j]],
-                             Sigma_b=Sigma[[j]],
-                             verbose=FALSE,
-                             open_progress=FALSE,
-                             show_messages=FALSE,
-                             refresh=-1, iter=10000)
+      fit1 <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
+                           beta_hat_b=out2$beta_hat_b[[j]],
+                           se_a=out2$se_a[[j]],
+                           se_b=out2$se_b[[j]],
+                           Sigma_a=Sigma[[j]],
+                           Sigma_b=Sigma[[j]],
+                           verbose=FALSE,
+                           open_progress=FALSE,
+                           show_messages=FALSE,
+                           iter=10000,
+                           refresh=-1)
     })
-    rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
-    #rstan::stan_plot(fit1, pars=paste0("beta_b[",1:nsnp[j],"]"))
-    coefs1 <- rstan::extract(fit1)
+    rstan::stan_plot(fit1$stan, pars=paste0("beta_a[",1:nsnp[j],"]"))
+    rstan::stan_plot(fit1$stan, pars=paste0("beta_b[",1:nsnp[j],"]"))
+    coefs1 <- rstan::extract(fit1$stan)
     beta_hat_a[[j]] <- colMeans(coefs1$beta_a)
-    beta_hat_b[[j]] <- colMeans(coefs1$beta_b)
+    beta_hat_b[[j]] <- colMeans(coefs1$beta_b) / fit1$scale_b
     se_a[[j]] <- colSds(coefs1$beta_a)
-    se_b[[j]] <- colSds(coefs1$beta_b)
+    se_b[[j]] <- colSds(coefs1$beta_b) / fit1$scale_b
   } else {
     beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
     beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
