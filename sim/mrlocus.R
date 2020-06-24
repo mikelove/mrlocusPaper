@@ -28,6 +28,8 @@ eqtl.true <- sapply(sum_stat, function(x) if (any(x$eqtl.true != 0))
                                             x$eqtl.true[x$eqtl.true != 0] else NA)
 out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE)
 sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
+eqtl.true <- sapply(out1$sum_stat, function(x) if (any(x$eqtl.true != 0))
+                                                 x$eqtl.true[x$eqtl.true != 0] else NA)
 
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                              a="eqtl", b="gwas",
@@ -43,7 +45,7 @@ library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
 library(matrixStats)
-options(mc.cores=2)
+options(mc.cores=3)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
@@ -52,22 +54,20 @@ se_b <- list()
 #save(out1, out2, Sigma, file="mrlocus_input.rda")
 
 for (j in seq_along(nsnp)) {
+  print(j)
   if (nsnp[j] > 1) {
-    system.time({
-      fit1 <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
-                           beta_hat_b=out2$beta_hat_b[[j]],
-                           se_a=out2$se_a[[j]],
-                           se_b=out2$se_b[[j]],
-                           Sigma_a=Sigma[[j]],
-                           Sigma_b=Sigma[[j]],
-                           verbose=FALSE,
-                           open_progress=FALSE,
-                           show_messages=FALSE,
-                           iter=10000,
-                           refresh=-1)
-    })
-    rstan::stan_plot(fit1$stan, pars=paste0("beta_a[",1:nsnp[j],"]"))
-    rstan::stan_plot(fit1$stan, pars=paste0("beta_b[",1:nsnp[j],"]"))
+    fit1 <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
+                         beta_hat_b=out2$beta_hat_b[[j]],
+                         se_a=out2$se_a[[j]],
+                         se_b=out2$se_b[[j]],
+                         Sigma_a=Sigma[[j]],
+                         Sigma_b=Sigma[[j]],
+                         verbose=FALSE,
+                         open_progress=FALSE,
+                         show_messages=FALSE,
+                         refresh=-1, chains=3)
+    #rstan::stan_plot(fit1$stan, pars=paste0("beta_a[",1:nsnp[j],"]"))
+    #rstan::stan_plot(fit1$stan, pars=paste0("beta_b[",1:nsnp[j],"]"))
     coefs1 <- rstan::extract(fit1$stan)
     beta_hat_a[[j]] <- colMeans(coefs1$beta_a)
     beta_hat_b[[j]] <- colMeans(coefs1$beta_b) / fit1$scale_b
@@ -81,23 +81,24 @@ for (j in seq_along(nsnp)) {
   }
 }
 
-save(beta_hat_a, beta_hat_b, se_a, se_b, file="mrlocus_part1.rda")
+#save(beta_hat_a, beta_hat_b, se_a, se_b, file="mrlocus_part1.rda")
 
 plotInitEstimates(out2)
 
-nsnp <- lengths(beta_hat_a)
-plot(unlist(beta_hat_a), unlist(beta_hat_b), col=rep(1:5,nsnp))
+nsnp <- lengths(out2$beta_hat_a)
+plot(unlist(beta_hat_a), unlist(beta_hat_b),
+     col=rep(seq_along(nsnp),each=nsnp),
+     pch=rep(seq_along(nsnp),each=nsnp))
 beta_hat_a <- unlist(beta_hat_a)
 beta_hat_b <- unlist(beta_hat_b)
 sd_a <- unlist(se_a)
 sd_b <- unlist(se_b)
 idx <- beta_hat_a > .05
-n <- sum(idx)
+sum(idx)
 
-fit2 <- fitBetaNonzero(beta_hat_a[idx],
-                       beta_hat_b[idx],
-                       sd_a[idx], sd_b[idx],
-                       iter=4000)
+fit2 <- fitSlope(beta_hat_a[idx],
+                 beta_hat_b[idx],
+                 sd_a[idx], sd_b[idx])
 
 rstan::stan_plot(fit2, pars=c("alpha","sigma"))
 print(fit2, pars=c("alpha","sigma"), digits=3)
@@ -106,8 +107,7 @@ coefs2 <- rstan::extract(fit2)
 
 plot(beta_hat_a[idx], beta_hat_b[idx],
      xlim=c(0,max(beta_hat_a[idx])),
-     ylim=c(0,max(beta_hat_b[idx])))
+     ylim=c(min(beta_hat_b[idx]),0))
 abline(0, mean(coefs2$alpha), lwd=2)
 abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
 abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
-
