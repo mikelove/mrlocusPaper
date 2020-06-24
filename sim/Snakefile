@@ -6,6 +6,8 @@ plink = "/proj/milovelab/bin/plink/plink"
 okg = "/proj/milovelab/anno/1000G_EUR_Phase3_plink"
 dap = "/proj/milovelab/love/bin/dap/dap_src/dap-g"
 ptwas = "/proj/milovelab/love/bin/ptwas/PTWAS_est/PTWAS_est"
+r = "/proj/milovelab/love/bin/R-4.0.2/bin/R"
+rscript = "/proj/milovelab/love/bin/R-4.0.2/bin/Rscript"
 
 rule all:
     input: 
@@ -26,7 +28,7 @@ rule twas_sim_plink:
     input:
         "out/{locus}.locus.txt"
     output:
-        "out/{locus}.bim"
+        "out/{locus}.bed"
     params:
         path = "out/{locus}"
     shell:
@@ -60,7 +62,7 @@ rule add_p:
         "out/{locus}.scan.p.tsv"
     shell:
         """
-        Rscript -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{output}", quote=FALSE, row.names=FALSE, sep="\\t")'
+        {rscript} -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{output}", quote=FALSE, row.names=FALSE, sep="\\t")'
         """
 
 rule ld:
@@ -101,7 +103,7 @@ rule ptwas:
     shell:
         """
         grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
-        Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
+        {rscript} -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
         {ptwas} -d {params.path}.eqtl.gwas --cluster_info > {output}
         """
 
@@ -125,5 +127,5 @@ rule twmr:
     output:
         "{locus}.twmr"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{r} CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
