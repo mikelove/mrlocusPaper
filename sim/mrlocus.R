@@ -26,7 +26,7 @@ library(pheatmap)
 sapply(sum_stat, function(x) any(x$eqtl.true != 0))
 eqtl.true <- sapply(sum_stat, function(x) if (any(x$eqtl.true != 0))
                                             x$eqtl.true[x$eqtl.true != 0] else NA)
-out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z")
+out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE)
 sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
 
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
