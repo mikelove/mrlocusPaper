@@ -1,5 +1,5 @@
 files <- sub(".clumped","",list.files("out",pattern=".clumped"))
-i <- 3
+i <- 1
 clumped <- read.table(paste0("out/",files[i],".clumped"), strings=FALSE, header=TRUE)
 big_sum_stat <- read.delim(paste0("out/",files[i],".scan.tsv"), strings=FALSE)
 big_ld_mat <- as.matrix(read.table(paste0("out/",files[i],".ld")))
@@ -51,7 +51,7 @@ beta_hat_a <- list()
 beta_hat_b <- list()
 se_a <- list()
 se_b <- list()
-#save(out1, out2, Sigma, file="mrlocus_input.rda")
+#save(out1, out2, Sigma, nsnp, file=paste0("mrlocus_input_",i,".rda"))
 
 for (j in seq_along(nsnp)) {
   print(j)
