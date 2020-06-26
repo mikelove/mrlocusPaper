@@ -111,3 +111,8 @@ plot(beta_hat_a[idx], beta_hat_b[idx],
 abline(0, mean(coefs2$alpha), lwd=2)
 abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
 abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+
+source("simpleEstimate.R")
+print(estimate("out/1_1pctmodel_0.1h2g_0.001ve.scan.tsv"), digits=3)
+print(estimate("out/2_1pctmodel_0.1h2g_0.01ve.scan.tsv"), digits=3)
+print(estimate("out/3_1pctmodel_0.2h2g_0.05ve.scan.tsv"), digits=3)
