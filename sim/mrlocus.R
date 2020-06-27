@@ -5,6 +5,14 @@ scan.filename <- cmd_args[2]
 ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
+if (FALSE) {
+  files <- list.files("out", pattern="clumped")
+  file <- sub(".clumped","",files[3])
+  clumped.filename <- paste0("out/",file,".clumped")
+  scan.filename <- paste0("out/",file,".scan.tsv")
+  ld.filename <- paste0("out/",file,".ld")
+}
+
 clumped <- read.table(clumped.filename, strings=FALSE, header=TRUE)
 big_sum_stat <- read.delim(scan.filename, strings=FALSE)
 big_ld_mat <- as.matrix(read.table(ld.filename))
@@ -16,7 +24,7 @@ clumps <- lapply(seq_along(clumps), function(j) c(clumped$SNP[j], clumps[[j]]))
 
 ld_mat <- lapply(clumps, function(x) {
   idx <- big_sum_stat$snp %in% x
-  unname(big_ld_mat[idx,idx])
+  unname(big_ld_mat[idx,idx,drop=FALSE])
 })
 sapply(ld_mat, nrow)
 sum_stat <- lapply(clumps, function(x) {
@@ -103,13 +111,20 @@ fit2 <- fitSlope(out3$beta_hat_a,
 #rstan::stan_plot(fit2, pars=c("alpha","sigma"))
 #print(fit2, pars=c("alpha","sigma"), digits=3)
 
-## coefs2 <- rstan::extract(fit2)
-## plot(beta_hat_a[idx], beta_hat_b[idx],
-##      xlim=c(0,max(beta_hat_a[idx])),
-##      ylim=c(min(beta_hat_b[idx]),0))
-## abline(0, mean(coefs2$alpha), lwd=2)
-## abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
-## abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+if (FALSE) {
+  coefs2 <- rstan::extract(fit2)
+  x <- out3$beta_hat_a
+  y <- out3$beta_hat_b
+  sd_x <- out3$sd_a
+  sd_y <- out3$sd_b
+  plot(x,y,xlim=c(0,1.2*max(x)),
+       ylim=c(-1.2*max(abs(y)),1.2*max(abs(y))))
+  arrows(x-sd_x,y,x+sd_x,y,angle=90,length=.05,code=3)
+  arrows(x,y-sd_y,x,y+sd_y,angle=90,length=.05,code=3)
+  abline(0, mean(coefs2$alpha), lwd=2)
+  abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+  abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+}
 
 s <- summary(fit2, pars="alpha")$summary
 s[,c("n_eff","Rhat")]
