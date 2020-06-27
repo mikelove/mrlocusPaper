@@ -1,5 +1,5 @@
 SIMS, = glob_wildcards("sim/{sim}.sim")
-FORMATS = ["ptwas", "twmr", "mrlocus", "final"]
+FORMATS = ["final"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
