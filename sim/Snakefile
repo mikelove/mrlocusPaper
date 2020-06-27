@@ -1,5 +1,5 @@
 SIMS, = glob_wildcards("sim/{sim}.sim")
-FORMATS = ["scan.tsv", "ptwas", "twmr", "mrlocus"]
+FORMATS = ["ptwas", "twmr", "mrlocus", "final"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -138,3 +138,15 @@ rule mrlocus:
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' mrlocus.R"
+
+rule collate:
+    input:
+        scan = "{locus}.scan.tsv",
+	twmr = "{locus}.twmr",
+	ptwas = "{locus}.ptwas",
+	mrlocus = "{locus}.mrlocus",
+    output:
+        "{locus}.final"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
+        "{input.ptwas} {input.mrlocus} {output}' collate.R"
