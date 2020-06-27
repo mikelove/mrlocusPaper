@@ -1,8 +1,13 @@
-files <- sub(".clumped","",list.files("out",pattern=".clumped"))
-i <- 1
-clumped <- read.table(paste0("out/",files[i],".clumped"), strings=FALSE, header=TRUE)
-big_sum_stat <- read.delim(paste0("out/",files[i],".scan.tsv"), strings=FALSE)
-big_ld_mat <- as.matrix(read.table(paste0("out/",files[i],".ld")))
+cmd_args=commandArgs(TRUE)
+
+clumped.filename <- cmd_args[1]
+scan.filename <- cmd_args[2]
+ld.filename <- cmd_args[3]
+out.filename <- cmd_args[4]
+
+clumped <- read.table(clumped.filename, strings=FALSE, header=TRUE)
+big_sum_stat <- read.delim(scan.filename, strings=FALSE)
+big_ld_mat <- as.matrix(read.table(ld.filename))
 
 noparen <- function(z) sub("\\(1\\)","",z)
 clumps <- lapply(strsplit(clumped$SP2,split=","), noparen)
@@ -22,10 +27,7 @@ sum_stat <- lapply(clumps, function(x) {
 
 devtools::load_all("../../mrlocus")
 
-library(pheatmap)
 sapply(sum_stat, function(x) any(x$eqtl.true != 0))
-eqtl.true <- sapply(sum_stat, function(x) if (any(x$eqtl.true != 0))
-                                            x$eqtl.true[x$eqtl.true != 0] else NA)
 out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE)
 sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
 eqtl.true <- sapply(out1$sum_stat, function(x) if (any(x$eqtl.true != 0))
@@ -37,21 +39,21 @@ out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                              beta="beta", se="se",
                              a2_plink="a0",
                              snp_id="snp", sep=".",
-                             ab_last=FALSE, alleles_same=TRUE)
+                             ab_last=FALSE, alleles_same=TRUE,
+                             plot=FALSE)
 
-plotInitEstimates(out2)
+#plotInitEstimates(out2)
 
 library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
 library(matrixStats)
-options(mc.cores=3)
+#options(mc.cores=3)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
 se_a <- list()
 se_b <- list()
-#save(out1, out2, Sigma, nsnp, file=paste0("mrlocus_input_",i,".rda"))
 
 for (j in seq_along(nsnp)) {
   print(j)
@@ -81,38 +83,36 @@ for (j in seq_along(nsnp)) {
   }
 }
 
-#save(beta_hat_a, beta_hat_b, se_a, se_b, file="mrlocus_part1.rda")
+#nsnp <- lengths(out2$beta_hat_a)
+#plot(unlist(beta_hat_a), unlist(beta_hat_b),
+#     col=rep(seq_along(nsnp),each=nsnp),
+#     pch=rep(seq_along(nsnp),each=nsnp))
 
-plotInitEstimates(out2)
+out3 <- extractForSlope(beta_hat_a,
+                        beta_hat_b,
+                        sd_a=out2$se_a,
+                        sd_b=out2$se_b,
+                        plot=FALSE)
 
-nsnp <- lengths(out2$beta_hat_a)
-plot(unlist(beta_hat_a), unlist(beta_hat_b),
-     col=rep(seq_along(nsnp),each=nsnp),
-     pch=rep(seq_along(nsnp),each=nsnp))
-beta_hat_a <- unlist(beta_hat_a)
-beta_hat_b <- unlist(beta_hat_b)
-sd_a <- unlist(se_a)
-sd_b <- unlist(se_b)
-idx <- beta_hat_a > .05
-sum(idx)
+fit2 <- fitSlope(out3$beta_hat_a,
+                 out3$beta_hat_b,
+                 out3$sd_a,
+                 out3$sd_b,
+                 iter=10000)
 
-fit2 <- fitSlope(beta_hat_a[idx],
-                 beta_hat_b[idx],
-                 sd_a[idx], sd_b[idx])
+#rstan::stan_plot(fit2, pars=c("alpha","sigma"))
+#print(fit2, pars=c("alpha","sigma"), digits=3)
 
-rstan::stan_plot(fit2, pars=c("alpha","sigma"))
-print(fit2, pars=c("alpha","sigma"), digits=3)
+## coefs2 <- rstan::extract(fit2)
+## plot(beta_hat_a[idx], beta_hat_b[idx],
+##      xlim=c(0,max(beta_hat_a[idx])),
+##      ylim=c(min(beta_hat_b[idx]),0))
+## abline(0, mean(coefs2$alpha), lwd=2)
+## abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+## abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
 
-coefs2 <- rstan::extract(fit2)
+s <- summary(fit2, pars="alpha")$summary
+s[,c("n_eff","Rhat")]
+s[,c("mean","sd")]
 
-plot(beta_hat_a[idx], beta_hat_b[idx],
-     xlim=c(0,max(beta_hat_a[idx])),
-     ylim=c(min(beta_hat_b[idx]),0))
-abline(0, mean(coefs2$alpha), lwd=2)
-abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
-abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
-
-source("simpleEstimate.R")
-print(estimate("out/1_1pctmodel_0.1h2g_0.001ve.scan.tsv"), digits=3)
-print(estimate("out/2_1pctmodel_0.1h2g_0.01ve.scan.tsv"), digits=3)
-print(estimate("out/3_1pctmodel_0.2h2g_0.05ve.scan.tsv"), digits=3)
+write(s[,c("mean","sd")], file=out.filename)
