@@ -1,4 +1,4 @@
-SIMS, = glob_wildcards("sim/{sim}.sim")
+SIMS, = glob_wildcards("sims/{sim}.sim")
 FORMATS = ["final"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
@@ -13,7 +13,7 @@ rule all:
 
 rule sample_genes:
     input:
-        "sim/{rep}_{model}model_{h2g}h2g_{ve}ve.sim"
+        "sims/{rep}_{model}model_{h2g}h2g_{ve}ve.sim"
     output:
         list = "out/{rep}_{model}model_{h2g}h2g_{ve}ve.gene.list",
         txt = "out/{rep}_{model}model_{h2g}h2g_{ve}ve.locus.txt"

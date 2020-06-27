@@ -75,7 +75,7 @@ for (j in seq_along(nsnp)) {
                          verbose=FALSE,
                          open_progress=FALSE,
                          show_messages=FALSE,
-                         refresh=-1, chains=3)
+                         refresh=-1)
     #rstan::stan_plot(fit1$stan, pars=paste0("beta_a[",1:nsnp[j],"]"))
     #rstan::stan_plot(fit1$stan, pars=paste0("beta_b[",1:nsnp[j],"]"))
     coefs1 <- rstan::extract(fit1$stan)

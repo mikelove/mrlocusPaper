@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 #SBATCH --job-name=snake
-#SBATCH --time=1440
+#SBATCH --time=60
 #SBATCH --mem=1000
-#SBATCH --mail-user=milove@email.unc.edu
-#SBATCH --mail-type=ALL
 
-module load python/3.6.6
-snakemake -j 4 --latency-wait 30 --cluster "sbatch --mem=10000 -N 1 -n 6"
+module load anaconda/2019.10
+module load r/4.0.1
+module load gcc/6.3.0
+snakemake -j 4 --latency-wait 30 --cluster "sbatch --mem=5000 --time 60"
