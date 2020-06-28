@@ -48,6 +48,8 @@ rule sim:
         "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
     params:
         path = "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+    benchmark:
+        "bench/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve_sim.bench"
     shell:
         "python {ts}/sim.py {params.path} --ngwas 100000 "
         "--nqtl {wildcards.nqtl} "
@@ -94,9 +96,14 @@ rule ptwas:
         path = "out/{locus}"
     shell:
         """
-        grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
-        Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
-        {ptwas} -d {params.path}.eqtl.gwas --cluster_info > {output}
+        if [[ -s {input.dap} ]]
+        then
+          grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
+          Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
+          {ptwas} -d {params.path}.eqtl.gwas --cluster_info > {output}
+        else
+          echo "0	0	0	0	0	0" > {output}
+        fi
         """
 
 rule clump:
@@ -117,34 +124,36 @@ rule clump:
 
 rule twmr:
     input:
-        clump = "{locus}.clumped",
-        scan = "{locus}.scan.tsv",
-        ld = "{locus}.ld"
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
     output:
-        "{locus}.twmr"
+        "out/{locus}.twmr"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
 
 rule mrlocus:
     input:
-        clump = "{locus}.clumped",
-        scan = "{locus}.scan.tsv",
-        ld = "{locus}.ld"
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
     output:
-        "{locus}.mrlocus"
+        "out/{locus}.mrlocus"
+    benchmark:
+        "bench/{locus}_mrlocus.bench"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' mrlocus.R"
 
 rule collate:
     input:
-        scan = "{locus}.scan.tsv",
-	twmr = "{locus}.twmr",
-	ptwas = "{locus}.ptwas",
-	mrlocus = "{locus}.mrlocus",
+        scan = "out/{locus}.scan.tsv",
+	twmr = "out/{locus}.twmr",
+	ptwas = "out/{locus}.ptwas",
+	mrlocus = "out/{locus}.mrlocus",
     output:
-        "{locus}.final"
+        "out/{locus}.final"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
         "{input.ptwas} {input.mrlocus} {output}' collate.R"
