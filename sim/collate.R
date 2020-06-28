@@ -34,4 +34,4 @@ dimn <- list(c("twmr","ptwas","mrlocus"), c("Estimate","Std. Error"))
 out <- rbind(out,
              matrix(c(twmr, ptwas, mrlocus),
                     byrow=TRUE, ncol=2, dimnames=dimn))
-write.table(format(out, digits=2), file=out.filename, quote=FALSE)
+write.table(format(out, digits=2), file=out.filename, quote=FALSE, sep="\t")

@@ -7,7 +7,7 @@ out.filename <- cmd_args[4]
 
 if (FALSE) {
   files <- list.files("out", pattern="clumped")
-  file <- sub(".clumped","",files[3])
+  file <- sub(".clumped","",files[1])
   clumped.filename <- paste0("out/",file,".clumped")
   scan.filename <- paste0("out/",file,".scan.tsv")
   ld.filename <- paste0("out/",file,".ld")
@@ -126,8 +126,13 @@ if (FALSE) {
   abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
 }
 
-s <- summary(fit2, pars="alpha")$summary
-s[,c("n_eff","Rhat")]
-s[,c("mean","sd")]
+if (is(fit2, "stanfit")) {
+  s <- summary(fit2, pars="alpha")$summary
+  s[,c("n_eff","Rhat")]
+  s[,c("mean","sd")]
+  mrlocus.out <- s[,c("mean","sd")]
+} else {
+  mrlocus.out <- fit2
+}
 
-write(s[,c("mean","sd")], file=out.filename)
+write(mrlocus.out, file=out.filename)
