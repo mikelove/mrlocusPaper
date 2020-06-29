@@ -1,3 +1,6 @@
+shell.executable("/bin/bash")
+shell.prefix("source ~/.bashrc; ")
+
 SIMS, = glob_wildcards("sims/{sim}.sim")
 FORMATS = ["final"]
 
@@ -51,13 +54,16 @@ rule sim:
     benchmark:
         "bench/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve_sim.bench"
     shell:
-        "python {ts}/sim.py {params.path} --ngwas 100000 "
-        "--nqtl {wildcards.nqtl} "
-        "--model {wildcards.model} "
-        "--eqtl-h2 {wildcards.h2g} "
-        "--var-explained {wildcards.ve} "
-        "--output {params.path} "
-        "--seed {wildcards.rep}"
+        """
+        conda activate twas_sim
+        python {ts}/sim.py {params.path} --ngwas 100000 \
+        --nqtl {wildcards.nqtl} \
+        --model {wildcards.model} \
+        --eqtl-h2 {wildcards.h2g} \
+        --var-explained {wildcards.ve} \
+        --output {params.path} \
+        --seed {wildcards.rep}
+        """
 
 rule ld:
      input:
