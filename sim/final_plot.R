@@ -11,11 +11,13 @@ dat <- data.frame(rep=rep(1:20,each=5),
                   method=rep(c("causal","all","twmr","ptwas","mrlocus"),times=20),
                   estimate=as.vector(sapply(final, function(x) x$V2[c(3,5,6:8)])))
 dat$method <- factor(dat$method, c("causal","all","twmr","ptwas","mrlocus"))
+dat$est_nozero <- ifelse(dat$est == 0, NA, dat$est)
 
 library(dplyr)
 tab <- dat %>% group_by(method) %>%
-  summarize(MAE=mean(abs(estimate-true)),
-            RMSE=sqrt(mean((estimate-true)^2)))
+  summarize(MAE=mean(abs(est_nozero-true),na.rm=TRUE),
+            RMSE=sqrt(mean((est_nozero-true)^2,na.rm=TRUE)))
+tab
 data.tb <- tibble(x=-.7, y=.7, tb=list(tab))
 
 library(ggplot2)
