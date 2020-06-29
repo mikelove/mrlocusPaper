@@ -60,83 +60,63 @@ library(matrixStats)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
-se_a <- list()
-se_b <- list()
-
 for (j in seq_along(nsnp)) {
   print(j)
   if (nsnp[j] > 1) {
-    fit1 <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
-                         beta_hat_b=out2$beta_hat_b[[j]],
-                         se_a=out2$se_a[[j]],
-                         se_b=out2$se_b[[j]],
-                         Sigma_a=Sigma[[j]],
-                         Sigma_b=Sigma[[j]],
-                         verbose=FALSE,
-                         open_progress=FALSE,
-                         show_messages=FALSE,
-                         refresh=-1)
-    ## rstan::stan_plot(fit1$stan,
+    fit <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
+                        beta_hat_b=out2$beta_hat_b[[j]],
+                        se_a=out2$se_a[[j]],
+                        se_b=out2$se_b[[j]],
+                        Sigma_a=Sigma[[j]],
+                        Sigma_b=Sigma[[j]],
+                        verbose=FALSE,
+                        open_progress=FALSE,
+                        show_messages=FALSE,
+                        refresh=-1)
+    ## rstan::stan_plot(fit$stan,
     ##                  pars=c(paste0("beta_a[",1:nsnp[j],"]"),
     ##                         paste0("beta_b[",1:nsnp[j],"]")))
-    coefs1 <- rstan::extract(fit1$stan)
-    beta_hat_a[[j]] <- colMeans(coefs1$beta_a) / fit1$scale_a
-    beta_hat_b[[j]] <- colMeans(coefs1$beta_b) / fit1$scale_b
-    se_a[[j]] <- colSds(coefs1$beta_a) / fit1$scale_a
-    se_b[[j]] <- colSds(coefs1$beta_b) / fit1$scale_b
+    beta_hat_a[[j]] <- fit$beta_hat_a
+    beta_hat_b[[j]] <- fit$beta_hat_b
   } else {
     beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
     beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
-    se_a[[j]] <- out2$se_a[[j]]
-    se_b[[j]] <- out2$se_b[[j]]
   }
 }
 
-out3 <- extractForSlope(beta_hat_a,
-                        beta_hat_b,
-                        sd_a=out2$se_a,
-                        sd_b=out2$se_b,
-                        plot=FALSE)
+# make a results list for slope fitting
+res <- list(beta_hat_a=beta_hat_a,
+            beta_hat_b=beta_hat_b,
+            sd_a=out2$se_a,
+            sd_a=out2$se_b)
+res <- extractForSlope(res, plot=FALSE)
+res <- fitSlope(res, iter=10000)
 
-if (length(out3$beta_hat_a) > 1) {
-  naive <- unname(coef(with(out3, lm(beta_hat_b ~ beta_hat_a))))
-} else {
-  naive <- c(1,1)
-}
-
-fit2 <- fitSlope(out3$beta_hat_a,
-                 out3$beta_hat_b,
-                 out3$sd_a,
-                 out3$sd_b,
-                 alpha_mu=naive[2],
-                 alpha_sd=abs(naive[2])/2,
-                 iter=10000)
-
-#rstan::stan_plot(fit2, pars=c("alpha","sigma"))
-#print(fit2, pars=c("alpha","sigma"), digits=3)
+#rstan::stan_plot(res$stanfit, pars=c("alpha","sigma"))
+#print(res$stanfit, pars=c("alpha","sigma"), digits=3)
 
 if (FALSE) {
-  coefs2 <- rstan::extract(fit2)
-  x <- out3$beta_hat_a
-  y <- out3$beta_hat_b
-  sd_x <- out3$sd_a
-  sd_y <- out3$sd_b
+  coefs <- rstan::extract(res$stanfit)
+  x <- res$beta_hat_a
+  y <- res$beta_hat_b
+  sd_x <- res$sd_a
+  sd_y <- res$sd_b
   plot(x,y,xlim=c(0,1.2*max(x)),
        ylim=c(-1.2*max(abs(y)),1.2*max(abs(y))))
   arrows(x-sd_x,y,x+sd_x,y,angle=90,length=.05,code=3)
   arrows(x,y-sd_y,x,y+sd_y,angle=90,length=.05,code=3)
   abline(0, mean(coefs2$alpha), lwd=2)
-  abline(mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
-  abline(-mean(coefs2$sigma), mean(coefs2$alpha), col="blue")
+  abline(mean(coefs$sigma), mean(coefs$alpha), col="blue")
+  abline(-mean(coefs$sigma), mean(coefs$alpha), col="blue")
 }
 
-if (is(fit2, "stanfit")) {
-  s <- summary(fit2, pars="alpha")$summary
+if ("stanfit" in names(res))
+  s <- summary(res$stanfit, pars="alpha")$summary
   s[,c("n_eff","Rhat")]
   s[,c("mean","sd")]
   mrlocus.out <- s[,c("mean","sd")]
 } else {
-  mrlocus.out <- fit2
+  mrlocus.out <- res$est
 }
 
 write(mrlocus.out, file=out.filename)
