@@ -25,7 +25,7 @@ ptwas <- scan(ptwas.filename, what="char", sep="\n")
 ptwas <- ptwas[length(ptwas)]
 ptwas <- as.numeric(trimws(strsplit(ptwas, "\t")[[1]][5:6]))
 
-mrlocus <- scan(mrlocus.filename)
+mrlocus <- unname(as.matrix(read.table(mrlocus.filename, header=FALSE))[1,])
 
 out <- estimate(scan.filename)
 out <- t(out)
