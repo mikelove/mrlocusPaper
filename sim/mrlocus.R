@@ -7,7 +7,7 @@ out.filename <- cmd_args[4]
 
 if (FALSE) {
   files <- list.files("out", pattern="clumped")
-  file <- sub(".clumped","",files[7])
+  file <- sub(".clumped","",files[1])
   clumped.filename <- paste0("out/",file,".clumped")
   scan.filename <- paste0("out/",file,".scan.tsv")
   ld.filename <- paste0("out/",file,".ld")
@@ -88,7 +88,7 @@ for (j in seq_along(nsnp)) {
 res <- list(beta_hat_a=beta_hat_a,
             beta_hat_b=beta_hat_b,
             sd_a=out2$se_a,
-            sd_a=out2$se_b)
+            sd_b=out2$se_b)
 res <- extractForSlope(res, plot=FALSE)
 res <- fitSlope(res, iter=10000)
 
@@ -101,22 +101,30 @@ if (FALSE) {
   y <- res$beta_hat_b
   sd_x <- res$sd_a
   sd_y <- res$sd_b
-  plot(x,y,xlim=c(0,1.2*max(x)),
+  plot(x,y,pch=19,
+       xlim=c(0,1.2*max(x)),
        ylim=c(-1.2*max(abs(y)),1.2*max(abs(y))))
   arrows(x-sd_x,y,x+sd_x,y,angle=90,length=.05,code=3)
   arrows(x,y-sd_y,x,y+sd_y,angle=90,length=.05,code=3)
-  abline(0, mean(coefs2$alpha), lwd=2)
+  abline(v=0, h=0, lty=2)
+  abline(0, mean(coefs$alpha), lwd=2)
   abline(mean(coefs$sigma), mean(coefs$alpha), col="blue")
   abline(-mean(coefs$sigma), mean(coefs$alpha), col="blue")
 }
 
 if ("stanfit" in names(res))
-  s <- summary(res$stanfit, pars="alpha")$summary
-  s[,c("n_eff","Rhat")]
-  s[,c("mean","sd")]
-  mrlocus.out <- s[,c("mean","sd")]
+  s <- summary(res$stanfit, pars="alpha", probs=c(.025,.05,.1,.9,.95,.975))$summary
+  mrlocus.out <- matrix(s[,c("mean","sd","10%","90%","5%","95%","2.5%","97.5%")],
+                        ncol=2, byrow=TRUE)
 } else {
-  mrlocus.out <- res$est
+  mrlocus.out <- matrix(c(res$est,
+                          res$est[1] + qnorm(.1) * res$est[2],
+                          res$est[1] + qnorm(.9) * res$est[2],
+                          res$est[1] + qnorm(.05) * res$est[2],
+                          res$est[1] + qnorm(.95) * res$est[2],
+                          res$est[1] + qnorm(.025) * res$est[2],
+                          res$est[1] + qnorm(.975) * res$est[2]),
+                          ncol=2, byrow=TRUE)
 }
 
-write(mrlocus.out, file=out.filename)
+write.table(mrlocus.out, file=out.filename, row.names=FALSE, col.names=FALSE)

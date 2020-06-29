@@ -16,10 +16,10 @@ rule all:
 
 rule sample_genes:
     input:
-        "sims/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
+        "sims/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
     output:
-        list = "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
-        txt = "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
+        list = "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
+        txt = "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
     shell:
         "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
         "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
@@ -46,13 +46,11 @@ rule twas_sim_plink:
 
 rule sim:
     input:
-        "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+        "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
     output:
-        "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
+        "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
     params:
-        path = "out/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
-    benchmark:
-        "bench/{rep}_{nqtl}nq_{model}m_{h2g}h2_{ve}ve_sim.bench"
+        path = "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
     shell:
         """
         conda activate twas_sim
@@ -84,6 +82,8 @@ rule dap:
         "out/{locus}.dap"
     params:
         path = "out/{locus}"
+    benchmark:
+        "bench/{locus}_dap.bench"
     shell:
         """
         tail -n +2 {input.scan} | awk '{{ print $2,$11,$12 }}' > {params.path}.eqtl
@@ -100,6 +100,8 @@ rule ptwas:
         "out/{locus}.ptwas"
     params:
         path = "out/{locus}"
+    benchmark:
+        "bench/{locus}_ptwas.bench"
     shell:
         """
         if [[ -s {input.dap} ]]
@@ -120,6 +122,8 @@ rule clump:
     params:
         path = "out/{locus}",
         scan_p = "out/{locus}.scan.p.tsv"
+    benchmark:
+        "bench/{locus}_clump.bench"
     shell:
         """
         Rscript -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{params.scan_p}", quote=FALSE, row.names=FALSE, sep="\\t")'
@@ -135,6 +139,8 @@ rule twmr:
         ld = "out/{locus}.ld"
     output:
         "out/{locus}.twmr"
+    benchmark:
+        "bench/{locus}_twmr.bench"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
