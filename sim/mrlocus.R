@@ -7,7 +7,7 @@ out.filename <- cmd_args[4]
 
 if (FALSE) {
   files <- list.files("out", pattern="clumped")
-  file <- sub(".clumped","",files[1])
+  file <- sub(".clumped","",files[7])
   clumped.filename <- paste0("out/",file,".clumped")
   scan.filename <- paste0("out/",file,".scan.tsv")
   ld.filename <- paste0("out/",file,".ld")
@@ -76,12 +76,13 @@ for (j in seq_along(nsnp)) {
                          open_progress=FALSE,
                          show_messages=FALSE,
                          refresh=-1)
-    #rstan::stan_plot(fit1$stan, pars=paste0("beta_a[",1:nsnp[j],"]"))
-    #rstan::stan_plot(fit1$stan, pars=paste0("beta_b[",1:nsnp[j],"]"))
+    ## rstan::stan_plot(fit1$stan,
+    ##                  pars=c(paste0("beta_a[",1:nsnp[j],"]"),
+    ##                         paste0("beta_b[",1:nsnp[j],"]")))
     coefs1 <- rstan::extract(fit1$stan)
-    beta_hat_a[[j]] <- colMeans(coefs1$beta_a)
+    beta_hat_a[[j]] <- colMeans(coefs1$beta_a) / fit1$scale_a
     beta_hat_b[[j]] <- colMeans(coefs1$beta_b) / fit1$scale_b
-    se_a[[j]] <- colSds(coefs1$beta_a)
+    se_a[[j]] <- colSds(coefs1$beta_a) / fit1$scale_a
     se_b[[j]] <- colSds(coefs1$beta_b) / fit1$scale_b
   } else {
     beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
@@ -91,21 +92,24 @@ for (j in seq_along(nsnp)) {
   }
 }
 
-#nsnp <- lengths(out2$beta_hat_a)
-#plot(unlist(beta_hat_a), unlist(beta_hat_b),
-#     col=rep(seq_along(nsnp),each=nsnp),
-#     pch=rep(seq_along(nsnp),each=nsnp))
-
 out3 <- extractForSlope(beta_hat_a,
                         beta_hat_b,
                         sd_a=out2$se_a,
                         sd_b=out2$se_b,
                         plot=FALSE)
 
+if (length(out3$beta_hat_a) > 1) {
+  naive <- unname(coef(with(out3, lm(beta_hat_b ~ beta_hat_a))))
+} else {
+  naive <- c(1,1)
+}
+
 fit2 <- fitSlope(out3$beta_hat_a,
                  out3$beta_hat_b,
                  out3$sd_a,
                  out3$sd_b,
+                 alpha_mu=naive[2],
+                 alpha_sd=abs(naive[2])/2,
                  iter=10000)
 
 #rstan::stan_plot(fit2, pars=c("alpha","sigma"))
