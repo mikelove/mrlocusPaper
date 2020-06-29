@@ -112,7 +112,7 @@ if (FALSE) {
   abline(-mean(coefs$sigma), mean(coefs$alpha), col="blue")
 }
 
-if ("stanfit" in names(res))
+if ("stanfit" %in% names(res))
   s <- summary(res$stanfit, pars="alpha", probs=c(.025,.05,.1,.9,.95,.975))$summary
   mrlocus.out <- matrix(s[,c("mean","sd","10%","90%","5%","95%","2.5%","97.5%")],
                         ncol=2, byrow=TRUE)
