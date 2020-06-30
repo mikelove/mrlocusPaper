@@ -1,4 +1,4 @@
-i <- 1
+i <- 3
 
 files <- sub(".final","",list.files("out", pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
@@ -42,7 +42,7 @@ ggplot(dat, aes(true,estimate,col=method)) +
   geom_point() +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=cols) +
-  geom_table(data=data.tb, aes(x, y, label=tab),
+  geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
   xlim(-1.2*mx,1.2*mx) + ylim(-1.2*mx,1.2*mx) +
