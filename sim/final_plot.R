@@ -1,4 +1,4 @@
-i <- 3
+i <- 4
 
 files <- sub(".final","",list.files("out", pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
@@ -7,6 +7,13 @@ final <- list()
 for (k in seq_along(files)) {
   final[[k]] <- read.table(paste0("out/",files[k],".final"),skip=1)
 }
+
+mrlocus <- list()
+for (k in seq_along(files)) {
+  mrlocus[[k]] <- read.table(paste0("out/",files[k],".mrlocus"))
+}
+mrlocus10 <- sapply(mrlocus, function(x) x[2,1])
+mrlocus90 <- sapply(mrlocus, function(x) x[2,2])
 
 h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1]))
 ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
@@ -24,6 +31,8 @@ dat$est_nozero <- ifelse(dat$est == 0, NA, dat$est)
 q <- qnorm(.9)
 dat$min <- dat$estimate - q * dat$se
 dat$max <- dat$estimate + q * dat$se
+dat$min[dat$method == "mrlocus"] <- mrlocus10
+dat$max[dat$method == "mrlocus"] <- mrlocus90
 
 library(dplyr)
 tab <- dat %>% group_by(method) %>%
@@ -37,7 +46,7 @@ data.tb <- tibble(x=-1.2*mx, y=1.2*mx, tb=list(tab))
 
 library(ggplot2)
 library(ggpmisc)
-cols <- unname(palette.colors(6))[-5]
+cols <- unname(palette.colors(7))[-c(1,5)]
 ggplot(dat, aes(true,estimate,col=method)) +
   geom_point() +
   geom_abline(intercept=0, slope=1) +
