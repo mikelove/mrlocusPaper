@@ -47,10 +47,11 @@ data.tb <- tibble(x=-1.2*mx, y=1.2*mx, tb=list(tab))
 library(ggplot2)
 library(ggpmisc)
 cols <- unname(palette.colors(7))[-c(1,5)]
-ggplot(dat, aes(true,estimate,col=method)) +
-  geom_point(shape="square") +
+ggplot(dat, aes(true,estimate,color=method,shape=method)) +
+  geom_point(size=2) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=cols) +
+  scale_shape_manual(values=c(24,25,17,15,16)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
