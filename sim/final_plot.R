@@ -1,4 +1,4 @@
-i <- 4
+i <- 1
 
 files <- sub(".final","",list.files("out", pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
@@ -48,7 +48,7 @@ library(ggplot2)
 library(ggpmisc)
 cols <- unname(palette.colors(7))[-c(1,5)]
 ggplot(dat, aes(true,estimate,col=method)) +
-  geom_point() +
+  geom_point(shape="square") +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=cols) +
   geom_table(data=data.tb, aes(x, y, label=tb),
@@ -69,7 +69,7 @@ tab$x <- "left"
 tab$y <- "top"
 
 ggplot(dat, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
-  geom_pointrange() + facet_wrap(~method) +
+  geom_pointrange(shape="square", size=.5) + facet_wrap(~method) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) + 
