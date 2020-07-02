@@ -6,11 +6,14 @@ ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
 if (FALSE) {
-  files <- list.files("out", pattern="clumped")
-  file <- sub(".clumped","",files[18])
-  clumped.filename <- paste0("out/",file,".clumped")
-  scan.filename <- paste0("out/",file,".scan.tsv")
-  ld.filename <- paste0("out/",file,".ld")
+  i <- "1"
+  dir <- file.path("out")
+  files <- list.files(dir, pattern="clumped")
+  file <- sub(".clumped","",files[19])
+  dir <- "out"
+  clumped.filename <- paste0(dir,"/",file,".clumped")
+  scan.filename <- paste0(dir,"/",file,".scan.tsv")
+  ld.filename <- paste0(dir,"/",file,".ld")
 }
 
 clumped <- read.table(clumped.filename, strings=FALSE, header=TRUE)
@@ -93,7 +96,10 @@ res <- extractForSlope(res, plot=FALSE)
 res <- fitSlope(res, iter=10000)
 
 #rstan::stan_plot(res$stanfit, pars=c("alpha","sigma"))
-#print(res$stanfit, pars=c("alpha","sigma"), digits=3)
+if ("stanfit" %in% res) {
+  print(res$stanfit, pars=c("alpha","sigma"), digits=3)
+  summary(res$stanfit, pars="alpha", probs=c(.1,.9))$summary
+}
 
 if (FALSE) {
   coefs <- rstan::extract(res$stanfit)
