@@ -17,20 +17,20 @@ sapply(sum_stat, nrow)
 library(pheatmap)
 library(gridExtra)
 load_all("../../mrlocus")
-out1 <- collapseHighCorSNPs(sum_stat, ld_mat)
+out1 <- collapseHighCorSNPs(sum_stat, ld_mat, plot=FALSE)
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                             a="eQTL", b="GWAS",
                             ref="Ref", eff="Effect",
                             beta="beta", se="se",
-                            major_plink="Major_plink",
-                            snp_id="SNP", sep="_", ab_last=TRUE)
+                            a2_plink="Major_plink",
+                            snp_id="SNP", sep="_",
+                            ab_last=TRUE)
 
 library(Matrix)
 Sigma_npd <- out2$Sigma
 for (j in seq_along(out2$Sigma)) {
   Sigma_npd[[j]] <- as.matrix(nearPD(out2$Sigma[[j]])$mat)
 }
-Sigma_b <- Sigma_a <- Sigma_npd
 
 nsnp <- lengths(out2$beta_hat_a)
 
@@ -38,24 +38,35 @@ plotInitEstimates(out2)
 
 load_all("../../mrlocus")
 options(mc.cores=2)
-j <- 2
-fit1 <- fitBetaEcaviar(nsnp=nsnp[j],
-                       beta_hat_a=out2$beta_hat_a[[j]],
-                       beta_hat_b=out2$beta_hat_b[[j]],
-                       se_a=out2$se_a[[j]],
-                       se_b=out2$se_b[[j]],
-                       Sigma_a=Sigma_a[[j]],
-                       Sigma_b=Sigma_b[[j]],
-                       iter=2000)
+beta_hat_a <- list()
+beta_hat_b <- list()
+for (j in seq_along(nsnp)) {
+  print(j)
+  if (nsnp[j] > 1) {
+    fit <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
+                        beta_hat_b=out2$beta_hat_b[[j]],
+                        se_a=out2$se_a[[j]],
+                        se_b=out2$se_b[[j]],
+                        Sigma_a=Sigma_npd[[j]],
+                        Sigma_b=Sigma_npd[[j]],
+                        verbose=FALSE,
+                        open_progress=FALSE,
+                        show_messages=FALSE,
+                        refresh=-1)
+    beta_hat_a[[j]] <- fit$beta_hat_a
+    beta_hat_b[[j]] <- fit$beta_hat_b
+  } else {
+    beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
+    beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
+  }
+}
 
-rstan::stan_plot(fit1, pars=paste0("beta_a[",1:nsnp[j],"]"))
-rstan::stan_plot(fit1, pars=paste0("beta_b[",1:nsnp[j],"]"))
-print(fit1, pars=paste0("beta_a[",1:nsnp[3],"]"), digits=3)
-coefs1 <- rstan::extract(fit1)
-par(mfrow=c(1,2))
-beta_clean_a <- colMeans(coefs1$beta_a)
-plot(beta_hat_a[[j]], beta_clean_a, asp=1)
-abline(0,1); abline(h=0, lty=2)
-beta_clean_b <- colMeans(coefs1$beta_b)
-plot(beta_hat_b[[j]], beta_clean_b, asp=1)
-abline(0,1); abline(h=0, lty=2)
+# make a results list for slope fitting
+res <- list(beta_hat_a=beta_hat_a,
+            beta_hat_b=beta_hat_b,
+            sd_a=out2$se_a,
+            sd_b=out2$se_b)
+res <- extractForSlope(res)
+res <- fitSlope(res, iter=10000)
+
+plotMrlocus(res, main="PHACTR1")
