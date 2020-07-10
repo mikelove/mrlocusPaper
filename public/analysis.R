@@ -5,7 +5,10 @@ genes <- list(Artery_Tibial=c("MRAS","PHACTR1"),
 for (tissue in names(genes)) {
   for (gene in genes[[tissue]]) {
 
+    set.seed(1)
     print(paste("---",tissue,"-",gene,"---"))
+    ptm <- proc.time() 
+    
     dir <- file.path(tissue, gene)
     cond.files <- sub(".tsv","",list.files(dir, ".tsv"))
     nclust <- length(cond.files)
@@ -31,7 +34,7 @@ for (tissue in names(genes)) {
                                  beta="beta", se="se",
                                  a2_plink="Major_plink",
                                  snp_id="SNP", sep="_",
-                                 ab_last=TRUE)
+                                 ab_last=TRUE, plot=FALSE)
 
     library(Matrix)
     Sigma_npd <- out2$Sigma
@@ -41,7 +44,7 @@ for (tissue in names(genes)) {
 
     nsnp <- lengths(out2$beta_hat_a)
 
-    plotInitEstimates(out2)
+    # plotInitEstimates(out2)
 
     load_all("../../mrlocus")
     options(mc.cores=2)
@@ -50,16 +53,18 @@ for (tissue in names(genes)) {
     for (j in seq_along(nsnp)) {
       print(j)
       if (nsnp[j] > 1) {
-        fit <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
-                            beta_hat_b=out2$beta_hat_b[[j]],
-                            se_a=out2$se_a[[j]],
-                            se_b=out2$se_b[[j]],
-                            Sigma_a=Sigma_npd[[j]],
-                            Sigma_b=Sigma_npd[[j]],
-                            verbose=FALSE,
-                            open_progress=FALSE,
-                            show_messages=FALSE,
-                            refresh=-1)
+        cap.out <- capture.output({ 
+          fit <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
+                              beta_hat_b=out2$beta_hat_b[[j]],
+                              se_a=out2$se_a[[j]],
+                              se_b=out2$se_b[[j]],
+                              Sigma_a=Sigma_npd[[j]],
+                              Sigma_b=Sigma_npd[[j]],
+                              verbose=FALSE,
+                              open_progress=FALSE,
+                              show_messages=FALSE,
+                              refresh=-1)
+        })
         beta_hat_a[[j]] <- fit$beta_hat_a
         beta_hat_b[[j]] <- fit$beta_hat_b
       } else {
@@ -74,9 +79,11 @@ for (tissue in names(genes)) {
                 sd_a=out2$se_a,
                 sd_b=out2$se_b)
 
-    res <- extractForSlope(res)
+    res <- extractForSlope(res, plot=FALSE)
     res <- fitSlope(res, iter=10000)
 
+    print(proc.time() - ptm)
+    
     pdf(file=paste0(tissue,"-",gene,".pdf"))
     plotMrlocus(res, main=paste(tissue,"-",gene))
     dev.off()
@@ -86,3 +93,5 @@ for (tissue in names(genes)) {
 
   }
 }
+
+sessionInfo()
