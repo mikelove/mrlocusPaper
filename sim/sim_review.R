@@ -43,9 +43,12 @@ clumps <- lapply(1:12, function(i) {
     dir <- file.path("out","null")
     files <- list.files(dir, pattern=paste0("null",ii,".*clumped"))
   }
-  sapply(files, USE.NAMES=FALSE, function(f) {
-    length(readLines(file.path(dir, f))) - 1
+  nlines <- sapply(files, USE.NAMES=FALSE, function(f) {
+    x <- readLines(file.path(dir, f))
+    x <- x[x != ""]
+    length(x)
   })
+  nlines - 1 # remove header
 })
 names(clumps) <- c(1:9,paste0("null",1:3))
 
@@ -74,15 +77,18 @@ names(dap) <- c(1:9,paste0("null",1:3))
 
 load("sim_review.rda")
 
-.1 .01 - 1
-.05 .01 - 2 
-.2 .01 - 3
-.1 .005 - 4 
-.1 .001 - 5 
-.2 .005 - 6 
-.2 .001 - 7 
-.05 .005 - 8 
-.05 .001 - 9
+## .1  .01  - 1
+## .05 .01  - 2 
+## .2  .01  - 3
+
+## .1  .005 - 4 
+## .1  .001 - 5 
+
+## .2  .005 - 6 
+## .2  .001 - 7 
+
+## .05 .005 - 8 
+## .05 .001 - 9
 
 h2 <- rep(c(.1,.2,.05),4)
 ve <- c(rep(c(.01,.005,.001),each=3),c(0,0,0))
@@ -133,5 +139,5 @@ plotit <- function(x, dot=TRUE, bee=FALSE) {
 
 plotit(i2, dot=FALSE, bee=TRUE)
 plotit(causal) + ylim(0,15)
-plotit(clumps) + ylim(0,20)
+plotit(clumps) + ylim(0,15)
 plotit(dap, dot=FALSE, bee=TRUE) + ylim(0,40)
