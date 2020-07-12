@@ -70,7 +70,7 @@ dap <- lapply(1:12, function(i) {
   })
 })
 names(dap) <- c(1:9,paste0("null",1:3))
-
+save(i2, causal, clumps, dap, file="sim_review.rda")
 
 library(ggplot2)
 library(ggbeeswarm)
