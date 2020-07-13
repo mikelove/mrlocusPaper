@@ -37,6 +37,7 @@ levels(dat$h2) <- paste0("h2: ",levels(dat$h2),"%")
 
 dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
 
+library(dplyr)
 tab <- dat %>% group_by(h2, method) %>%
   summarize(cov=paste0(100*mean(contain),"%"))
 tab
