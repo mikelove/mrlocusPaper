@@ -6,10 +6,9 @@ ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
 if (FALSE) {
-  i <- "1"
   dir <- file.path("out")
   files <- list.files(dir, pattern="clumped")
-  file <- sub(".clumped","",files[19])
+  file <- sub(".clumped","",files[1])
   dir <- "out"
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
@@ -43,6 +42,12 @@ out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE)
 sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
 eqtl.true <- sapply(out1$sum_stat, function(x) if (any(x$eqtl.true != 0))
                                                  x$eqtl.true[x$eqtl.true != 0] else NA)
+
+if (any(sapply(out1$sum_stat, nrow) >= 100)) {
+  drop.idx <- which(sapply(out1$sum_stat, nrow) >= 100)
+  out1$sum_stat <- out1$sum_stat[-drop.idx]
+  out1$ld_mat <- out1$ld_mat[-drop.idx]
+}
 
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                              a="eqtl", b="gwas",
