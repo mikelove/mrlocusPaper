@@ -16,16 +16,52 @@ encoded in the Stan programming language and with posterior
 inference performed using the Stan and RStan software packages
 \citep{stan,rstan}.
 
+\subsection*{Colocalization step}
+
 The first step performs colocalization of eQTL (A) and GWAS (B)
 signals across a number of LD-independent signal clusters
-$j \in 1,\dots,J$, using summary statistics from both studies
-($\widehat{\beta}_{ij}$ and $\se(\widehat{\beta}_{ij})$
-for SNP $i$ in cluster $j$) and the respective LD matrices for each
-clump $j$ ($\Sigma_A^j$ and $\Sigma_B^j$).
+$j \in 1,\dots,J$, using summary statistics from both studies:
+$\widehat{\beta}^A_{i,j}$ and $\se(\widehat{\beta}^A_{i,j})$
+for SNP $i \in 1,\dots,n_j$ in cluster $j$ for study A,
+and the respective LD matrices for each clump $j$:
+$\Sigma_j^A$ and $\Sigma_j^B$.
 The eQTL and GWAS studies are referred to as ``A'' and ``B'' in the
 formula and code below for generalization, for example, the eQTL study
-could be replaced with a pQTL (protein quantitative trait locus)
+could be replaced with a pQTL (protein quantitative trait loci)
 study.
+
+In practice, before supplying
+$\widehat{\beta}^A_{i,j}$ and $\widehat{\beta}^B_{i,j}$
+and the associated standard errors to the hierarchical model, the
+values are scaled such that the index SNP (as defined by its
+$z$-score) for study A has estimated coefficient of 1 for both study A
+and B. If two or more SNPs have the same $z$-score, the first is chosen.
+This simplifies the Stan code and improves model fit, as the
+two studies are then at comparable scale. The scaling is reversed
+after the Stan model is fit.
+For the user-input estimated coefficients and standard errors for
+study $X \in \{A,B\}$ and clump $j$,
+$\widehat{\beta}^{X,input}_{i,j}$ and $\se(\widehat{\beta}^{X,input}_{i,j})$,
+in the first step we create scaled estimated coefficients:
+
+\begin{align}
+  z^*_j &= \max_i \left( |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) \right) \\
+  i^*_j &= \min \left(i \in 1,\dots,n_j \right) \, s.t. \, |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) = z^*_j \\
+  s^X_j &= 1/|\widehat{\beta}^{X,input}_{i^*,j}| \\
+  \widehat{\beta}^X_{i,j} &= s_j \widehat{\beta}^{X,input}_{i,j}, \quad i \in 1,\dots,n_j \\
+  \se(\widehat{\beta}^X_{i,j}) &= s_j \se(\widehat{\beta}^{X,input}_{i,j}), \quad i \in 1,\dots,n_j
+\end{align}
+
+Note that equations (1-2) refer specifically to study A, while
+equations (3-5) refer to steps that are repeated for $X=A$ and $X=B$. 
+
+In the following equations, $\widehat{\beta}^X_{i,j}$ and
+$\se(\widehat{\beta}^X_{i,j})$ refer to these scaled estimates, but in
+the following section on slope fitting, the values are transformed
+back to the original scale by multiplying by $1/s^X_j$ for
+$X \in \{A,B\}$ respectively.
+
+\subsection*{Slope fitting step}
 
 \newpage
 
