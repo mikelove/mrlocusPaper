@@ -25,20 +25,31 @@ $\widehat{\beta}^A_{i,j}$ and $\se(\widehat{\beta}^A_{i,j})$
 for SNP $i \in 1,\dots,n_j$ in cluster $j$ for study A,
 and the respective LD matrices for each clump $j$:
 $\Sigma_j^A$ and $\Sigma_j^B$.
+The estimated coefficients $\widehat{\beta}^X_{i,j}$ for
+$X \in \{A,B\}$ refer to either the estimated coefficients from a
+linear model of a continuous trait $y$ on genotype dosages
+$\{0,1,2\}$, or the estimated log odds from a logistic regression of a
+binary trait $y$ modeled on genotype dosages. While it would be
+preferable to use allelic fold change (aFC) \citep{aFC} or ACME effect sizes
+\citep{ACME} for the eQTL (A) study in MRLocus modelinge, in practice
+we typically are provided with publicly available estimated
+coefficients representing log expression values on genotype dosages.
+
 The eQTL and GWAS studies are referred to as ``A'' and ``B'' in the
 formula and code below for generalization, for example, the eQTL study
 could be replaced with a pQTL (protein quantitative trait loci)
-study.
+study. ``A'' therefore refers to a study of a trait that is believed
+to be causally upstream of the trait examined in study ``B''.
 
 In practice, before supplying
 $\widehat{\beta}^A_{i,j}$ and $\widehat{\beta}^B_{i,j}$
 and the associated standard errors to the hierarchical model, the
-values are scaled such that the index SNP (as defined by its
-$z$-score) for study A has estimated coefficient of 1 for both study A
-and B. If two or more SNPs have the same $z$-score, the first is chosen.
-This simplifies the Stan code and improves model fit, as the
-two studies are then at comparable scale. The scaling is reversed
-after the Stan model is fit.
+values are scaled such that the index SNP (as defined by its absolute
+value of $z$-score) for study A has estimated coefficient of $\pm 1$ for
+both study A and B. If two or more SNPs have the same $z$-score, the
+first is chosen.  This simplifies the Stan code and improves model
+fit, as the two studies are then at comparable scale. The scaling is
+reversed after the Stan model is fit.
 For the user-input estimated coefficients and standard errors for
 study $X \in \{A,B\}$ and clump $j$,
 $\widehat{\beta}^{X,input}_{i,j}$ and $\se(\widehat{\beta}^{X,input}_{i,j})$,
@@ -46,20 +57,41 @@ in the first step we create scaled estimated coefficients:
 
 \begin{align}
   z^*_j &= \max_i \left( |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) \right) \\
-  i^*_j &= \min \left(i \in 1,\dots,n_j \right) \, s.t. \, |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) = z^*_j \\
+  i^*_j &= \min \left(i \in 1,\dots,n_j \right) \  s.t. \  |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) = z^*_j \\
   s^X_j &= 1/|\widehat{\beta}^{X,input}_{i^*,j}| \\
-  \widehat{\beta}^X_{i,j} &= s_j \widehat{\beta}^{X,input}_{i,j}, \quad i \in 1,\dots,n_j \\
-  \se(\widehat{\beta}^X_{i,j}) &= s_j \se(\widehat{\beta}^{X,input}_{i,j}), \quad i \in 1,\dots,n_j
+  \widehat{\beta}^X_{i,j} &= s_j \widehat{\beta}^{X,input}_{i,j}, \; i \in 1,\dots,n_j \\
+  \se(\widehat{\beta}^X_{i,j}) &= s_j \se(\widehat{\beta}^{X,input}_{i,j}), \; i \in 1,\dots,n_j
 \end{align}
 
 Note that equations (1-2) refer specifically to study A, while
-equations (3-5) refer to steps that are repeated for $X=A$ and $X=B$. 
+equations (3-5) refer to steps that are repeated for $X=A$ and
+$X=B$. Again, in words, $i^*_j$ is the index of the first occurrence of
+the maximal value of absolute value of $z$-score in study A and clump
+$j$.
 
 In the following equations, $\widehat{\beta}^X_{i,j}$ and
 $\se(\widehat{\beta}^X_{i,j})$ refer to these scaled estimates, but in
 the following section on slope fitting, the values are transformed
 back to the original scale by multiplying by $1/s^X_j$ for
 $X \in \{A,B\}$ respectively.
+
+Talk about eCAVIAR
+
+Talk about horseshoe prior
+
+The following hierarchical model is fit separately across LD-independent signal
+clusters $j \in 1,\dots,J$, and so in the following equations, the
+subscript for $j$ is omitted for clarity. In all equations below but
+the first, $i \in 1,\dots,n_j$. 
+
+\begin{align}
+  \tau &\sim \textrm{Cauchy}(0,1) \\
+  \lambda_i &\sim \textrm{Cauchy}(0,1) \\
+  \widehat{\beta}^A_i &\sim N([\Sigma^A \beta^A]_i, \se(\widehat{\beta}^A_i)) \\
+  \widehat{\beta}^B_i &\sim N([\Sigma^B \beta^B]_i, \se(\widehat{\beta}^B_i)) \\
+  \beta_i^A &\sim N(0, \lambda_i \tau) \\
+  \beta_i^B &\sim N(0, \lambda_i \tau) 
+\end{align}
 
 \subsection*{Slope fitting step}
 
