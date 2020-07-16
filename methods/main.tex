@@ -9,14 +9,18 @@
 \author{Michael I. Love}
 \begin{document}
 \maketitle
-\section*{MRLocus statistical model}
+\section{MRLocus statistical model}
 
 MRLocus proceeds in two separate hierarchical models, which are
 encoded in the Stan programming language and with posterior
 inference performed using the Stan and RStan software packages
-\citep{stan,rstan}.
+\citep{stan,rstan}. In section \ref{sec:coloc} we define the
+model for the colocalization step, and in section \ref{sec:slope} we
+define the model for the slope fitting step.
 
-\subsection*{Colocalization step}
+\subsection{Colocalization step} \label{sec:coloc}
+
+\subsubsection{Input data}
 
 The first step performs colocalization of eQTL (A) and GWAS (B)
 signals across a number of LD-independent signal clusters
@@ -40,6 +44,12 @@ formula and code below for generalization, for example, the eQTL study
 could be replaced with a pQTL (protein quantitative trait loci)
 study. ``A'' therefore refers to a study of a trait that is believed
 to be causally upstream of the trait examined in study ``B''.
+
+\subsubsection{Allele flipping}
+
+...
+
+\subsubsection{Scaling}
 
 In practice, before supplying
 $\widehat{\beta}^A_{i,j}$ and $\widehat{\beta}^B_{i,j}$
@@ -69,6 +79,8 @@ $X=B$. Again, in words, $i^*_j$ is the index of the first occurrence of
 the maximal value of absolute value of $z$-score in study A and clump
 $j$.
 
+\subsubsection{Colocalization}
+
 In the following equations, $\widehat{\beta}^X_{i,j}$ and
 $\se(\widehat{\beta}^X_{i,j})$ refer to these scaled estimates, but in
 the following section on slope fitting, the values are transformed
@@ -93,13 +105,13 @@ the first, $i \in 1,\dots,n_j$.
   \beta_i^B &\sim N(0, \lambda_i \tau) 
 \end{align}
 
-\subsection*{Slope fitting step}
+\subsection{Slope fitting step} \label{sec:slope}
 
 \newpage
 
-\section*{MRLocus stan code}
+\section{MRLocus stan code}
 
-\subsection*{Colocalization step}
+\subsection{Colocalization step}
 
 \texttt{inst/stan/beta\_coloc.stan}
 
@@ -133,7 +145,7 @@ model {
 
 \newpage
 
-\subsection*{Slope fitting step}
+\subsection{Slope fitting step}
 
 \texttt{inst/stan/slope.stan}
 
