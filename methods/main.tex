@@ -1,0 +1,101 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyvrb}
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+\usepackage{amsmath,amssymb}
+\DeclareMathOperator{\se}{\textrm{se}}
+\title{Supplementary Methods}
+\author{Michael I. Love}
+\begin{document}
+\maketitle
+\section*{MRLocus statistical model}
+
+MRLocus proceeds in two separate hierarchical models, which are
+encoded in the Stan programming language and with posterior
+inference performed using the Stan and RStan software packages
+\citep{stan,rstan}.
+
+The first step performs colocalization of eQTL (A) and GWAS (B)
+signals across a number of LD-independent signal clusters
+$j \in 1,\dots,J$, using summary statistics from both studies
+($\widehat{\beta}_{ij}$ and $\se(\widehat{\beta}_{ij})$
+for SNP $i$ in cluster $j$) and the respective LD matrices for each
+clump $j$ ($\Sigma_A^j$ and $\Sigma_B^j$).
+The eQTL and GWAS studies are referred to as ``A'' and ``B'' in the
+formula and code below for generalization, for example, the eQTL study
+could be replaced with a pQTL (protein quantitative trait locus)
+study.
+
+\newpage
+
+\section*{MRLocus stan code}
+
+\subsection*{Colocalization step}
+
+\texttt{inst/stan/beta\_coloc.stan}
+
+\begin{Verbatim}[frame=single,numbers=left]
+data {
+  int n;
+  vector[n] beta_hat_a;
+  vector[n] beta_hat_b;
+  vector[n] se_a;
+  vector[n] se_b;
+  matrix[n,n] Sigma_a;
+  matrix[n,n] Sigma_b;
+}
+parameters {
+  vector[n] beta_a;
+  vector[n] beta_b;
+  vector<lower=0>[n] lambda;
+  real<lower=0> tau;
+}
+model {
+  tau ~ cauchy(0, 1);
+  lambda ~ cauchy(0, 1);
+  beta_hat_a ~ normal(Sigma_a * beta_a, se_a);
+  beta_hat_b ~ normal(Sigma_b * beta_b, se_b);
+  for (i in 1:n) {
+    beta_a[i] ~ normal(0, lambda[i] * tau);
+    beta_b[i] ~ normal(0, lambda[i] * tau);
+  }
+}
+\end{Verbatim}
+
+\newpage
+
+\subsection*{Slope fitting step}
+
+\texttt{inst/stan/slope.stan}
+
+\begin{Verbatim}[frame=single,numbers=left]
+data {
+  int n; 
+  vector[n] beta_hat_a;
+  vector[n] beta_hat_b;
+  vector[n] sd_a;
+  vector[n] sd_b;
+  real alpha_mu;
+  real alpha_sd;
+  real sigma_sd;
+}
+parameters {
+  real alpha;
+  real<lower=0> sigma;
+  vector[n] beta_a;
+  vector[n] beta_b;
+}
+model {
+  beta_hat_a ~ normal(beta_a, sd_a);
+  beta_hat_b ~ normal(beta_b, sd_b);
+  beta_b ~ normal(alpha * beta_a, sigma);
+  alpha ~ normal(alpha_mu, alpha_sd);
+  sigma ~ normal(0, sigma_sd);
+}
+\end{Verbatim}
+
+\newpage
+
+\bibliography{main}
+\end{document}
