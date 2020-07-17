@@ -104,6 +104,12 @@ $j$.
 
 \subsubsection{Colocalization}
 
+Colocalization refers to the task of determining if the same signal in
+eQTL and GWAS summary statistics arise from the same causal variant,
+considering the correlation of genotypes in a locus (the LD
+matrix). Here we perform colocalization using a generative model for
+the estimated coefficients, where the true coefficients will be
+modeled and their posterior distribution used for inference.
 In the following equations, $\widehat{\beta}^X_{i,j}$ and
 $\se(\widehat{\beta}^X_{i,j})$ refer to these scaled estimates as
 described in the previous section, but in the following section
@@ -168,7 +174,74 @@ SNP $i^\dagger$ that is causal both for eQTL and GWAS signal
 will be reflected in larger posterior draws for $\lambda_{i^\dagger}$
 compared to other $\lambda_{i'}$ for $i' \ne i^\dagger$.
 
+The posterior mean for $\beta_{i,j}^A$ and $\beta_{i,j}^B$ are the
+parameters of interest from this step of model fitting, and passed
+along to the next step after scaling back to the original scale by
+$1/s_j^A$ and $1/s_j^B$, respectively, as described earlier.
+
+We also considered making use of the posterior standard deviation
+for these two parameters, but found MRLocus gave better performance in
+terms of accuracy and stability in the Stan fitting procedure if only
+the posterior mean was kept from the colocalization step.
+
 \subsection{Slope fitting step} \label{sec:slope}
+
+The second step of MRLocus is to estimate the slope using the
+posterior mean values from the colocalization step. For each
+LD-independent signal cluster, MRLocus extracts one SNP, based on the
+largest posterior mean value for $\beta_{i,j}^A$ (prioritizing the
+mediator trait for variant selection). MRLocus also has the
+non-default option to perform model-based clustering using a fixed
+number of EM steps to determine how many SNPs per LD-independent
+signal cluster to pass to the slope fitting step \citep{mclust}.
+
+By default, $J$ SNPs are passed from the colocalization step to the
+slope fitting step, which represent ideally the causal SNP from each
+LD-independent signal cluster. The posterior mean for
+$\beta_{i,j}^A$ and $\beta_{i,j}^B$ for these SNPs is then provided to
+the slope fitting step as $\widehat{\beta}_j^A$ and
+$\widehat{\beta}_j^B$ which is modeled again as normally distributed
+variable with standard deviation according to the original standard
+errors $\se(\widehat{\beta}_{i,j}^A)$ and
+$\se(\widehat{\beta}_{i,j}^B)$. We found this incorporation of the
+original standard errors into the slope fitting procedure helped to
+accurately estimate the uncertainty on the slope, giving our
+uncertainty involved in estimating the coefficients.
+
+The primary two parameters of interest are $\alpha$, the slope,
+i.e. the predominant gene-to-trait effect demonstrated by the
+LD-independent signal clusters in the locus, and $\sigma$,
+heterogeneity of gene-to-trait effects from individual signal clusters
+around the predominant slope. We are both interested in the posterior
+mean of $\alpha$ and $\sigma$ as well as in our certainty of their
+estimates. In particular we focus on a quantile-based credible
+interval for $\alpha$, which is used for determining our confidence in
+a gene as being a causal mediator for a trait.
+
+The hierarchical model for the slope fitting step is given by:
+
+\begin{align}
+  \widehat{\beta}_j^A &\sim N(\beta_j^A, \se_j^A) \\
+  \widehat{\beta}_j^B &\sim N(\beta_j^B, \se_j^B) \\
+  \beta_j^A &\sim N(0, \textrm{SD}_\beta) \\
+  \beta_j^B &\sim N(\alpha \beta_j^A, \sigma) \\
+  \alpha &\sim N(\mu_\alpha, \textrm{SD}_\alpha) \\
+  \sigma &\sim N(0, \textrm{SD}_\sigma)
+\end{align}
+
+The hyperparameter for the prior for $\beta_j^A$ is
+$\textrm{SD}_\beta$ which is set to 2 times the largest absolute value
+of $\widehat{\beta}_j^A$, for $j \in 1,\dots,J$.
+The hyperparameters for the priors for $\alpha$ and $\sigma$ are
+$\mu_\alpha$, $\textrm{SD}_\alpha$, and $\textrm{SD}_\sigma$.
+The first two of these are set based on a simple un-weighted linear model of
+$\widehat{\beta}_i^B$ on $\widehat{\beta}_i^A$ without an intercept.
+$\mu_\alpha$ is set to the estimated slope coefficient, and
+$\textrm{SD}_\alpha$ is set to 2 times the absolute value of this
+estimated slope coefficient. $\textrm{SD}_\sigma$ is set by default to
+1 (but can be modified by the user), which corresponds to a very wide
+prior as the GWAS effects sizes are typically quite small in magnitude
+(as seen in the analyses in the Results).
 
 \newpage
 
@@ -219,9 +292,10 @@ data {
   vector[n] beta_hat_b;
   vector[n] sd_a;
   vector[n] sd_b;
-  real alpha_mu;
-  real alpha_sd;
-  real sigma_sd;
+  real sd_beta;
+  real mu_alpha;
+  real sd_alpha;
+  real sd_sigma;
 }
 parameters {
   real alpha;
@@ -232,9 +306,10 @@ parameters {
 model {
   beta_hat_a ~ normal(beta_a, sd_a);
   beta_hat_b ~ normal(beta_b, sd_b);
+  beta_a ~ normal(0, sd_beta);
   beta_b ~ normal(alpha * beta_a, sigma);
-  alpha ~ normal(alpha_mu, alpha_sd);
-  sigma ~ normal(0, sigma_sd);
+  alpha ~ normal(mu_alpha, sd_alpha);
+  sigma ~ normal(0, sd_sigma);
 }
 \end{Verbatim}
 
