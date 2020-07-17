@@ -35,9 +35,10 @@ linear model of a continuous trait $y$ on genotype dosages
 $\{0,1,2\}$, or the estimated log odds from a logistic regression of a
 binary trait $y$ modeled on genotype dosages. While it would be
 preferable to use allelic fold change (aFC) \citep{aFC} or ACME effect sizes
-\citep{ACME} for the eQTL (A) study in MRLocus modelinge, in practice
+\citep{ACME} for the eQTL (A) study in MRLocus modeling, in practice
 we typically are provided with publicly available estimated
-coefficients representing log expression values on genotype dosages.
+coefficients representing log expression values regressed on genotype
+dosages.
 
 The eQTL and GWAS studies are referred to as ``A'' and ``B'' in the
 formula and code below for generalization, for example, the eQTL study
@@ -65,25 +66,24 @@ such that we are always describing the effects on downstream traits
 for expression increasing alleles. Additionally, we flip alleles such
 that SNPs with positive correlation of genotypes in either
 $\Sigma_j^A$ or $\Sigma_j^B$ (the user must pick which to use) are
-kept as-is, while SNPs with negative correlation of genotypes have
-their alleles flipped. Allele flipping obviously involves both keeping
-track of the reference and effect allele, as well as multiplication of
-the estimated coefficient by -1. This function also performs checks
-such that the A and B study agree in terms of the effect and reference
-allele.
+kept the same, while SNPs with negative correlation of genotypes have
+their alleles flipped. Allele flipping involves both keeping track of
+the reference and effect allele, as well as changing the sign of the
+estimated coefficient. This function also performs checks such that
+the A and B study agree in terms of the effect and reference allele.
 
 \subsubsection{Scaling}
 
 In practice, before supplying
 $\widehat{\beta}^A_{i,j}$ and $\widehat{\beta}^B_{i,j}$
-and the associated standard errors to the hierarchical model, the
-values are scaled such that the index SNP (as defined by its absolute
-value of $z$-score) for study A has estimated coefficient of $\pm 1$ for
-both study A and B. If two or more SNPs have the same $z$-score, the
-first is chosen.  This simplifies the Stan code and improves model
-fit, as the two studies are then at comparable scale. The scaling is
-reversed after the Stan model is fit.
-For the user-input estimated coefficients and standard errors for
+and the associated standard errors to the colocalization hierarchical
+model, the values are scaled such that the index SNP (as defined by
+its absolute value of $z$-score) for study A has estimated coefficient
+of $\pm 1$ for both study A and B. If two or more SNPs have the same
+$z$-score, the first is chosen.  This simplifies the Stan code and
+improves model fit, as the two studies are then at comparable
+scale. The scaling is reversed after the Stan model is fit.  For the
+user-input estimated coefficients and standard errors for
 study $X \in \{A,B\}$ and clump $j$,
 $\widehat{\beta}^{X,input}_{i,j}$ and $\se(\widehat{\beta}^{X,input}_{i,j})$,
 in the first step we create scaled estimated coefficients:
@@ -92,8 +92,8 @@ in the first step we create scaled estimated coefficients:
   z^*_j &= \max_i \left( |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) \right) \\
   i^*_j &= \min \left(i \in 1,\dots,n_j \right) \  s.t. \  |\widehat{\beta}^{A,input}_{i,j}|/\se(\widehat{\beta}^{A,input}_{i,j}) = z^*_j \\
   s^X_j &= 1/|\widehat{\beta}^{X,input}_{i^*,j}| \\
-  \widehat{\beta}^X_{i,j} &= s_j \widehat{\beta}^{X,input}_{i,j}, \; i \in 1,\dots,n_j \\
-  \se(\widehat{\beta}^X_{i,j}) &= s_j \se(\widehat{\beta}^{X,input}_{i,j}), \; i \in 1,\dots,n_j
+  \widehat{\beta}^X_{i,j} &= s_j^X \widehat{\beta}^{X,input}_{i,j}, \; i \in 1,\dots,n_j \\
+  \se(\widehat{\beta}^X_{i,j}) &= s_j^X \se(\widehat{\beta}^{X,input}_{i,j}), \; i \in 1,\dots,n_j
 \end{align}
 
 Note that equations (1-2) refer specifically to study A, while
@@ -105,7 +105,7 @@ $j$.
 \subsubsection{Colocalization}
 
 Colocalization refers to the task of determining if the same signal in
-eQTL and GWAS summary statistics arise from the same causal variant,
+eQTL and GWAS summary statistics arise from the same causal variant(s),
 considering the correlation of genotypes in a locus (the LD
 matrix). Here we perform colocalization using a generative model for
 the estimated coefficients, where the true coefficients will be
@@ -121,29 +121,30 @@ We use a statistical model for the summary statistics motivated by the
 eCAVIAR model \citep{eCAVIAR}. In eCAVIAR, the summary statistic
 $z$-scores in a vector $S$ are modeled as a multivariate normal
 distribution with mean vector $\Sigma \Lambda$ and covariance matrix
-$\Sigma$, where $\Lambda$ is a vector giving the true standardized
-effect sizes. In a locus with a single causal SNP producing the
-observed enrichment of signal, and if the causal SNP is in the set
-modeled by eCAVIAR, the vector $\Lambda$ would consist of a vector
-with all 0 values except for one SNP with non-zero value.
-eCAVIAR then models $\Lambda$ with a multivariate normal prior
-distribution centered on 0 with covariance matrix based on a vector of
-0's and 1's giving the true causal status of the SNPs in the locus and
-a preset scale parameter determined from previous studies.
+$\Sigma$ (the LD matrix), where $\Lambda$ is a vector giving the true
+standardized effect sizes. In a locus with a single causal SNP
+producing the observed enrichment of signal, and if the causal SNP is
+in the set modeled by eCAVIAR, $\Lambda$ would consist of a vector
+with all 0 values except for one SNP with non-zero value.  eCAVIAR
+then models $\Lambda$ with a multivariate normal prior distribution
+centered on 0 with covariance matrix based on a vector of 0's and 1's
+giving the true causal status of the SNPs in the locus and a preset
+scale parameter determined from previous studies.
 
-Here MRLocus diverges from eCAVIAR in two ways. Firstly, we will use a
+Here MRLocus diverges from eCAVIAR in two ways. First, we will use a
 generative model for the elements in the vector
 $\widehat{\beta}_{\centerdot,j}$ conditional on the true effect sizes
 $\beta_{\centerdot,j}$ within LD-independent signal cluster
-$j$ (effect sizes rather than $z$-scores).
-Secondly, we will use a univariate distribution for each
-$\widehat{\beta}^X_{i,j}$ instead of a multivariate for the entire
-vector. This second choice was a practical one, as it provided more
-efficient model fitting with Stan, and allowed for more flexible
-choice of priors, as described below. 
+$j$ (that is, MRLocus models effect sizes rather than $z$-scores).
+Second, we will use a univariate distribution for each
+$\widehat{\beta}^X_{i,j}$ instead of a multivariate distribution for
+the entire vector. This second difference is motivated by practical
+concerns of model fitting and specification; the univariate modeling
+provided more efficient model fitting with Stan, and allowed for more
+flexible choice of priors, as described below. 
 
-Instead of a multivariate normal prior on the estimate coefficients,
-MRLocus uses a horseshoe prior \citep{horseshoe1,horseshoe2}, which is
+Instead of a multivariate normal prior on the estimated coefficients,
+MRLocus uses a horseshoe prior \citep{horseshoe1,horseshoe2}, 
 a type of hierarchical shrinkage prior that provides sparsity in the
 posterior estimates \citep{hiershrink}. In the following, we use the
 notation of \citet{horseshoe1}, where $\lambda_i$ provides the
@@ -156,7 +157,7 @@ following equations, the subscript for $j$ is omitted for clarity. In
 all equations below but the last, $i \in 1,\dots,n_j$. Here, for
 consistency with Stan code, the normal distribution is written as
 $N(\mu,\sigma)$ where the second element $\sigma$ provides the
-standard deviation. 
+standard deviation instead of the variance.
 
 \begin{align}
   \widehat{\beta}^A_i &\sim N([\Sigma^A \beta^A]_i, \se(\widehat{\beta}^A_i)) \\
@@ -178,7 +179,6 @@ The posterior mean for $\beta_{i,j}^A$ and $\beta_{i,j}^B$ are the
 parameters of interest from this step of model fitting, and passed
 along to the next step after scaling back to the original scale by
 $1/s_j^A$ and $1/s_j^B$, respectively, as described earlier.
-
 We also considered making use of the posterior standard deviation
 for these two parameters, but found MRLocus gave better performance in
 terms of accuracy and stability in the Stan fitting procedure if only
@@ -188,33 +188,36 @@ the posterior mean was kept from the colocalization step.
 
 The second step of MRLocus is to estimate the slope using the
 posterior mean values from the colocalization step. For each
-LD-independent signal cluster, MRLocus extracts one SNP, based on the
+LD-independent signal cluster $j$, MRLocus extracts one SNP, based on the
 largest posterior mean value for $\beta_{i,j}^A$ (prioritizing the
-mediator trait for variant selection). MRLocus also has the
+mediator trait for SNP selection). MRLocus also has the
 non-default option to perform model-based clustering using a fixed
 number of EM steps to determine how many SNPs per LD-independent
-signal cluster to pass to the slope fitting step \citep{mclust}.
+signal cluster to pass to the slope fitting step \citep{mclust}, but
+this option was not extensively evaluated here.
 
 By default, $J$ SNPs are passed from the colocalization step to the
-slope fitting step, which represent ideally the causal SNP from each
-LD-independent signal cluster. The posterior mean for
+slope fitting step, which should represent the candidate causal SNP
+from each LD-independent signal cluster. The posterior mean for
 $\beta_{i,j}^A$ and $\beta_{i,j}^B$ for these SNPs is then provided to
-the slope fitting step as $\widehat{\beta}_j^A$ and
-$\widehat{\beta}_j^B$ which is modeled again as normally distributed
-variable with standard deviation according to the original standard
-errors $\se(\widehat{\beta}_{i,j}^A)$ and
+the slope fitting step as variables $\widehat{\beta}_j^A$ and
+$\widehat{\beta}_j^B$. These two variables
+are modeled as normally distributed variables centered on
+true values $\beta_j^A$ and $\beta_j^B$
+with standard deviation according to the original standard errors
+$\se(\widehat{\beta}_{i,j}^A)$ and
 $\se(\widehat{\beta}_{i,j}^B)$. We found this incorporation of the
 original standard errors into the slope fitting procedure helped to
-accurately estimate the uncertainty on the slope, giving our
-uncertainty involved in estimating the coefficients.
+accurately estimate the uncertainty on the slope (the gene-to-trait
+effect). 
 
 The primary two parameters of interest are $\alpha$, the slope,
 i.e. the predominant gene-to-trait effect demonstrated by the
 LD-independent signal clusters in the locus, and $\sigma$,
 heterogeneity of gene-to-trait effects from individual signal clusters
 around the predominant slope. We are both interested in the posterior
-mean of $\alpha$ and $\sigma$ as well as in our certainty of their
-estimates. In particular we focus on a quantile-based credible
+mean of $\alpha$ and $\sigma$ as well as our uncertainty regarding the
+point estimates. In particular we focus on a quantile-based credible
 interval for $\alpha$, which is used for determining our confidence in
 a gene as being a causal mediator for a trait.
 
@@ -229,9 +232,10 @@ The hierarchical model for the slope fitting step is given by:
   \sigma &\sim N(0, \textrm{SD}_\sigma)
 \end{align}
 
+where the first four equations are defined by $j \in 1,\dots,J$.
 The hyperparameter for the prior for $\beta_j^A$ is
 $\textrm{SD}_\beta$ which is set to 2 times the largest absolute value
-of $\widehat{\beta}_j^A$, for $j \in 1,\dots,J$.
+of $\widehat{\beta}_j^A$.
 The hyperparameters for the priors for $\alpha$ and $\sigma$ are
 $\mu_\alpha$, $\textrm{SD}_\alpha$, and $\textrm{SD}_\sigma$.
 The first two of these are set based on a simple un-weighted linear model of
@@ -245,7 +249,7 @@ prior as the GWAS effects sizes are typically quite small in magnitude
 
 \newpage
 
-\section{MRLocus stan code}
+\section{MRLocus Stan code}
 
 \subsection{Colocalization step}
 
