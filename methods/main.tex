@@ -45,9 +45,32 @@ could be replaced with a pQTL (protein quantitative trait loci)
 study. ``A'' therefore refers to a study of a trait that is believed
 to be causally upstream of the trait examined in study ``B''.
 
-\subsubsection{Allele flipping}
+\subsubsection{Collapsing and allele flipping}
 
-...
+MRLocus contains two convenience functions,
+\texttt{collapseHighCorSNPs} and \texttt{flipAllelesAndGather}, which
+are described briefly. The first function uses hierarchical clustering
+based on the LD matrix (the user must pick which to use if two are
+available), in order to collapse SNPs into groups using complete
+linkage, and thresholding the resulting dendrogram at 0.95
+correlation. The SNP with the highest absolute $z$-score within a
+collapsed set is chosen as the representative SNP.
+
+\texttt{flipAllelesAndGather} performs a number of allele flipping
+steps for assisting statistical modeling and visualization. The
+alleles are flipped such that the index SNP (as defined by its
+absolute value of $z$-score) for study A has a positive estimated
+coefficient. This is to simplify the interpretations of the plots --
+such that we are always describing the effects on downstream traits
+for expression increasing alleles. Additionally, we flip alleles such
+that SNPs with positive correlation of genotypes in either
+$\Sigma_j^A$ or $\Sigma_j^B$ (the user must pick which to use) are
+kept as-is, while SNPs with negative correlation of genotypes have
+their alleles flipped. Allele flipping obviously involves both keeping
+track of the reference and effect allele, as well as multiplication of
+the estimated coefficient by -1. This function also performs checks
+such that the A and B study agree in terms of the effect and reference
+allele.
 
 \subsubsection{Scaling}
 
@@ -82,28 +105,68 @@ $j$.
 \subsubsection{Colocalization}
 
 In the following equations, $\widehat{\beta}^X_{i,j}$ and
-$\se(\widehat{\beta}^X_{i,j})$ refer to these scaled estimates, but in
-the following section on slope fitting, the values are transformed
-back to the original scale by multiplying by $1/s^X_j$ for
-$X \in \{A,B\}$ respectively.
+$\se(\widehat{\beta}^X_{i,j})$ refer to these scaled estimates as
+described in the previous section, but in the following section
+\ref{sec:slope} on slope fitting, the values are transformed back to
+the original scale by multiplying by $1/s^X_j$ for $X \in \{A,B\}$
+respectively.
 
-Talk about eCAVIAR
+We use a statistical model for the summary statistics motivated by the
+eCAVIAR model \citep{eCAVIAR}. In eCAVIAR, the summary statistic
+$z$-scores in a vector $S$ are modeled as a multivariate normal
+distribution with mean vector $\Sigma \Lambda$ and covariance matrix
+$\Sigma$, where $\Lambda$ is a vector giving the true standardized
+effect sizes. In a locus with a single causal SNP producing the
+observed enrichment of signal, and if the causal SNP is in the set
+modeled by eCAVIAR, the vector $\Lambda$ would consist of a vector
+with all 0 values except for one SNP with non-zero value.
+eCAVIAR then models $\Lambda$ with a multivariate normal prior
+distribution centered on 0 with covariance matrix based on a vector of
+0's and 1's giving the true causal status of the SNPs in the locus and
+a preset scale parameter determined from previous studies.
 
-Talk about horseshoe prior
+Here MRLocus diverges from eCAVIAR in two ways. Firstly, we will use a
+generative model for the elements in the vector
+$\widehat{\beta}_{\centerdot,j}$ conditional on the true effect sizes
+$\beta_{\centerdot,j}$ within LD-independent signal cluster
+$j$ (effect sizes rather than $z$-scores).
+Secondly, we will use a univariate distribution for each
+$\widehat{\beta}^X_{i,j}$ instead of a multivariate for the entire
+vector. This second choice was a practical one, as it provided more
+efficient model fitting with Stan, and allowed for more flexible
+choice of priors, as described below. 
 
-The following hierarchical model is fit separately across LD-independent signal
-clusters $j \in 1,\dots,J$, and so in the following equations, the
-subscript for $j$ is omitted for clarity. In all equations below but
-the first, $i \in 1,\dots,n_j$. 
+Instead of a multivariate normal prior on the estimate coefficients,
+MRLocus uses a horseshoe prior \citep{horseshoe1,horseshoe2}, which is
+a type of hierarchical shrinkage prior that provides sparsity in the
+posterior estimates \citep{hiershrink}. In the following, we use the
+notation of \citet{horseshoe1}, where $\lambda_i$ provides the
+\emph{local} shrinkage parameters and $\tau$ provides the
+\emph{global} shrinkage parameter.
+
+The following hierarchical model is fit separately across
+LD-independent signal clusters $j \in 1,\dots,J$, and so in the
+following equations, the subscript for $j$ is omitted for clarity. In
+all equations below but the last, $i \in 1,\dots,n_j$. Here, for
+consistency with Stan code, the normal distribution is written as
+$N(\mu,\sigma)$ where the second element $\sigma$ provides the
+standard deviation. 
 
 \begin{align}
-  \tau &\sim \textrm{Cauchy}(0,1) \\
-  \lambda_i &\sim \textrm{Cauchy}(0,1) \\
   \widehat{\beta}^A_i &\sim N([\Sigma^A \beta^A]_i, \se(\widehat{\beta}^A_i)) \\
   \widehat{\beta}^B_i &\sim N([\Sigma^B \beta^B]_i, \se(\widehat{\beta}^B_i)) \\
   \beta_i^A &\sim N(0, \lambda_i \tau) \\
-  \beta_i^B &\sim N(0, \lambda_i \tau) 
+  \beta_i^B &\sim N(0, \lambda_i \tau) \\
+  \lambda_i &\sim \textrm{Cauchy}(0,1) \\
+  \tau &\sim \textrm{Cauchy}(0,1)
 \end{align}
+
+Of note, $\beta_i^A$ and $\beta_i^B$ share a prior involving
+$\lambda_i$, such that evidence from study A and B supporting a
+SNP $i^\dagger$ that is causal both for eQTL and GWAS signal
+($\beta_{i^\dagger}^A \ne 0, \beta_{i^\dagger}^B \ne 0$),
+will be reflected in larger posterior draws for $\lambda_{i^\dagger}$
+compared to other $\lambda_{i'}$ for $i' \ne i^\dagger$.
 
 \subsection{Slope fitting step} \label{sec:slope}
 
