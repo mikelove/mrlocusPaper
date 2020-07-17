@@ -46,8 +46,11 @@ tab$y <- "top"
 
 library(ggplot2)
 library(ggpmisc)
+png(file="~/Desktop/nullplot.png", res=125, width=1200, height=800)
 ggplot(dat, aes(estimate,rep,xmin=min,xmax=max,color=contain)) +
   geom_pointrange(shape="square",size=.5) + facet_grid(h2 ~ method) +
   geom_vline(xintercept=0) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov))
+dev.off()
+

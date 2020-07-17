@@ -137,7 +137,14 @@ plotit <- function(x, dot=TRUE, bee=FALSE) {
   g
 }
 
-plotit(i2, dot=FALSE, bee=TRUE)
-plotit(causal) + ylim(0,15)
-plotit(clumps) + ylim(0,15)
-plotit(dap, dot=FALSE, bee=TRUE) + ylim(0,40)
+plotit(i2, dot=FALSE, bee=TRUE) + ggttitle("I2 values for PTWAS")
+
+png(file="~/Desktop/true-eqtl.png")
+plotit(causal) + ylim(0,15) + ggtitle("number of true eQTL SNPs per simuation")
+dev.off()
+png(file="~/Desktop/plink-clumps.png")
+plotit(clumps) + ylim(0,15) + ggtitle("number of PLINK clumps per simulation")
+dev.off()
+png(file="~/Desktop/dap-clusters.png")
+plotit(dap, dot=FALSE, bee=TRUE) + ylim(0,40) + ggtitle("number of DAP signal clusters per simulation")
+dev.off()
