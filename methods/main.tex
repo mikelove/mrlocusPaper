@@ -140,7 +140,8 @@ Second, we will use a univariate distribution for each
 $\widehat{\beta}^X_{i,j}$ instead of a multivariate distribution for
 the entire vector. This second difference is motivated by practical
 concerns of model fitting and specification; the univariate modeling
-provided more efficient model fitting with Stan, and allowed for more
+provided more efficient model fitting with Stan (higher effective
+sample sizes and R-hat values near 1), and allowed for more
 flexible choice of priors, as described below. 
 
 Instead of a multivariate normal prior on the estimated coefficients,
