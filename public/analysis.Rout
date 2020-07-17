@@ -45,7 +45,7 @@ Type 'q()' to quit R.
 + 
 +     library(pheatmap)
 +     library(gridExtra)
-+     load_all("../../mrlocus")
++     devtools::load_all("../../mrlocus")
 +     out1 <- collapseHighCorSNPs(sum_stat, ld_mat, plot=FALSE)
 +     out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
 +                                  a="eQTL", b="GWAS",
@@ -65,7 +65,6 @@ Type 'q()' to quit R.
 + 
 +     # plotInitEstimates(out2)
 + 
-+     load_all("../../mrlocus")
 +     options(mc.cores=2)
 +     beta_hat_a <- list()
 +     beta_hat_b <- list()
@@ -116,7 +115,6 @@ Type 'q()' to quit R.
 Loading mrlocus
 pre:  111,10,39,01,19,102,08,295,07,05,05,02,46,15,03,156,24,17
 post: 18,06,11,01,12,19,07,23,05,04,04,02,09,03,03,10,08,08
-Loading mrlocus
 [1] 1
 [1] 2
 [1] 3
@@ -136,113 +134,112 @@ Loading mrlocus
 [1] 17
 [1] 18
 
-SAMPLING FOR MODEL 'slope' NOW (CHAIN 1).
-
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 2).
+
+SAMPLING FOR MODEL 'slope' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 7.6e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.76 seconds.
-Chain 1: Adjust your expectations accordingly!
+Chain Chain 1: 2: 
+Gradient evaluation took 4.8e-05 seconds
+Chain 1Chain 2: Gradient evaluation took 6.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.48 seconds.
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.61 seconds.
+Chain 2: : Adjust your expectations accordingly!
 Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: 
-Chain 2: Gradient evaluation took 4.3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
-Chain 2: Adjust your expectations accordingly!
+Chain Adjust your expectations accordingly!1
+: 
 Chain 2: 
 Chain 2: 
-Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 2: Chain Iteration:    1 / 10000 [  0%]  (Warmup)1
+: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 1.57423 seconds (Warm-up)
-Chain 1:                1.05359 seconds (Sampling)
-Chain 1:                2.62782 seconds (Total)
+Chain 1:  Elapsed Time: 3.43406 seconds (Warm-up)
+Chain 1:                3.04737 seconds (Sampling)
+Chain 1:                6.48143 seconds (Total)
 Chain 1: 
-Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.2e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.42 seconds.
+Chain 3: Gradient evaluation took 9e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.9 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
 Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 2.12192 seconds (Warm-up)
-Chain 2:                1.25123 seconds (Sampling)
-Chain 2:                3.37315 seconds (Total)
+Chain 2:  Elapsed Time: 3.18855 seconds (Warm-up)
+Chain 2:                5.32494 seconds (Sampling)
+Chain 2:                8.51349 seconds (Total)
 Chain 2: 
+Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 4.5e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
+Chain 4: Gradient evaluation took 4.9e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
 Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
-Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 2.31643 seconds (Warm-up)
-Chain 3:                2.20473 seconds (Sampling)
-Chain 3:                4.52116 seconds (Total)
+Chain 3:  Elapsed Time: 1.88864 seconds (Warm-up)
+Chain 3:                3.07713 seconds (Sampling)
+Chain 3:                4.96577 seconds (Total)
 Chain 3: 
+Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 2.01809 seconds (Warm-up)
-Chain 4:                2.24658 seconds (Sampling)
-Chain 4:                4.26466 seconds (Total)
+Chain 4:  Elapsed Time: 3.18922 seconds (Warm-up)
+Chain 4:                1.73713 seconds (Sampling)
+Chain 4:                4.92634 seconds (Total)
 Chain 4: 
    user  system elapsed 
-301.129  11.173 178.307 
+345.528  12.918 229.707 
 plotting a 10%-90% interval
 [1] "--- Artery_Tibial - PHACTR1 ---"
 Loading mrlocus
 pre:  01,128,145,117,74,113,157,04,25,171,10,88
 post: 01,13,34,19,05,20,21,04,08,18,07,13
-Loading mrlocus
 [1] 1
 [1] 2
 [1] 3
@@ -260,109 +257,109 @@ SAMPLING FOR MODEL 'slope' NOW (CHAIN 1).
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 2).
 Chain 1: 
-Chain 1: Gradient evaluation took 6e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.
+Chain 1: Gradient evaluation took 5.3e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.53 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
-Chain Chain 21: 
-: 
-Chain 2: Gradient evaluation took 3.7e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
+Chain 1: 
+Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 2: 
+Chain 2: Gradient evaluation took 3.9e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.39 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
-Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
 Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.985513 seconds (Warm-up)
-Chain 2:                0.942118 seconds (Sampling)
-Chain 2:                1.92763 seconds (Total)
+Chain 2:  Elapsed Time: 0.972729 seconds (Warm-up)
+Chain 2:                1.02868 seconds (Sampling)
+Chain 2:                2.00141 seconds (Total)
 Chain 2: 
-Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 3.7e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
+Chain 3: Gradient evaluation took 3.6e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.36 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
 Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
-Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.00323 seconds (Warm-up)
-Chain 3:                0.891435 seconds (Sampling)
-Chain 3:                1.89467 seconds (Total)
-Chain 3: 
+Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 1.04981 seconds (Warm-up)
+Chain 1:                1.17711 seconds (Sampling)
+Chain 1:                2.22693 seconds (Total)
+Chain 1: 
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 3.9e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.39 seconds.
+Chain 4: Gradient evaluation took 4e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.4 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
 Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 1.27009 seconds (Warm-up)
-Chain 1:                4.40712 seconds (Sampling)
-Chain 1:                5.67721 seconds (Total)
-Chain 1: 
+Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
 Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 1.02529 seconds (Warm-up)
+Chain 3:                0.967632 seconds (Sampling)
+Chain 3:                1.99292 seconds (Total)
+Chain 3: 
 Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 1.04155 seconds (Warm-up)
-Chain 4:                0.814987 seconds (Sampling)
-Chain 4:                1.85654 seconds (Total)
+Chain 4:  Elapsed Time: 0.970481 seconds (Warm-up)
+Chain 4:                0.870839 seconds (Sampling)
+Chain 4:                1.84132 seconds (Total)
 Chain 4: 
    user  system elapsed 
-389.579   7.740 223.042 
+494.046  10.270 334.261 
 plotting a 10%-90% interval
 [1] "--- Blood - LIPC ---"
 Loading mrlocus
+Loading required package: mrlocus
 pre:  70,21,71,20,07,82,01,111,01,02,38,91,38,81,05,59,01,31,34,03,49,43,29,137,45,07,08,26,46,15,27,15,01,01,26,23,03,26,08,01,01,01,03,06,01,01,01,40,02,06,26,05,14,01,39,09,42,16,48,22,20
 post: 22,14,13,06,06,17,01,23,01,02,05,18,12,21,03,18,01,08,05,03,17,13,14,30,19,06,05,14,28,12,14,12,01,01,18,12,03,18,05,01,01,01,02,05,01,01,01,25,02,03,05,05,05,01,12,08,13,07,30,09,14
-Loading mrlocus
 [1] 1
 [1] 2
 [1] 3
@@ -425,113 +422,112 @@ Loading mrlocus
 [1] 60
 [1] 61
 
-SAMPLING FOR MODEL 'slope' NOW (CHAIN 1).
-
+SAMPLING FOR MODEL 'slope' NOW (CHAIN 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 2).
-Chain 1: 
-Chain 1: Gradient evaluation took 5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: 
-Chain 2: Gradient evaluation took 5.6e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.56 seconds.
+1).
+Chain 1Chain 2: 
+: 
+Chain 2: Gradient evaluation took 6.3e-05 seconds
+Chain 1: Gradient evaluation took 6.3e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.63 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.63 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
 Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
-Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 1.31066 seconds (Warm-up)
-Chain 2:                1.84583 seconds (Sampling)
-Chain 2:                3.15649 seconds (Total)
+Chain 2:  Elapsed Time: 1.48162 seconds (Warm-up)
+Chain 2:                0.689235 seconds (Sampling)
+Chain 2:                2.17085 seconds (Total)
 Chain 2: 
-Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 1.37447 seconds (Warm-up)
-Chain 1:                1.88616 seconds (Sampling)
-Chain 1:                3.26063 seconds (Total)
-Chain 1: 
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.8e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.48 seconds.
+Chain 3: Gradient evaluation took 4.9e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
 Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
-
-SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 4.5e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
 Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 1.36437 seconds (Warm-up)
+Chain 1:                2.67813 seconds (Sampling)
+Chain 1:                4.04251 seconds (Total)
+Chain 1: 
 Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 1.38336 seconds (Warm-up)
-Chain 4:                1.25846 seconds (Sampling)
-Chain 4:                2.64182 seconds (Total)
-Chain 4: 
 Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 1.31348 seconds (Warm-up)
-Chain 3:                3.47333 seconds (Sampling)
-Chain 3:                4.78681 seconds (Total)
+Chain 3:  Elapsed Time: 1.39208 seconds (Warm-up)
+Chain 3:                0.647127 seconds (Sampling)
+Chain 3:                2.03921 seconds (Total)
 Chain 3: 
+
+SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 7.9e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.79 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 1.37244 seconds (Warm-up)
+Chain 4:                0.597935 seconds (Sampling)
+Chain 4:                1.97037 seconds (Total)
+Chain 4: 
     user   system  elapsed 
-1514.240   31.414  852.111 
+1554.735   32.237  886.724 
 plotting a 10%-90% interval
 [1] "--- Liver - CETP ---"
 Loading mrlocus
 pre:  17,16,01,13
 post: 05,06,01,08
-Loading mrlocus
 [1] 1
 [1] 2
 [1] 3
@@ -540,133 +536,132 @@ Loading mrlocus
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 1).
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 5.8e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.58 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain Chain 21: : 
-
-Chain 2Chain : 1
-: Gradient evaluation took 3.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.34 seconds.
+Chain 1: 
+Chain 1: Gradient evaluation took 4.6e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.46 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
-Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 2: 
+Chain 2: Gradient evaluation took 6.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.61 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
 Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
-Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.407917 seconds (Warm-up)
-Chain 2:                0.252586 seconds (Sampling)
-Chain 2:                0.660503 seconds (Total)
-Chain 2: 
+Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.428447 seconds (Warm-up)
-Chain 1:                0.265609 seconds (Sampling)
-Chain 1:                0.694056 seconds (Total)
+Chain 1:  Elapsed Time: 0.449074 seconds (Warm-up)
+Chain 1:                0.263241 seconds (Sampling)
+Chain 1:                0.712315 seconds (Total)
 Chain 1: 
+Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.488812 seconds (Warm-up)
+Chain 2:                0.269762 seconds (Sampling)
+Chain 2:                0.758574 seconds (Total)
+Chain 2: 
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 3).
+
+SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.4e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
+Chain 3: Gradient evaluation took 4.5e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
 Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
-
-SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 3.9e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.39 seconds.
+Chain 4: Gradient evaluation took 5e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
 Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
-Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
-Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
 Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
-Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.416698 seconds (Warm-up)
-Chain 3:                0.245647 seconds (Sampling)
-Chain 3:                0.662345 seconds (Total)
-Chain 3: 
+Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 0.384337 seconds (Warm-up)
-Chain 4:                0.244038 seconds (Sampling)
-Chain 4:                0.628375 seconds (Total)
+Chain 4:  Elapsed Time: 0.412309 seconds (Warm-up)
+Chain 4:                0.270441 seconds (Sampling)
+Chain 4:                0.68275 seconds (Total)
 Chain 4: 
+Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.445481 seconds (Warm-up)
+Chain 3:                0.268498 seconds (Sampling)
+Chain 3:                0.713979 seconds (Total)
+Chain 3: 
    user  system elapsed 
- 40.019   2.399  23.605 
+ 39.350   2.111  22.763 
 plotting a 10%-90% interval
 [1] "--- Liver - LIPC ---"
 Loading mrlocus
 Loading required package: mrlocus
 pre:  47,31,15,133
 post: 29,21,07,24
-Loading mrlocus
 [1] 1
 [1] 2
 [1] 3
 [1] 4
 
-SAMPLING
-SAMPLING FOR MODEL 'slope' NOW (CHAIN  FOR MODEL 'slope' NOW (CHAIN 1).
-2).
-Chain 1: Chain 
+SAMPLING FOR MODEL 'slope' NOW (CHAIN 
+SAMPLING FOR MODEL 'slope2).
+' NOW (CHAIN 1).
+Chain 1: 
+Chain Chain 12: 
+: Chain 2: Gradient evaluation took 5.6e-05 seconds
+Gradient evaluation took 4.3e-05 seconds
+Chain 2: Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.56 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
+Chain 1: Adjust your expectations accordingly!
 2: 
-Chain 1Chain : 2: Gradient evaluation took 3.9e-05 seconds
-Gradient evaluation took 5e-05 secondsChain 1
-: 1000 transitions using 10 leapfrog steps per transition would take 0.39 seconds.
-Chain 1Chain : 2: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
-Adjust your expectations accordingly!
-Chain 2Chain 1: 
-Chain 1: Adjust your expectations accordingly!: 
-
-Chain 2: 
-Chain 2: 
-Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 1: 
+Chain 1: 
 Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
@@ -689,21 +684,21 @@ Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.373323 seconds (Warm-up)
-Chain 2:                0.253103 seconds (Sampling)
-Chain 2:                0.626426 seconds (Total)
+Chain 2:  Elapsed Time: 0.400389 seconds (Warm-up)
+Chain 2:                0.267567 seconds (Sampling)
+Chain 2:                0.667956 seconds (Total)
 Chain 2: 
 Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.397757 seconds (Warm-up)
-Chain 1:                0.253138 seconds (Sampling)
-Chain 1:                0.650895 seconds (Total)
+Chain 1:  Elapsed Time: 0.416536 seconds (Warm-up)
+Chain 1:                0.283505 seconds (Sampling)
+Chain 1:                0.700041 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.4e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
+Chain 3: Gradient evaluation took 4.3e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -711,8 +706,8 @@ Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 4e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.4 seconds.
+Chain 4: Gradient evaluation took 3.7e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -735,29 +730,28 @@ Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
 Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 0.415897 seconds (Warm-up)
-Chain 3:                0.268925 seconds (Sampling)
-Chain 3:                0.684822 seconds (Total)
+Chain 3:  Elapsed Time: 0.449419 seconds (Warm-up)
+Chain 3:                0.264688 seconds (Sampling)
+Chain 3:                0.714107 seconds (Total)
 Chain 3: 
-Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 0.396908 seconds (Warm-up)
-Chain 4:                0.328745 seconds (Sampling)
-Chain 4:                0.725653 seconds (Total)
+Chain 4:  Elapsed Time: 0.442972 seconds (Warm-up)
+Chain 4:                0.270786 seconds (Sampling)
+Chain 4:                0.713758 seconds (Total)
 Chain 4: 
    user  system elapsed 
-266.614   2.925 143.482 
+269.447   3.203 144.342 
 plotting a 10%-90% interval
 [1] "--- Liver - SORT1 ---"
 Loading mrlocus
 Loading required package: mrlocus
 pre:  101,72,29,28,20,181,24,32,44,59,66,30,10,16,02,06,33
 post: 12,21,12,09,10,14,07,09,17,14,19,16,03,07,01,04,14
-Loading mrlocus
 [1] 1
 [1] 2
 [1] 3
@@ -779,32 +773,32 @@ Loading mrlocus
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 1).
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 2).
-Chain 1: 
-Chain 1: Gradient evaluation took 4.1e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.41 seconds.
+Chain 2Chain 1: : 
+
+Chain Chain 12: : Gradient evaluation took 4.6e-05 seconds
+Gradient evaluation took 4.1e-05 seconds
+Chain 2: Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.46 seconds.
+1000 transitions using 10 leapfrog steps per transition would take 0.41 seconds.
 Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
+Chain 1: Chain 2
+Chain : Adjust your expectations accordingly!1: 
+
+Chain 2: 
+Chain 2: 
 Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: 
-Chain 2: Gradient evaluation took 5.5e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.55 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
 Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
-Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
 Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
-Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
-Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
-Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
 Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
@@ -815,21 +809,21 @@ Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.817641 seconds (Warm-up)
-Chain 2:                0.71358 seconds (Sampling)
-Chain 2:                1.53122 seconds (Total)
+Chain 2:  Elapsed Time: 0.853211 seconds (Warm-up)
+Chain 2:                0.646447 seconds (Sampling)
+Chain 2:                1.49966 seconds (Total)
 Chain 2: 
 Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.850351 seconds (Warm-up)
-Chain 1:                0.733451 seconds (Sampling)
-Chain 1:                1.5838 seconds (Total)
+Chain 1:  Elapsed Time: 0.853322 seconds (Warm-up)
+Chain 1:                0.667349 seconds (Sampling)
+Chain 1:                1.52067 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'slope' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.4 seconds.
+Chain 3: Gradient evaluation took 4.1e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.41 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -844,15 +838,15 @@ Chain 4:
 Chain 4: 
 Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
 Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
-Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
 Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
-Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
 Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
-Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
 Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
 Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
 Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
@@ -865,18 +859,18 @@ Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 0.790529 seconds (Warm-up)
-Chain 3:                0.717381 seconds (Sampling)
-Chain 3:                1.50791 seconds (Total)
+Chain 3:  Elapsed Time: 0.884157 seconds (Warm-up)
+Chain 3:                0.631141 seconds (Sampling)
+Chain 3:                1.5153 seconds (Total)
 Chain 3: 
 Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 0.815293 seconds (Warm-up)
-Chain 4:                0.699382 seconds (Sampling)
-Chain 4:                1.51467 seconds (Total)
+Chain 4:  Elapsed Time: 0.828045 seconds (Warm-up)
+Chain 4:                0.64349 seconds (Sampling)
+Chain 4:                1.47154 seconds (Total)
 Chain 4: 
    user  system elapsed 
-374.178   9.840 206.706 
+374.165   9.596 206.938 
 plotting a 10%-90% interval
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
@@ -896,23 +890,21 @@ attached base packages:
 [1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
-[1] mrlocus_0.0.13  Matrix_1.2-18   gridExtra_2.3   pheatmap_1.0.12 testthat_2.3.2  rmarkdown_2.1  
-[7] devtools_2.3.0  usethis_1.6.1  
+[1] mrlocus_0.0.14  Matrix_1.2-18   testthat_2.3.2  gridExtra_2.3   pheatmap_1.0.12
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.4.6       lattice_0.20-41    prettyunits_1.1.1  ps_1.3.3           assertthat_0.2.1  
- [6] rprojroot_1.3-2    digest_0.6.25      R6_2.4.1           backports_1.1.6    stats4_4.0.0      
-[11] evaluate_0.14      ggplot2_3.3.0      pillar_1.4.4       rlang_0.4.6        rstudioapi_0.11   
-[16] callr_3.4.3        desc_1.2.0         loo_2.2.0          munsell_0.5.0      compiler_4.0.0    
-[21] xfun_0.13          rstan_2.19.3       pkgconfig_2.0.3    pkgbuild_1.0.8     rstantools_2.0.0  
-[26] htmltools_0.4.0    tidyselect_1.0.0   tibble_3.0.1       codetools_0.2-16   matrixStats_0.56.0
-[31] fansi_0.4.1        crayon_1.3.4       dplyr_0.8.5        withr_2.2.0        grid_4.0.0        
-[36] gtable_0.3.0       lifecycle_0.2.0    magrittr_1.5       StanHeaders_2.19.2 scales_1.1.1      
-[41] cli_2.0.2          fs_1.4.1           remotes_2.1.1      ellipsis_0.3.0     vctrs_0.2.4       
-[46] RColorBrewer_1.1-2 tools_4.0.0        glue_1.4.0         purrr_0.3.4        processx_3.4.2    
-[51] pkgload_1.0.2      parallel_4.0.0     inline_0.3.15      colorspace_1.4-1   sessioninfo_1.1.1 
-[56] memoise_1.1.0      knitr_1.28        
+ [1] rstan_2.19.3       tidyselect_1.0.0   remotes_2.1.1      purrr_0.3.4        lattice_0.20-41   
+ [6] colorspace_1.4-1   vctrs_0.2.4        usethis_1.6.1      stats4_4.0.0       loo_2.2.0         
+[11] rlang_0.4.6        pkgbuild_1.0.8     pillar_1.4.4       glue_1.4.0         withr_2.2.0       
+[16] RColorBrewer_1.1-2 sessioninfo_1.1.1  matrixStats_0.56.0 lifecycle_0.2.0    munsell_0.5.0     
+[21] gtable_0.3.0       devtools_2.3.0     codetools_0.2-16   memoise_1.1.0      inline_0.3.15     
+[26] callr_3.4.3        ps_1.3.3           parallel_4.0.0     fansi_0.4.1        rstantools_2.0.0  
+[31] Rcpp_1.0.4.6       scales_1.1.1       backports_1.1.6    desc_1.2.0         pkgload_1.0.2     
+[36] StanHeaders_2.19.2 fs_1.4.1           ggplot2_3.3.0      digest_0.6.25      processx_3.4.2    
+[41] dplyr_0.8.5        grid_4.0.0         rprojroot_1.3-2    cli_2.0.2          tools_4.0.0       
+[46] magrittr_1.5       tibble_3.0.1       crayon_1.3.4       pkgconfig_2.0.3    ellipsis_0.3.0    
+[51] prettyunits_1.1.1  assertthat_0.2.1   rstudioapi_0.11    R6_2.4.1           compiler_4.0.0    
 > 
 > proc.time()
     user   system  elapsed 
-2890.348   66.016 1632.411 
+3081.166   70.965 1829.941 

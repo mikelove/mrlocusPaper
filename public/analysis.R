@@ -26,7 +26,7 @@ for (tissue in names(genes)) {
 
     library(pheatmap)
     library(gridExtra)
-    load_all("../../mrlocus")
+    devtools::load_all("../../mrlocus")
     out1 <- collapseHighCorSNPs(sum_stat, ld_mat, plot=FALSE)
     out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                                  a="eQTL", b="GWAS",
@@ -46,7 +46,6 @@ for (tissue in names(genes)) {
 
     # plotInitEstimates(out2)
 
-    load_all("../../mrlocus")
     options(mc.cores=2)
     beta_hat_a <- list()
     beta_hat_b <- list()
