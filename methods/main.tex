@@ -26,10 +26,14 @@ define the model for the slope fitting step.
 The first step performs colocalization of eQTL (A) and GWAS (B)
 signals across a number of LD-independent signal clusters
 $j \in 1,\dots,J$, using summary statistics from both studies:
-$\widehat{\beta}^A_{i,j}$ and $\se(\widehat{\beta}^A_{i,j})$
-for SNP $i \in 1,\dots,n_j$ in cluster $j$ for study A,
-and the respective LD matrices for each clump $j$:
+$\widehat{\beta}^A_{i,j}$ and $\se(\widehat{\beta}^A_{i,j})$,
+$\widehat{\beta}^B_{i,j}$ and $\se(\widehat{\beta}^B_{i,j})$
+for SNP $i \in 1,\dots,n_j$ in cluster $j$ for study A and B,
+and the respective LD matrices for each cluster $j$:
 $\Sigma_j^A$ and $\Sigma_j^B$.
+The clusters and the individual SNPs per cluster must be matched across
+study, and our procedure for performing this matching is described in
+the Methods section in the main text.
 The estimated coefficients $\widehat{\beta}^X_{i,j}$ for
 $X \in \{A,B\}$ refer to either the estimated coefficients from a
 linear model of a continuous trait $y$ on genotype dosages
@@ -85,7 +89,7 @@ $z$-score, the first is chosen.  This simplifies the Stan code and
 improves model fit, as the two studies are then at comparable
 scale. The scaling is reversed after the Stan model is fit.  For the
 user-input estimated coefficients and standard errors for
-study $X \in \{A,B\}$ and clump $j$,
+study $X \in \{A,B\}$ and cluster $j$,
 $\widehat{\beta}^{X,input}_{i,j}$ and $\se(\widehat{\beta}^{X,input}_{i,j})$,
 in the first step we create scaled estimated coefficients:
 
@@ -100,7 +104,7 @@ in the first step we create scaled estimated coefficients:
 Note that equations (1-2) refer specifically to study A, while
 equations (3-5) refer to steps that are repeated for $X=A$ and
 $X=B$. Again, in words, $i^*_j$ is the index of the first occurrence of
-the maximal value of absolute value of $z$-score in study A and clump
+the maximal value of absolute value of $z$-score in study A and cluster
 $j$.
 
 \subsubsection{Colocalization}
@@ -188,13 +192,14 @@ the posterior mean was kept from the colocalization step.
 
 \subsection{Slope fitting step} \label{sec:slope}
 
-The second step of MRLocus is to estimate the slope using the
+The second step of MRLocus is to estimate the gene-to-trait effect
+(the slope in a Mendelian Randomization analysis) using the
 posterior mean values from the colocalization step. For each
 LD-independent signal cluster $j$, MRLocus extracts one SNP, based on the
 largest posterior mean value for $\beta_{i,j}^A$ (prioritizing the
-mediator trait for SNP selection). MRLocus also has the
-non-default option to perform model-based clustering using a fixed
-number of EM steps to determine how many SNPs per LD-independent
+putative mediator trait for SNP selection). MRLocus also has the
+non-default option to perform model-based clustering using 
+an EM algorithm to determine how many SNPs per LD-independent
 signal cluster to pass to the slope fitting step \citep{mclust}, but
 this option was not extensively evaluated here.
 
@@ -221,7 +226,7 @@ around the predominant slope. We are both interested in the posterior
 mean of $\alpha$ and $\sigma$ as well as our uncertainty regarding the
 point estimates. In particular we focus on a quantile-based credible
 interval for $\alpha$, which is used for determining our confidence in
-a gene as being a causal mediator for a trait.
+a gene being a causal mediator for a trait.
 
 The hierarchical model for the slope fitting step is given by:
 
@@ -235,17 +240,23 @@ The hierarchical model for the slope fitting step is given by:
 \end{align}
 
 where the first four equations are defined by $j \in 1,\dots,J$.
+
+\subsubsection{Choice of hyperparameters}
+
 The hyperparameter for the prior for $\beta_j^A$ is
-$\textrm{SD}_\beta$ which is set to 2 times the largest absolute value
+$\textrm{SD}_\beta$, which is set to 2 times the largest absolute value
 of $\widehat{\beta}_j^A$.
-The hyperparameters for the priors for $\alpha$ and $\sigma$ are
-$\mu_\alpha$, $\textrm{SD}_\alpha$, and $\textrm{SD}_\sigma$.
-The first two of these are set based on a simple un-weighted linear model of
+The hyperparameters for the prior for $\alpha$ are
+$\mu_\alpha$ and $\textrm{SD}_\alpha$, and 
+are set based on a simple un-weighted linear model of
 $\widehat{\beta}_i^B$ on $\widehat{\beta}_i^A$ without an intercept.
 $\mu_\alpha$ is set to the estimated slope coefficient, and
 $\textrm{SD}_\alpha$ is set to 2 times the absolute value of this
-estimated slope coefficient. $\textrm{SD}_\sigma$ is set by default to
-1 (but can be modified by the user), which corresponds to a very wide
+estimated slope coefficient.
+
+The hyperparameter for the prior for $\sigma$ is
+$\textrm{SD}_\sigma$, which is set by default to
+1 (but can be modified by the user). This corresponds to a very wide
 prior as the GWAS effects sizes are typically quite small in magnitude
 (as seen in the analyses in the Results).
 
