@@ -41,8 +41,10 @@ for (tissue in names(genes)) {
     out1 <- collapseHighCorSNPs(sum_stat, ld_mat, ld_mat2, plot=FALSE)
     if (two.ancestry) {
       a2_plink <- "Major_plink_EUR"
+      a2_plink_mat2 <- "Major_plink_EAS"
     } else {
       a2_plink <- "Major_plink"
+      a2_plink_mat2 <- NULL
     }
     out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                                  out1$ld_mat2,
@@ -50,6 +52,7 @@ for (tissue in names(genes)) {
                                  ref="Ref", eff="Effect",
                                  beta="beta", se="se",
                                  a2_plink=a2_plink,
+                                 a2_plink_mat2=a2_plink_mat2,
                                  snp_id="SNP", sep="_",
                                  ab_last=TRUE, plot=FALSE)
     
@@ -103,7 +106,7 @@ for (tissue in names(genes)) {
                 sd_a=out2$se_a,
                 sd_b=out2$se_b)
 
-    res <- extractForSlope(res, plot=FALSE)
+    res <- extractForSlope(res, plot=TRUE)
     res <- fitSlope(res, iter=10000)
 
     print(proc.time() - ptm)
