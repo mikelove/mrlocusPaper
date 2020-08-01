@@ -7,7 +7,7 @@
 \DeclareMathOperator{\se}{\textrm{se}}
 \title{Supplementary Methods}
 \author{Anqi Zhu$^*$, Nana Matoba$^*$, Emmaleigh Wilson, Amanda Tapia,
-  \\ Yun Li, Joseph G. Ibrahim, Jason Stein, Michael I. Love}
+  \\ Yun Li, Joseph G. Ibrahim, Jason L. Stein, Michael I. Love}
 \begin{document}
 \maketitle
 \section{MRLocus statistical model}
@@ -259,6 +259,19 @@ $\textrm{SD}_\sigma$, which is set by default to
 1 (but can be modified by the user). This corresponds to a very wide
 prior as the GWAS effects sizes are typically quite small in magnitude
 (as seen in the analyses in the Results).
+
+\subsubsection{One signal cluster}
+
+In the case that the upstream clumping method only returns a single
+LD-independent signal cluster, MRLocus relies on a parametric
+bootstrap to estimate the slope. MRLocus samples the numerator and
+denominator of the slope from normal distributions 
+$N(\widehat{\beta}_1^B,\se_1^B)$ and $N(\widehat{\beta}_1^A, \se_1^A)$,
+using the posterior mean estimates from section \ref{sec:coloc}.
+The point estimate is then the median of the bootstrap slope
+estimates. Intervals are calculated using the MAD of the bootstrap
+slope estimates, e.g. the median $\pm 1.28$ times the MAD to construct
+an 80\% interval.
 
 \newpage
 
