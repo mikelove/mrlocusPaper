@@ -1,8 +1,11 @@
 genes <- list(Artery_Tibial=c("MRAS","PHACTR1"),
               Blood="LIPC",
-              Liver=c("CETP","LIPC","SORT1"))
+              Liver=c("CETP","LIPC","SORT1"),
+              Blood_BBJ="LIPC",
+              Liver_BBJ="LIPC")
 
 for (tissue in names(genes)) {
+  two.ancestry <- grepl("BBJ", tissue)
   for (gene in genes[[tissue]]) {
 
     set.seed(1)
@@ -13,10 +16,18 @@ for (tissue in names(genes)) {
     cond.files <- sub(".tsv","",list.files(dir, ".tsv"))
     nclust <- length(cond.files)
     ld_mat <- list()
+    ld_mat2 <- list()
     sum_stat <- list()
     for (j in 1:nclust) {
-      filename <- file.path(dir,paste0(cond.files[j], ".ld"))
-      ld_mat[[j]] <- as.matrix(read.delim(filename,header=FALSE))
+      if (two.ancestry) {
+        filename <- file.path(dir,paste0(cond.files[j], "_EUR.ld"))
+        ld_mat[[j]] <- as.matrix(read.delim(filename,header=FALSE))
+        gwas_filename <- file.path(dir,paste0(cond.files[j], "_EAS.ld"))
+        ld_mat2[[j]] <- as.matrix(read.delim(gwas_filename,header=FALSE))
+      } else {
+        filename <- file.path(dir,paste0(cond.files[j], ".ld"))
+        ld_mat[[j]] <- as.matrix(read.delim(filename,header=FALSE))
+      }
       filename <- file.path(dir,paste0(cond.files[j], ".tsv"))
       sum_stat[[j]] <- read.delim(filename)
       sum_stat[[j]] <- sum_stat[[j]][order(sum_stat[[j]]$pos),]
@@ -27,24 +38,38 @@ for (tissue in names(genes)) {
     library(pheatmap)
     library(gridExtra)
     devtools::load_all("../../mrlocus")
-    out1 <- collapseHighCorSNPs(sum_stat, ld_mat, plot=FALSE)
+    out1 <- collapseHighCorSNPs(sum_stat, ld_mat, ld_mat2, plot=FALSE)
+    if (two.ancestry) {
+      a2_plink <- "Major_plink_EUR"
+    } else {
+      a2_plink <- "Major_plink"
+    }
     out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
+                                 out1$ld_mat2,
                                  a="eQTL", b="GWAS",
                                  ref="Ref", eff="Effect",
                                  beta="beta", se="se",
-                                 a2_plink="Major_plink",
+                                 a2_plink=a2_plink,
                                  snp_id="SNP", sep="_",
                                  ab_last=TRUE, plot=FALSE)
-
+    
     library(Matrix)
     Sigma_npd <- out2$Sigma
     for (j in seq_along(out2$Sigma)) {
       Sigma_npd[[j]] <- as.matrix(nearPD(out2$Sigma[[j]])$mat)
     }
+    if (two.ancestry) {
+      Sigma_npd2 <- out2$Sigma2
+      for (j in seq_along(out2$Sigma2)) {
+        Sigma_npd2[[j]] <- as.matrix(nearPD(out2$Sigma2[[j]])$mat)
+      }
+    } else {
+      Sigma_npd2 <- Sigma_npd
+    }
 
     nsnp <- lengths(out2$beta_hat_a)
 
-    # plotInitEstimates(out2)
+    plotInitEstimates(out2)
 
     options(mc.cores=2)
     beta_hat_a <- list()
@@ -58,7 +83,7 @@ for (tissue in names(genes)) {
                               se_a=out2$se_a[[j]],
                               se_b=out2$se_b[[j]],
                               Sigma_a=Sigma_npd[[j]],
-                              Sigma_b=Sigma_npd[[j]],
+                              Sigma_b=Sigma_npd2[[j]],
                               verbose=FALSE,
                               open_progress=FALSE,
                               show_messages=FALSE,
