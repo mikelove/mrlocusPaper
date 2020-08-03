@@ -1,5 +1,5 @@
-ALL = main.pdf 
-TEXFILES = main 
+ALL = supp.pdf 
+TEXFILES = supp 
 STYFILES = 
 CLSFILES = 
 FIGURES = 
