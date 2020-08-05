@@ -19,14 +19,6 @@ all: $(ALL)
 
 $(ALL): $(TEXFILES:=.tex) $(STYFILES:=.sty) $(CLSFILES:=.cls) $(FIGURES) $(BIBFILES:=.bib)
 
-zip: all 
-		rm -rf main.zip
-		zip main.zip \
-			main.pdf
-			$(ALL) \
-			main.tex \
-			$(BIBFILES:=.bib)  
-
 # How to compile a .tex file to a .pdf file
 %.pdf: %.tex $(FORCED)
 	@if (command -v latexmk > /dev/null) ; then latexmk $(LATEXMKOPTS) $< ; \
