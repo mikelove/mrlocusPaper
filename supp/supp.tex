@@ -75,11 +75,44 @@ Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{figs/snps-per-clump}
+  \includegraphics[width=.7\textwidth]{figs/snps-per-clump}
   \caption{SNPs per clump in the 240 simulations, before and after
     collapsing with MRLocus’ collapseHighCorSNPs. The mean number of
-    SNPs per clump was 19.9 and 8.8 (before and after, respectively),
-    and the median number of SNPs per clump was 15 and 8.}
+    SNPs per clump was 19.9 and 8.8, and the median number of SNPs per
+    clump was 15 and 8 (before and after, respectively).} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/sim2.png}
+  \caption{Accuracy of gene-to-trait effect estimation across 8
+    additional non-null simulations.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/cover2.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect across 8 additional non-null simulations.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/sigma_est.png}
+  \caption{Simulation assessing MRLocus' estimation of the scale of
+    dispersion of effects ($\sigma$) around the gene-to-trait fitted
+    line. The summary statistics for eQTL and GWAS were generated from
+    a multivariate normal distribution as in the eCAVIAR model, using
+    a simulated LD matrix. The true alpha was set to 1, the true $\sigma$
+    varied from 0.25 to 1 in increments of 0.25 (x-axis), and the
+    number of LD-independent clusters varied between 4, 6, and 8
+    (left, middle, and right panels), with 10 iterations per setting
+    (plotted with spacing to avoid overplotting). The posterior mean
+    is indicated with a dot, while 80\% quantile-based credible
+    intervals and their coverage of the true value are indicated with
+    the line and its color. The simulation script is included within
+    the MRLocus package in the test directory, as an R script
+    \texttt{"test\_sigma.R"}.} 
 \end{figure}
 
 \end{document}

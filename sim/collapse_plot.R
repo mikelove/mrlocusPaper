@@ -10,7 +10,7 @@ ggplot(dat, aes(x=number, fill=type)) +
   geom_histogram(position="identity",
                  alpha=.25, color="grey50",
                  breaks=0:30*5) +
-  theme_bw() + xlab("number of SNPs per clump")
+  xlab("number of SNPs per clump")
 dev.off()
 
 library(dplyr)

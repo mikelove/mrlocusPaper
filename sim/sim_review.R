@@ -101,6 +101,7 @@ key <- data.frame(value=c(h2,ve),
 
 library(ggplot2)
 cols <- palette.colors(4, palette="Set 2")
+
 pdf(file="../supp/figs/sim_types.pdf", height=5)
 ggplot(key, aes(sim, value, fill=group)) +
   geom_bar(stat="identity", show.legend=FALSE) +
@@ -125,7 +126,6 @@ plotit <- function(x, dot=TRUE, bee=FALSE) {
   
   g <- ggplot(dat, aes(sim, number, fill=group)) +
     geom_violin(show.legend=FALSE) +
-    theme_bw() +
     scale_fill_manual(values=cols)
   
   if (dot) {
