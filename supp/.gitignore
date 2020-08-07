@@ -3,5 +3,6 @@
 *.fls
 *.log
 *.pdf
+*.out
 figs/heatmap*
 figs/suppl*

@@ -1,8 +1,8 @@
 genes <- list(Artery_Tibial=c("MRAS","PHACTR1"),
-              Blood="LIPC",
-              Liver=c("CETP","LIPC","SORT1"),
-              Blood_BBJ="LIPC",
-              Liver_BBJ="LIPC")
+              Liver=c("CETP","LIPC","SORT1"))
+
+library(pheatmap)
+library(gridExtra)
 
 for (tissue in names(genes)) {
   two.ancestry <- grepl("BBJ", tissue)
@@ -35,10 +35,9 @@ for (tissue in names(genes)) {
 
     sapply(sum_stat, nrow)
 
-    library(pheatmap)
-    library(gridExtra)
     devtools::load_all("../../mrlocus")
-    out1 <- collapseHighCorSNPs(sum_stat, ld_mat, ld_mat2, plot=FALSE)
+    out1 <- collapseHighCorSNPs(sum_stat, ld_mat, plot=FALSE)
+    #out1 <- collapseHighCorSNPs(sum_stat, ld_mat, ld_mat2, plot=FALSE)
     if (two.ancestry) {
       a2_plink <- "Major_plink_EUR"
       a2_plink_mat2 <- "Major_plink_EAS"
@@ -106,19 +105,22 @@ for (tissue in names(genes)) {
                 sd_a=out2$se_a,
                 sd_b=out2$se_b)
 
-    res <- extractForSlope(res, plot=TRUE)
+    res <- extractForSlope(res, plot=FALSE)
     res <- fitSlope(res, iter=10000)
 
     print(proc.time() - ptm)
     
-    pdf(file=paste0(tissue,"-",gene,".pdf"))
-    plotMrlocus(res, main=paste(tissue,"-",gene))
-    dev.off()
-
-    out <- summary(res$stanfit, pars="alpha", probs=c(.1,.9))$summary[,c("mean","sd","10%","90%"),drop=FALSE]
-    write.table(format(out, digits=4), file=paste0(tissue,"-",gene,".txt"), quote=FALSE, row.names=FALSE)
-
+    save(res, file=paste0(tissue,"-",gene,".pdf"))
   }
 }
 
 sessionInfo()
+
+if (FALSE) {
+  devtools::load_all("../../mrlocus")
+  pdf(file=paste0(tissue,"-",gene,".pdf"))
+  plotMrlocus(res, main=paste(tissue,"-",gene))
+  dev.off()
+  out <- summary(res$stanfit, pars="alpha", probs=c(.1,.9))$summary[,c("mean","sd","10%","90%"),drop=FALSE]
+  write.table(format(out, digits=4), file=paste0(tissue,"-",gene,".txt"), quote=FALSE, row.names=FALSE)
+}

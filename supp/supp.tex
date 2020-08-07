@@ -85,7 +85,10 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{Diagram of the 12 types of \texttt{twas\_sim} simulations
     performed, varying eQTL $h^2$ (top row) and trait variance explained
     through gene expression (bottom row), with 20 replicates of each
-    setting resulting in 240 simulations total.}
+    setting resulting in 240 simulations total. Results for simulation
+    A are presented in Figure 2 in the main text, while results for
+    the remaining 11 simulation settings follow in Supplementary
+    Figures.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -106,24 +109,114 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/sim2.png}
-  \caption{Accuracy of gene-to-trait effect estimation across 8
-    additional non-null simulations.} 
+  \includegraphics[width=.5\textwidth]{figs/sim3.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation B.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{figs/cover2.png}
+  \includegraphics[width=.5\textwidth]{figs/sim2.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation C.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/sim4.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation D.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/sim6.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation E.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/sim8.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation F.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/sim5.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation G.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/sim7.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation H.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/sim9.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation I.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover3.png}
   \caption{Coverage of confidence or credible intervals for the
-    gene-to-trait effect across 8 additional non-null simulations.}
+    gene-to-trait effect in simulation B.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover2.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation C.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover4.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation D.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover6.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation E.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover8.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation F.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover5.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation G.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover7.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation H.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/cover9.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation I.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=\textwidth]{figs/sigma_est.png}
   \caption{Simulation assessing MRLocus' estimation of the scale of
-    dispersion of effects ($\sigma$) around the gene-to-trait fitted
-    line. The summary statistics for eQTL and GWAS were generated from
+    dispersion of effects ($\sigma$) across independent signal
+    clusters. The summary statistics for eQTL and GWAS were generated from
     a multivariate normal distribution as in the eCAVIAR model, using
     a simulated LD matrix. The true alpha was set to 1, the true $\sigma$
     varied from 0.25 to 1 in increments of 0.25 (x-axis), and the

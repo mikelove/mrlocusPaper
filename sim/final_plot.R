@@ -80,6 +80,3 @@ ggplot(dat, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   xlim(-1.2*mx,1.2*mx) + ylim(-1.2*mx,1.2*mx) +
   ggtitle(ttl)
 dev.off()
-
-
-
