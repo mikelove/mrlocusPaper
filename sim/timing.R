@@ -12,6 +12,9 @@ twmr <- list.files("bench","twmr", full.names=TRUE)
 twmr.time <- sapply(twmr, myscan)
 hist(log10(twmr.time))
 
+#save(twmr.time,ptw.time,mrl.time, file="timing.rda")
+load("timing.rda")
+
 boxplot(list(twmr.time,ptw.time,mrl.time),
         names=c("TWMR","PTWAS","MRLocus"),
         log="y",ylim=c(1,1000),range=0, ylab="seconds")
