@@ -3,6 +3,8 @@
 \usepackage{amsmath,amssymb}
 \DeclareMathOperator{\se}{\textrm{se}}
 \usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{breakurl}
 \title{Supplementary Tables and Figures}
 \author{Anqi Zhu$^*$, Nana Matoba$^*$, Emmaleigh Wilson, Amanda L. Tapia,
   \\ Yun Li, Joseph G. Ibrahim, Jason L. Stein, Michael I. Love}
@@ -50,8 +52,28 @@ Liver & SORT1 & LDL & 1 & rs2272272 & 110009802 & rs12127701 & 109838264 & 0.574
 Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
 \end{tabular}
 \caption{Details on eQTL and GWAS summary data employed in MRLocus
-  real data evaluation.}
+  real data evaluation. Genomic locations are in GRCh37 coordinates.}
 \end{table}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+\begin{tabular}{r p{4in}}
+eQTL Tissue & Resource \\
+\hline
+Artery Tibial (GTEx v8) & \url{https://console.cloud.google.com/storage/browser/gtex-resources} \\
+Liver & \url{https://www.nature.com/articles/s41598-018-24219-z} \\
+& \\
+GWAS Phenotype & Resource \\
+\hline
+CAD (CARDIoGRAMplusC4D) & \url{http://www.cardiogramplusc4d.org/media/cardiogramplusc4d-consortium/data-downloads/cad.additive.Oct2015.pub.zip} \\
+HDL (UKBB) & \url{https://www.dropbox.com/s/65jisgxwbbdrkaw/30760_irnt.gwas.imputed_v3.both_sexes.tsv.bgz} \\
+LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.imputed_v3.both_sexes.tsv.bgz} \\
+\end{tabular}
+\caption{Links to URLs for eQTL and GWAS summary data employed in
+  MRLocus real data evaluation.}
+\end{table}
+
 
 \clearpage
 
@@ -120,6 +142,14 @@ Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
   \includegraphics[width=\textwidth]{figs/nullplot.png}
   \caption{Coverage of confidence or credible intervals for the 3 null
     simulation settings.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/runtime}
+  \caption{Runtime for TWMR, PTWAS, and MRLocus on the 240
+    simulations. The runtime for a single locus using a single core is
+    shown on the y-axis.}
 \end{figure}
 
 \end{document}

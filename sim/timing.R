@@ -15,13 +15,22 @@ hist(log10(twmr.time))
 #save(twmr.time,ptw.time,mrl.time, file="timing.rda")
 load("timing.rda")
 
-boxplot(list(twmr.time,ptw.time,mrl.time),
-        names=c("TWMR","PTWAS","MRLocus"),
-        log="y",ylim=c(1,1000),range=0, ylab="seconds")
-abline(h=c(1,5,10,30,60,120,300,600),lty=2,col=rgb(0,0,0,.5))
-text(c(1,1,1,1,1),c(30,60,120,300,600),
-     c("30 sec","1 min","2 min","5 min","10 min"),pos=3)
-
+library(ggplot2)
+mths <- c("twmr","ptwas","mrlocus")
+dat <- data.frame(seconds=c(twmr.time,ptw.time,mrl.time),
+                  method=factor(rep(mths,each=240),levels=mths))
+pdf(file="../supp/figs/runtime.pdf", width=4, height=4)
+ggplot(dat, aes(method,seconds)) +
+  geom_boxplot() +
+  scale_y_log10(breaks=c(1,5,10,30,60,120,300,600)) +
+  ylab("runtime (seconds)") +
+  geom_text(aes(method,seconds,label=label),
+            data.frame(method=rep("twmr",4),
+                       seconds=c(60,120,300,600),
+                       label=c("1 min","2 min","5 min","10 min")),
+            fontface="bold")
+dev.off()
+  
 mean(mrl.time)
 mean(twmr.time)
 mean(ptw.time)
