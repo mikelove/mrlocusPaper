@@ -49,7 +49,8 @@ Liver & SORT1 & LDL & 1 & rs17584208 & 109833187 & rs61799430 & 109784082 & 0.49
 Liver & SORT1 & LDL & 1 & rs2272272 & 110009802 & rs12127701 & 109838264 & 0.574156 \\ 
 Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
 \end{tabular}
-\caption{foo bar} 
+\caption{Details on eQTL and GWAS summary data employed in MRLocus
+  real data evaluation.}
 \end{table}
 
 \clearpage
@@ -58,14 +59,27 @@ Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.25\textwidth]{foo.png}
-  \caption{foo foo}
+  \includegraphics[width=.7\textwidth]{figs/sim_types}
+  \caption{Diagram of the 12 types of \texttt{twas\_sim} simulations
+    performed, varying eQTL $h^2$ (top row) and trait variance explained
+    through gene expression (bottom row), with 20 replicates of each
+    setting resulting in 240 simulations total.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.25\textwidth]{foo.png}
-  \caption{foo foo}
+  \includegraphics[width=\textwidth]{figs/sim_details}
+  \caption{Number of (A) true eQTL SNPs, (B) PLINK clumps, and (C) DAP
+    signal clusters per simulation.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/snps-per-clump}
+  \caption{SNPs per clump in the 240 simulations, before and after
+    collapsing with MRLocus’ collapseHighCorSNPs. The mean number of
+    SNPs per clump was 19.9 and 8.8 (before and after, respectively),
+    and the median number of SNPs per clump was 15 and 8.}
 \end{figure}
 
 \end{document}

@@ -101,10 +101,12 @@ key <- data.frame(value=c(h2,ve),
 
 library(ggplot2)
 cols <- palette.colors(4, palette="Set 2")
+pdf(file="../supp/figs/sim_types.pdf", height=5)
 ggplot(key, aes(sim, value, fill=group)) +
   geom_bar(stat="identity", show.legend=FALSE) +
   facet_wrap(~type, nrow=2, scales="free") +
-  scale_fill_manual(values=cols)
+  scale_fill_manual(values=cols) + ylab("")
+dev.off()
 
 key2 <- key[1:12,c("sim","id","group")]
 
@@ -118,6 +120,9 @@ plotit <- function(x, dot=TRUE, bee=FALSE) {
   dat$group <- key2$group[idx]
   dat$sim <- factor(dat$sim, levels=key2$sim)
 
+  # shorten sim names
+  levels(dat$sim) <- c(LETTERS[1:9], c("N.1","N.2","N.05"))
+  
   g <- ggplot(dat, aes(sim, number, fill=group)) +
     geom_violin(show.legend=FALSE) +
     theme_bw() +
@@ -137,14 +142,12 @@ plotit <- function(x, dot=TRUE, bee=FALSE) {
   g
 }
 
-plotit(i2, dot=FALSE, bee=TRUE) + ggttitle("I2 values for PTWAS")
+plotit(i2, dot=FALSE, bee=TRUE) + ggtitle("I2 values for PTWAS")
 
-png(file="~/Desktop/true-eqtl.png")
-plotit(causal) + ylim(0,15) + ggtitle("number of true eQTL SNPs per simuation")
-dev.off()
-png(file="~/Desktop/plink-clumps.png")
-plotit(clumps) + ylim(0,15) + ggtitle("number of PLINK clumps per simulation")
-dev.off()
-png(file="~/Desktop/dap-clusters.png")
-plotit(dap, dot=FALSE, bee=TRUE) + ylim(0,40) + ggtitle("number of DAP signal clusters per simulation")
+library(patchwork)
+pdf(file="../supp/figs/sim_details.pdf", width=14, height=5)
+p1 <- plotit(causal) + ylim(0,15) + ggtitle("number of true eQTL SNPs per simuation")
+p2 <- plotit(clumps) + ylim(0,15) + ggtitle("number of PLINK clumps per simulation")
+p3 <- plotit(dap, dot=FALSE, bee=TRUE) + ylim(0,40) + ggtitle("number of DAP signal clusters per simulation")
+p1 + p2 + p3 + plot_annotation(tag_levels="A")
 dev.off()
