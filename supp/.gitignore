@@ -4,5 +4,5 @@
 *.log
 *.pdf
 *.out
-figs/heatmap*
-figs/suppl*
+figs/pdfs
+
