@@ -21,12 +21,13 @@ lvls <- c(dat$label[1:5],"heterogeneity")
 dat$label <- factor(dat$label, levels=lvls)
 
 library(ggpmisc)
-tab <- cbind(dat[dat$method == "ptwas",c("gene","I2")], dat[dat$method == "mrlocus","sigma"])
+tab <- cbind(dat[dat$method == "ptwas",c("gene","I2")], dat[dat$method == "mrlocus","sigma",drop=FALSE])
+names(tab) <- c("gene","I^2", "sigma")
 data.tb <- tibble(x=0, y="twmr",
                   label=factor("heterogeneity", levels=lvls),
                   tb=list(tab))
 
-#png(file="../supp/figs/forest.png", width=1200, height=600, res=150)
+png(file="../supp/figs/forest.png", width=1200, height=600, res=150)
 ggplot(dat, aes(alpha,method,xmin=xmin,xmax=xmax)) +
   geom_pointrange() +
   facet_wrap(~label, scales="free") +
@@ -34,5 +35,5 @@ ggplot(dat, aes(alpha,method,xmin=xmin,xmax=xmax)) +
   xlab("gene-to-trait estimate") +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
-             stat="fmt_tb")
-#dev.off()
+             stat="fmt_tb", size=4)
+dev.off()
