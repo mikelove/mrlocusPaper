@@ -88,7 +88,7 @@ rule dap:
         """
         tail -n +2 {input.scan} | awk '{{ print $2,$11,$12 }}' > {params.path}.eqtl
         {dap} -d_est {params.path}.eqtl -d_ld {input.ld} \
-        -d_n 1000 -d_syy 1000 --output_all \
+        -d_n 500 -d_syy 500 --output_all \
         -o {output} -l {params.path}.dap.log || true
         """
 

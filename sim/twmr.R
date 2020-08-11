@@ -1,7 +1,7 @@
 cmd_args=commandArgs(TRUE)
 
 Ngwas <- 100000
-N_eQTLs <- 1000
+N_eQTLs <- 500
 out <- c("gene","alpha","SE","P","Nsnps","Ngene")
 
 # arg 1 is clumped
