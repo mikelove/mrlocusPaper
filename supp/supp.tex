@@ -1,8 +1,11 @@
 \documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=.75in]{geometry}
 \usepackage{amsmath,amssymb}
 \DeclareMathOperator{\se}{\textrm{se}}
 \usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{breakurl}
+\usepackage{xspace}
 \title{Supplementary Tables and Figures}
 \author{Anqi Zhu$^*$, Nana Matoba$^*$, Emmaleigh Wilson, Amanda L. Tapia,
   \\ Yun Li, Joseph G. Ibrahim, Jason L. Stein, Michael I. Love}
@@ -13,6 +16,9 @@
 
 \setcounter{figure}{0}
 \renewcommand{\figurename}{Supplementary Figure}
+
+\newcommand{\Ncase}{$N_{\textrm{case}}$\xspace}
+\newcommand{\Ncontrol}{$N_{\textrm{control}}$\xspace}
 
 \begin{document}
 
@@ -50,8 +56,28 @@ Liver & SORT1 & LDL & 1 & rs2272272 & 110009802 & rs12127701 & 109838264 & 0.574
 Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
 \end{tabular}
 \caption{Details on eQTL and GWAS summary data employed in MRLocus
-  real data evaluation.}
+  real data evaluation. Genomic locations are in GRCh37 coordinates.}
 \end{table}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+\begin{tabular}{r p{4in}}
+eQTL Tissue & Resource \\
+\hline
+Artery Tibial (GTEx v8) & \url{https://console.cloud.google.com/storage/browser/gtex-resources} \\
+Liver & \url{https://www.nature.com/articles/s41598-018-24219-z} \\
+& \\
+GWAS Phenotype & Resource \\
+\hline
+CAD (CARDIoGRAMplusC4D) & \url{http://www.cardiogramplusc4d.org/media/cardiogramplusc4d-consortium/data-downloads/cad.additive.Oct2015.pub.zip} \\
+HDL (UKBB) & \url{https://www.dropbox.com/s/65jisgxwbbdrkaw/30760_irnt.gwas.imputed_v3.both_sexes.tsv.bgz} \\
+LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.imputed_v3.both_sexes.tsv.bgz} \\
+\end{tabular}
+\caption{Links to URLs for eQTL and GWAS summary data employed in
+  MRLocus real data evaluation.}
+\end{table}
+
 
 \clearpage
 
@@ -63,7 +89,10 @@ Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
   \caption{Diagram of the 12 types of \texttt{twas\_sim} simulations
     performed, varying eQTL $h^2$ (top row) and trait variance explained
     through gene expression (bottom row), with 20 replicates of each
-    setting resulting in 240 simulations total.}
+    setting resulting in 240 simulations total. Results for simulation
+    A are presented in Figure 2 in the main text, while results for
+    the remaining 11 simulation settings follow in Supplementary
+    Figures.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -84,24 +113,114 @@ Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/sim2.png}
-  \caption{Accuracy of gene-to-trait effect estimation across 8
-    additional non-null simulations.} 
+  \includegraphics[width=.6\textwidth]{figs/sim3.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation B.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{figs/cover2.png}
+  \includegraphics[width=.6\textwidth]{figs/sim2.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation C.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/sim4.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation D.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/sim6.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation E.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/sim8.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation F.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/sim5.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation G.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/sim7.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation H.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/sim9.png}
+  \caption{Accuracy of gene-to-trait effect estimation in simulation I.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover3.png}
   \caption{Coverage of confidence or credible intervals for the
-    gene-to-trait effect across 8 additional non-null simulations.}
+    gene-to-trait effect in simulation B.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover2.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation C.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover4.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation D.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover6.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation E.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover8.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation F.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover5.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation G.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover7.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation H.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/cover9.png}
+  \caption{Coverage of confidence or credible intervals for the
+    gene-to-trait effect in simulation I.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=\textwidth]{figs/sigma_est.png}
   \caption{Simulation assessing MRLocus' estimation of the scale of
-    dispersion of effects ($\sigma$) around the gene-to-trait fitted
-    line. The summary statistics for eQTL and GWAS were generated from
+    dispersion of effects ($\sigma$) across independent signal
+    clusters. The summary statistics for eQTL and GWAS were generated from
     a multivariate normal distribution as in the eCAVIAR model, using
     a simulated LD matrix. The true alpha was set to 1, the true $\sigma$
     varied from 0.25 to 1 in increments of 0.25 (x-axis), and the
@@ -120,6 +239,135 @@ Liver & SORT1 & LDL & 1 & rs7538453 & 110056537 & rs7538453 & 110056537 & 1 \\
   \includegraphics[width=\textwidth]{figs/nullplot.png}
   \caption{Coverage of confidence or credible intervals for the 3 null
     simulation settings.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/runtime}
+  \caption{Runtime for TWMR, PTWAS, and MRLocus on the 240
+    simulations. The runtime for a single locus using a single core is
+    shown on the y-axis.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region_mras.jpg}
+  \caption{Colocalized signals in the \emph{MRAS} region. From top panel to
+    bottom, gene model (NCBI Refseq), eQTL for MRAS in artery tibial
+    (GTEx; n = 663) and CAD association within CARDIoGRAMplusC4D
+    (\Ncase = 60,801 and \Ncontrol = 123,504) (M. Nikpay et al.,
+    2015). LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly. Symbols indicate independent co-localized
+    ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significant
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region_phactr1.jpg}
+  \caption{Colocalized signals in the \emph{PHACTR1} region. From top
+    panel to bottom, gene model (NCBI Refseq), eQTL for PHACTR1 in
+    artery tibial (GTEx; n = 663) and CAD association within
+    CARDIoGRAMplusC4D (\Ncase = 60,801 and \Ncontrol = 123,504)
+    (M. Nikpay et al., 2015). LD was calculated to independent SNPs
+    within 1KG EUR and colored accordingly. Symbols indicate
+    independent co-localized ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed
+    line indicates a significant threshold at p = 0.001 or p =
+    5x$10^{-8}$ for eQTL and GWAS respectively.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region_cetp.jpg}
+  \caption{Colocalized signals in the \emph{CETP} region. From top
+    panel to bottom, gene model (NCBI Refseq), eQTL for CETP in liver
+    (n = 588) (Strunz et al., 2018) and HDL association within UKBB (N
+    = 315,133). LD was calculated to independent SNPs within 1KG EUR
+    and colored accordingly. Symbols indicate independent co-localized
+    ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significant
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region_lipc.jpg}
+  \caption{Colocalized signals in the \emph{LIPC} region. From top
+    panel to bottom, gene model (NCBI Refseq), eQTL for LIPC in liver
+    (n = 588) (Strunz et al., 2018) and HDL association within UKBB (N
+    = 315,133). LD was calculated to independent SNPs within 1KG EUR
+    and colored accordingly. Symbols indicate independent co-localized
+    ($r^2> 0.4$) eQTL-GWAS pairs. Dashed line indicates a significant
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/heatmap_mras.jpg}
+  \caption{LD pattern across independent clusters from \emph{MRAS}
+    eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
+    independent clumps from \emph{MRAS} in artery tibial (columns) and
+    CAD GWAS SNPs (rows). Color bars at the top and left represent
+    cluster (pair) ID which is sorted by base position of index eQTL
+    SNPs. LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/heatmap_phactr1.jpg}
+  \caption{LD pattern across independent clusters from \emph{PHACTR1}
+    eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
+    independent clumps from \emph{PHACTR1} in artery tibial (columns)
+    and CAD GWAS SNPs (rows). Color bars at the top and left represent
+    cluster (pair) ID which is sorted by base position of index eQTL
+    SNPs. LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/heatmap_cetp}
+  \caption{LD pattern across independent clusters from \emph{CETP}
+    eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
+    clumps from \emph{CETP} in liver (columns) and HDL GWAS SNPs
+    (rows). Color bars at the top and left represent cluster (pair) ID
+    which is sorted by base position of index eQTL SNPs. LD was
+    calculated to independent SNPs within 1KG EUR and colored
+    accordingly.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/heatmap_lipc}
+  \caption{LD pattern across independent clusters from \emph{LIPC}
+    eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
+    clumps from \emph{LIPC} in liver (columns) and HDL GWAS SNPs
+    (rows). Color bars at the top and left represent cluster (pair) ID
+    which is sorted by base position of index eQTL SNPs. LD was
+    calculated to independent SNPs within 1KG EUR and colored
+    accordingly.} 
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/heatmap_sort1.jpg}
+  \caption{LD pattern across independent clusters from \emph{SORT1}
+    eQTL (liver) and LDL GWAS. LD ($r^2$) between SNPs in independent
+    clumps from \emph{SORT1} in liver (columns) and LDL GWAS SNPs
+    (rows). Color bars at the top and left represent cluster (pair) ID
+    which is sorted by base position of index eQTL SNPs. LD was
+    calculated to independent SNPs within 1KG EUR and colored
+    accordingly.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/realloci.png}
+  \caption{MRLocus plots for the four additional gene-trait pairs, in
+    addition to \emph{SORT1} in Figure 4A.}
 \end{figure}
 
 \end{document}
