@@ -48,6 +48,7 @@ library(ggplot2)
 library(ggpmisc)
 cols <- unname(palette.colors(7))[-c(1,5)]
 png(file=paste0("../supp/figs/sim",i,".png"), res=125, width=800, height=800)
+#png(file=paste0("../supp/figs/sim-big",i,".png"), res=150, width=800, height=800)
 ggplot(dat, aes(true,estimate,color=method,shape=method)) +
   geom_point(size=2) +
   geom_abline(intercept=0, slope=1) +
@@ -72,6 +73,7 @@ tab$x <- "left"
 tab$y <- "top"
 
 png(file=paste0("../supp/figs/cover",i,".png"), res=125, width=1200, height=800)
+#png(file=paste0("../supp/figs/cover-big",i,".png"), res=170, width=1200, height=800)
 ggplot(dat, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_pointrange(shape="square", size=.5) + facet_wrap(~method) +
   geom_abline(intercept=0, slope=1) +
