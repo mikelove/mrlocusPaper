@@ -102,17 +102,18 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=\textwidth]{figs/sim_details}
-  \caption{Number of (A) true eQTL SNPs, (B) PLINK clumps, and (C) DAP
-    signal clusters per simulation.}
+  \caption{Number of (A) true causal eQTL SNPs, (B) PLINK clumps, and
+    (C) DAP signal clusters per simulation.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=.7\textwidth]{figs/snps-per-clump}
   \caption{SNPs per clump in the 240 simulations, before and after
-    collapsing with MRLocus’ collapseHighCorSNPs. The mean number of
-    SNPs per clump was 19.9 and 8.8, and the median number of SNPs per
-    clump was 15 and 8 (before and after, respectively).} 
+    collapsing with MRLocus’ \texttt{collapseHighCorSNPs}
+    function. The mean number of SNPs per clump was 19.9 and 8.8, and
+    the median number of SNPs per clump was 15 and 8 (before and
+    after, respectively).}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -223,19 +224,19 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \centering
   \includegraphics[width=\textwidth]{figs/sigma_est.png}
   \caption{Simulation assessing MRLocus' estimation of the scale of
-    dispersion of effects ($\sigma$) across independent signal
+    dispersion ($\sigma$) across independent signal
     clusters. The summary statistics for eQTL and GWAS were generated from
     a multivariate normal distribution as in the eCAVIAR model, using
-    a simulated LD matrix. The true alpha was set to 1, the true $\sigma$
-    varied from 0.25 to 1 in increments of 0.25 (x-axis), and the
-    number of LD-independent clusters varied between 4, 6, and 8
-    (left, middle, and right panels), with 10 iterations per setting
-    (plotted with spacing to avoid overplotting). The posterior mean
-    is indicated with a dot, while 80\% quantile-based credible
-    intervals and their coverage of the true value are indicated with
-    the line and its color. The simulation script is included within
-    the MRLocus package in the test directory, as an R script
-    \texttt{"test\_sigma.R"}.} 
+    a simulated LD matrix. The true slope ($\alpha$) was set to 1, the
+    true $\sigma$ varied from 0.25 to 1 in increments of 0.25
+    (x-axis), and the number of LD-independent clusters varied between
+    4, 6, and 8 (left, middle, and right panels), with 10 iterations
+    per setting (plotted with spacing to avoid overplotting). The
+    posterior mean is indicated with a dot, while 80\% quantile-based
+    credible intervals and their coverage of the true value are
+    indicated with the line and its color. The simulation script is
+    included within the MRLocus package test directory, as an R
+    script \texttt{"test\_sigma.R"}.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -250,7 +251,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.7\textwidth]{figs/runtime}
   \caption{Runtime for TWMR, PTWAS, and MRLocus on the 240
     simulations. The runtime for a single locus using a single core is
-    shown on the y-axis.}
+    shown on the y-axis (log scale).}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -258,11 +259,11 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.7\textwidth]{figs/region_mras.jpg}
   \caption{Colocalized signals in the \emph{MRAS} region. From top panel to
     bottom, gene model (NCBI Refseq), eQTL for MRAS in artery tibial
-    (GTEx; n = 663) and CAD association within CARDIoGRAMplusC4D
+    (GTEx; N = 663) and CAD association within CARDIoGRAMplusC4D
     (\Ncase = 60,801 and \Ncontrol = 123,504) (M. Nikpay et al.,
     2015). LD was calculated to independent SNPs within 1KG EUR and
     colored accordingly. Symbols indicate independent co-localized
-    ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significant
+    ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significance
     threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
     respectively.}
 \end{figure}
@@ -272,12 +273,12 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.7\textwidth]{figs/region_phactr1.jpg}
   \caption{Colocalized signals in the \emph{PHACTR1} region. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for PHACTR1 in
-    artery tibial (GTEx; n = 663) and CAD association within
+    artery tibial (GTEx; N = 663) and CAD association within
     CARDIoGRAMplusC4D (\Ncase = 60,801 and \Ncontrol = 123,504)
     (M. Nikpay et al., 2015). LD was calculated to independent SNPs
     within 1KG EUR and colored accordingly. Symbols indicate
     independent co-localized ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed
-    line indicates a significant threshold at p = 0.001 or p =
+    line indicates a significance threshold at p = 0.001 or p =
     5x$10^{-8}$ for eQTL and GWAS respectively.} 
 \end{figure}
 
@@ -286,10 +287,10 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.7\textwidth]{figs/region_cetp.jpg}
   \caption{Colocalized signals in the \emph{CETP} region. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for CETP in liver
-    (n = 588) (Strunz et al., 2018) and HDL association within UKBB (N
+    (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
     = 315,133). LD was calculated to independent SNPs within 1KG EUR
     and colored accordingly. Symbols indicate independent co-localized
-    ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significant
+    ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significance
     threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
     respectively.} 
 \end{figure}
@@ -299,10 +300,10 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.7\textwidth]{figs/region_lipc.jpg}
   \caption{Colocalized signals in the \emph{LIPC} region. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for LIPC in liver
-    (n = 588) (Strunz et al., 2018) and HDL association within UKBB (N
+    (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
     = 315,133). LD was calculated to independent SNPs within 1KG EUR
     and colored accordingly. Symbols indicate independent co-localized
-    ($r^2> 0.4$) eQTL-GWAS pairs. Dashed line indicates a significant
+    ($r^2> 0.4$) eQTL-GWAS pairs. Dashed line indicates a significance
     threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
     respectively.} 
 \end{figure}
