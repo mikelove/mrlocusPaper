@@ -38,18 +38,26 @@ The estimated coefficients $\widehat{\beta}^X_{i,j}$ for
 $X \in \{A,B\}$ refer to either the estimated coefficients from a
 linear model of a continuous trait $y$ on genotype dosages
 $\{0,1,2\}$, or the estimated log odds from a logistic regression of a
-binary trait $y$ modeled on genotype dosages. While it would be
-preferable to use allelic fold change (aFC) \citep{aFC} or ACME effect sizes
-\citep{ACME} for the eQTL (A) study in MRLocus modeling, in practice
-we typically are provided with publicly available estimated
-coefficients representing log expression values regressed on genotype
-dosages.
+binary trait $y$ modeled on genotype dosages.
+
+While it would be preferable to use allelic fold change (aFC)
+\citep{aFC} or ACME effect sizes \citep{ACME} for the eQTL (A) study
+in MRLocus modeling, in practice we typically are provided with
+publicly available estimated coefficients representing inverse normal
+transformed (INT) or $\log_2$ transformed expression values regressed
+on genotype dosages. For eQTL coefficients derived from INT expression
+data, the mediation effect estimated by MRLocus represents the effect
+on the trait from modifying gene expression by 1 SD, while for eQTL
+coefficients derived from $\log_2$ transformed expression data, the
+mediation effect represents the effect on the trait from doubling gene
+expression.
 
 The eQTL and GWAS studies are referred to as ``A'' and ``B'' in the
 formula and code below for generalization, for example, the eQTL study
 could be replaced with a pQTL (protein quantitative trait loci)
-study. ``A'' therefore refers to a study of a trait that is believed
-to be causally upstream of the trait examined in study ``B''.
+study. ``A'' therefore refers to a study of a trait (or ``exposure'')
+that is believed to be causally upstream of the trait examined in
+study ``B'' (or ``outcome'').
 
 \subsubsection{Collapsing and allele flipping}
 
@@ -76,6 +84,9 @@ their alleles flipped. Allele flipping involves both keeping track of
 the reference and effect allele, as well as changing the sign of the
 estimated coefficient. This function also performs checks such that
 the A and B study agree in terms of the effect and reference allele.
+If two LD matrices are provided, one is prioritized for generating
+positive correlations of genotypes, while the other has its alleles
+flipped for consistency.
 
 \subsubsection{Scaling}
 
@@ -138,8 +149,8 @@ scale parameter determined from previous studies.
 
 Here MRLocus diverges from eCAVIAR in two ways. First, we will use a
 generative model for the elements in the vector
-$\widehat{\beta}_{\centerdot,j}$ conditional on the true effect sizes
-$\beta_{\centerdot,j}$ within LD-independent signal cluster
+$\widehat{\beta}^X_{\centerdot,j}$ conditional on the true effect sizes
+$\beta^X_{\centerdot,j}$ within LD-independent signal cluster
 $j$ (that is, MRLocus models effect sizes rather than $z$-scores).
 Second, we will use a univariate distribution for each
 $\widehat{\beta}^X_{i,j}$ instead of a multivariate distribution for
@@ -188,7 +199,13 @@ $1/s_j^A$ and $1/s_j^B$, respectively, as described earlier.
 We also considered making use of the posterior standard deviation
 for these two parameters, but found MRLocus gave better performance in
 terms of accuracy and stability in the Stan fitting procedure if only
-the posterior mean was kept from the colocalization step.
+the posterior mean was kept from the colocalization step. 
+The use of the horseshoe prior in this colocalization step
+is distinct from other uses of the horseshoe prior in Bayesian
+Mendelian Randomization methods, \citet{Berzuini2018} and
+\citet{Uche2019}, where it is used as a prior for the
+pleiotropic effects (effects not mediated by the exposure) or on the
+mediation slope, respectively.
 
 \subsection{Slope fitting step} \label{sec:slope}
 
