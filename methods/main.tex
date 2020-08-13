@@ -214,14 +214,14 @@ The second step of MRLocus is to estimate the gene-to-trait effect
 posterior mean values from the colocalization step. For each
 LD-independent signal cluster $j$, MRLocus extracts one SNP, based on the
 largest posterior mean value for $\beta_{i,j}^A$ (prioritizing the
-putative mediator trait for SNP selection). MRLocus also has the
+putative mediator for SNP selection). MRLocus also has the
 non-default option to perform model-based clustering using 
 an EM algorithm to determine how many SNPs per LD-independent
 signal cluster to pass to the slope fitting step \citep{mclust}, but
 this option was not extensively evaluated here.
 
 By default, $J$ SNPs are passed from the colocalization step to the
-slope fitting step, which should represent the candidate causal SNP
+slope fitting step, which should represent the candidate causal SNPs
 from each LD-independent signal cluster. The posterior mean for
 $\beta_{i,j}^A$ and $\beta_{i,j}^B$ for these SNPs is then provided to
 the slope fitting step as variables $\widehat{\beta}_j^A$ and
@@ -235,16 +235,11 @@ original standard errors into the slope fitting procedure helped to
 accurately estimate the uncertainty on the slope (the gene-to-trait
 effect). 
 
-The primary two parameters of interest are $\alpha$, the slope,
+The primary two parameters of interest are the slope $\alpha$, 
 i.e. the predominant gene-to-trait effect demonstrated by the
 LD-independent signal clusters in the locus, and $\sigma$,
-heterogeneity of gene-to-trait effects from individual signal clusters
-around the predominant slope. We are both interested in the posterior
-mean of $\alpha$ and $\sigma$ as well as our uncertainty regarding the
-point estimates. In particular we focus on a quantile-based credible
-interval for $\alpha$, which is used for determining our confidence in
-a gene being a causal mediator for a trait.
-
+the dispersion of gene-to-trait effects from individual signal clusters
+around the predominant slope.
 The hierarchical model for the slope fitting step is given by:
 
 \begin{align}
@@ -256,7 +251,17 @@ The hierarchical model for the slope fitting step is given by:
   \sigma &\sim N(0, \textrm{SD}_\sigma)
 \end{align}
 
-where the first four equations are defined by $j \in 1,\dots,J$.
+where the first four equations are defined for $j \in 1,\dots,J$.
+In words, $\beta_j^B$ is assumed to follow a normal distribution
+centered on the predicted value from a line with slope $\alpha$ and no
+intercept, and with dispersion $\sigma$ around the fitted line.
+We are both interested in the posterior mean of $\alpha$ and $\sigma$
+as well as our uncertainty regarding the point estimates. In
+particular we focus on a quantile-based credible interval for
+$\alpha$, which is used for determining our confidence in a gene being
+a causal mediator for a trait. Large values of $\sigma$ relative to
+$\alpha$ times typical mediator perturbation sizes ($\beta_j^A$)
+reflect significant heterogeneity of the gene-to-trait effect.
 
 \subsubsection{Choice of hyperparameters}
 
@@ -266,7 +271,7 @@ of $\widehat{\beta}_j^A$.
 The hyperparameters for the prior for $\alpha$ are
 $\mu_\alpha$ and $\textrm{SD}_\alpha$, and 
 are set based on a simple un-weighted linear model of
-$\widehat{\beta}_i^B$ on $\widehat{\beta}_i^A$ without an intercept.
+$\widehat{\beta}_j^B$ on $\widehat{\beta}_j^A$ without an intercept.
 $\mu_\alpha$ is set to the estimated slope coefficient, and
 $\textrm{SD}_\alpha$ is set to 2 times the absolute value of this
 estimated slope coefficient.
