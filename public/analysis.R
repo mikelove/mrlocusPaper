@@ -123,7 +123,7 @@ if (FALSE) {
   trait <- c(MRAS="CAD",PHACTR1="CAD",CETP="HDL",LIPC="HDL",SORT1="LDL")
 
   png(file="../supp/figs/realloci.png", width=1000, height=1000, res=120)
-  #png(file="../supp/figs/sort1.png", width=800, height=800, res=150)
+  #png(file="../supp/figs/sort1.png", width=1200, height=1200, res=200)
   par(mfrow=c(2,2), mar=c(5,5,2,1))
   for (tissue in names(genes)) {
     for (gene in genes[[tissue]]) {
