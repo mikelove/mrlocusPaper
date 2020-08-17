@@ -34,6 +34,25 @@ dat$max <- dat$estimate + q * dat$se
 dat$min[dat$method == "mrlocus"] <- mrlocus10
 dat$max[dat$method == "mrlocus"] <- mrlocus90
 
+if (FALSE) {
+  # add additional methods
+  est.lda <- unname(sapply(files, function(f)
+    scan(paste0("ldamregger/",f,".ldamregger"),quiet=TRUE)[1]))
+  est.pmr <- unname(sapply(files, function(f) {
+    load(paste0("pmr/",f,".pmr"));
+    if (is.null(res)) NA else res$causal_effect
+  }))
+  ests <- c(est.lda, est.pmr)
+  ests[is.na(ests)] <- 0
+  dat2 <- data.frame(rep=rep(1:20,2),
+                     true=rep(dat$true[dat$method=="causal"],2),
+                     method=rep(c("lda-mr-egger","pmr-sum-egger"),each=20),
+                     estimate=ests, se=rep(1,40),
+                     est_nozero=ests,
+                     min=ests, max=ests)
+  dat <- rbind(dat, dat2)
+}
+
 library(dplyr)
 tab <- dat %>% group_by(method) %>%
   summarize(
@@ -42,23 +61,27 @@ tab <- dat %>% group_by(method) %>%
     )
 tab
 mx <- max(abs(dat$true))
-data.tb <- tibble(x=-1.2*mx, y=1.2*mx, tb=list(tab))
+lex <- 1.2 # limits expansion
+data.tb <- tibble(x=-lex*mx, y=lex*mx, tb=list(tab))
 
 library(ggplot2)
 library(ggpmisc)
-cols <- unname(palette.colors(7))[-c(1,5)]
-#png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
-p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
+nl <-  nlevels(dat$method)
+cols <- unname(palette.colors( nl+2 ))[-c(1,5)]
+shps <- c(24,25,17,15,16, head(7:14,nl-5) )
+png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
+#png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=800, height=800)
+ggplot(dat, aes(true,estimate,color=method,shape=method)) +
   geom_point(size=2) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=cols) +
-  scale_shape_manual(values=c(24,25,17,15,16)) +
+  scale_shape_manual(values=shps) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-  xlim(-1.2*mx,1.2*mx) + ylim(-1.2*mx,1.2*mx) +
+  xlim(-lex*mx,lex*mx) + ylim(-lex*mx,lex*mx) +
   ggtitle(ttl)
-#dev.off()
+dev.off()
 
 ###
 
