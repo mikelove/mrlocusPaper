@@ -61,7 +61,7 @@ tab <- dat %>% group_by(method) %>%
     )
 tab
 mx <- max(abs(dat$true))
-lex <- 1.2 # limits expansion
+lex <- 1.75 # 1.2 # limits expansion
 data.tb <- tibble(x=-lex*mx, y=lex*mx, tb=list(tab))
 
 library(ggplot2)
@@ -69,9 +69,9 @@ library(ggpmisc)
 nl <-  nlevels(dat$method)
 cols <- unname(palette.colors( nl+2 ))[-c(1,5)]
 shps <- c(24,25,17,15,16, head(7:14,nl-5) )
-png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
-#png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=800, height=800)
-ggplot(dat, aes(true,estimate,color=method,shape=method)) +
+#png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
+#png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
+p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
   geom_point(size=2) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=cols) +
@@ -81,7 +81,7 @@ ggplot(dat, aes(true,estimate,color=method,shape=method)) +
              stat="fmt_tb") +
   xlim(-lex*mx,lex*mx) + ylim(-lex*mx,lex*mx) +
   ggtitle(ttl)
-dev.off()
+#dev.off()
 
 ###
 
