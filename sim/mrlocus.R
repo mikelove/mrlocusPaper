@@ -43,12 +43,6 @@ sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
 eqtl.true <- sapply(out1$sum_stat, function(x) if (any(x$eqtl.true != 0))
                                                  x$eqtl.true[x$eqtl.true != 0] else NA)
 
-if (any(sapply(out1$sum_stat, nrow) >= 100)) {
-  drop.idx <- which(sapply(out1$sum_stat, nrow) >= 100)
-  out1$sum_stat <- out1$sum_stat[-drop.idx]
-  out1$ld_mat <- out1$ld_mat[-drop.idx]
-}
-
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                              a="eqtl", b="gwas",
                              ref="a0", eff="a1",
