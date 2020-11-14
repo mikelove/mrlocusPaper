@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["final"]
+FORMATS = ["ecav"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -16,10 +16,10 @@ rule all:
 
 rule sample_genes:
     input:
-        "sims/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
+        "sims/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
     output:
-        list = "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
-        txt = "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
+        list = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
+        txt = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
     shell:
         "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
         "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
@@ -46,11 +46,11 @@ rule twas_sim_plink:
 
 rule sim:
     input:
-        "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
     output:
-        "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
+        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
     params:
-        path = "out/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+        path = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
     shell:
         """
         conda activate twas_sim
@@ -114,6 +114,26 @@ rule ptwas:
         fi
         """
 
+rule ptwas_low_spip:
+    input:
+        scan = "out/{locus}.scan.tsv",
+        dap = "out/{locus}.dap"
+    output:
+        "out/{locus}.ptwas_t0.1"
+    params:
+        path = "out/{locus}"
+    shell:
+        """
+        if [[ -s {input.dap} ]]
+        then
+          grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
+          Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
+          {ptwas} -d {params.path}.eqtl.gwas --cluster_info -t 0.1 > {output}
+        else
+          echo "0	0	0	0	0	0" > {output}
+        fi
+        """
+
 rule clump:
     input:
         "out/{locus}.scan.tsv"
@@ -128,7 +148,7 @@ rule clump:
         """
         Rscript -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{params.scan_p}", quote=FALSE, row.names=FALSE, sep="\\t")'
         {plink} --bfile {params.path} --clump {params.scan_p} --clump-snp-field snp \
-        --clump-p1 0.001 --clump-p2 1 --clump-r2 0.2 --clump-kb 500 \
+        --clump-p1 0.001 --clump-p2 1 --clump-r2 0.1 --clump-kb 500 \
         --clump-field eqtl.p --out {params.path} --silent
         """
 
@@ -144,6 +164,17 @@ rule twmr:
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
+
+rule ecaviar:
+    input:
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.ecav"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{input.ld} {output}' ecaviar.R"
 
 # rule ldamregger:
 #     input:

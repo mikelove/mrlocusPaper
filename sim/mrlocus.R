@@ -6,10 +6,10 @@ ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
 if (FALSE) {
-  dir <- file.path("out")
+  dir <- file.path("out/1")
   files <- list.files(dir, pattern="clumped")
-  file <- sub(".clumped","",files[1])
-  dir <- "out"
+  file <- sub(".clumped","",files[10])
+  dir <- "out/1"
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
@@ -30,18 +30,31 @@ ld_mat <- lapply(clumps, function(x) {
 })
 sapply(ld_mat, nrow)
 sum_stat <- lapply(clumps, function(x) {
-  z <- big_sum_stat[big_sum_stat$snp %in% x,]
-  z$abs.z <- abs(z$eqtl.beta/z$eqtl.se)
-  z
+  out <- big_sum_stat[big_sum_stat$snp %in% x,]
+  out$z <- out$eqtl.beta/out$eqtl.se
+  out$abs.z <- abs(out$z)
+  out$z2 <- out$gwas.beta/out$gwas.se # for testing ecaviar
+  out
 })
+
+# mrlocus
 
 devtools::load_all("../../mrlocus")
 
 sapply(sum_stat, function(x) any(x$eqtl.true != 0))
-out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE)
+out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE, snp_id="snp")
+# naive look to see if true eQTLs are still present
 sapply(out1$sum_stat, function(x) any(x$eqtl.true != 0))
-eqtl.true <- sapply(out1$sum_stat, function(x) if (any(x$eqtl.true != 0))
-                                                 x$eqtl.true[x$eqtl.true != 0] else NA)
+# taking into account collapsed SNPs, the true eQTL should survive
+sapply(seq_along(sum_stat), function(j) {
+  eqtl.true <- sum_stat[[j]]$eqtl.true != 0
+  if (any(eqtl.true)) {
+    eqtl.nms <- sum_stat[[j]]$snp[eqtl.true]
+    any(sapply(eqtl.nms, function(p) grepl(p, out1$sum_stat[[j]]$collapsed)))
+  } else {
+    FALSE
+  }
+})
 
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                              a="eqtl", b="gwas",
@@ -75,9 +88,9 @@ for (j in seq_along(nsnp)) {
                         open_progress=FALSE,
                         show_messages=FALSE,
                         refresh=-1)
-    ## rstan::stan_plot(fit$stan,
-    ##                  pars=c(paste0("beta_a[",1:nsnp[j],"]"),
-    ##                         paste0("beta_b[",1:nsnp[j],"]")))
+    rstan::stan_plot(fit$stan,
+                     pars=c(paste0("beta_a[",1:nsnp[j],"]"),
+                            paste0("beta_b[",1:nsnp[j],"]")))
     beta_hat_a[[j]] <- fit$beta_hat_a
     beta_hat_b[[j]] <- fit$beta_hat_b
   } else {
