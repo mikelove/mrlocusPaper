@@ -1,9 +1,8 @@
 shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
-# SIMS, = glob_wildcards("sims/{sim}.sim")
-SIMS = "1/1_10r_500nq_1pctm_0.1h2_0.01ve"
-FORMATS = ["mrlocus"]
+SIMS, = glob_wildcards("sims/{sim}.sim")
+FORMATS = ["final"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -211,9 +210,10 @@ rule collate:
         scan = "out/{locus}.scan.tsv",
 	twmr = "out/{locus}.twmr",
 	ptwas = "out/{locus}.ptwas",
+	ptwas2 = "out/{locus}.ptwas_t0.1",
 	mrlocus = "out/{locus}.mrlocus",
     output:
         "out/{locus}.final"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
-        "{input.ptwas} {input.mrlocus} {output}' collate.R"
+        "{input.ptwas} {input.ptwas2} {input.mrlocus} {output}' collate.R"

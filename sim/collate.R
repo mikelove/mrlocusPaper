@@ -3,8 +3,9 @@ cmd_args=commandArgs(TRUE)
 scan.filename <- cmd_args[1]
 twmr.filename <- cmd_args[2]
 ptwas.filename <- cmd_args[3]
-mrlocus.filename <- cmd_args[4]
-out.filename <- cmd_args[5]
+ptwas2.filename <- cmd_args[4]
+mrlocus.filename <- cmd_args[5]
+out.filename <- cmd_args[6]
 
 ivw.fixed.effects <- function(eqtl.beta, gwas.beta, eqtl.se, gwas.se) {
   res <- TwoSampleMR::mr_ivw_fe(eqtl.beta, gwas.beta, eqtl.se, gwas.se)
@@ -29,13 +30,18 @@ ptwas <- scan(ptwas.filename, what="char", sep="\n")
 ptwas <- ptwas[length(ptwas)]
 ptwas <- as.numeric(trimws(strsplit(ptwas, "\t")[[1]][5:6]))
 
+# ptwas at an alternative threshold
+ptwas2 <- scan(ptwas2.filename, what="char", sep="\n")
+ptwas2 <- ptwas2[length(ptwas2)]
+ptwas2 <- as.numeric(trimws(strsplit(ptwas2, "\t")[[1]][5:6]))
+
 mrlocus <- unname(as.matrix(read.table(mrlocus.filename, header=FALSE))[1,])
 
 out <- estimate(scan.filename)
 out <- t(out)
 
-dimn <- list(c("twmr","ptwas","mrlocus"), c("Estimate","Std. Error"))
+dimn <- list(c("twmr","ptwas","ptwas2","mrlocus"), c("Estimate","Std. Error"))
 out <- rbind(out,
-             matrix(c(twmr, ptwas, mrlocus),
+             matrix(c(twmr, ptwas, ptwas2, mrlocus),
                     byrow=TRUE, ncol=2, dimnames=dimn))
 write.table(format(out, digits=2), file=out.filename, quote=FALSE, sep="\t")

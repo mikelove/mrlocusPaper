@@ -8,7 +8,7 @@ out.filename <- cmd_args[4]
 if (FALSE) {
   dir <- file.path("out/1")
   files <- list.files(dir, pattern="clumped")
-  file <- sub(".clumped","",files[20])
+  file <- sub(".clumped","",files[11])
   dir <- "out/1"
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
