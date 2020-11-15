@@ -8,7 +8,7 @@ out.filename <- cmd_args[4]
 if (FALSE) {
   dir <- file.path("out/1")
   files <- list.files(dir, pattern="clumped")
-  file <- sub(".clumped","",files[10])
+  file <- sub(".clumped","",files[20])
   dir <- "out/1"
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
@@ -71,7 +71,7 @@ library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
 library(matrixStats)
-#options(mc.cores=3)
+options(mc.cores=4)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
 beta_hat_b <- list()
@@ -88,9 +88,9 @@ for (j in seq_along(nsnp)) {
                         open_progress=FALSE,
                         show_messages=FALSE,
                         refresh=-1)
-    rstan::stan_plot(fit$stan,
-                     pars=c(paste0("beta_a[",1:nsnp[j],"]"),
-                            paste0("beta_b[",1:nsnp[j],"]")))
+    ## rstan::stan_plot(fit$stan,
+    ##                  pars=c(paste0("beta_a[",1:nsnp[j],"]"),
+    ##                         paste0("beta_b[",1:nsnp[j],"]")))
     beta_hat_a[[j]] <- fit$beta_hat_a
     beta_hat_b[[j]] <- fit$beta_hat_b
   } else {
@@ -103,7 +103,12 @@ for (j in seq_along(nsnp)) {
 res <- list(beta_hat_a=beta_hat_a,
             beta_hat_b=beta_hat_b,
             sd_a=out2$se_a,
-            sd_b=out2$se_b)
+            sd_b=out2$se_b,
+            alleles=out2$alleles)
+
+# save the colocalization output
+save(res, file=sub("mrlocus","mrl_coloc",out.filename))
+
 res <- extractForSlope(res, plot=FALSE)
 res <- fitSlope(res, iter=10000)
 

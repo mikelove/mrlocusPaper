@@ -1,8 +1,9 @@
 shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
-SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["ecav"]
+# SIMS, = glob_wildcards("sims/{sim}.sim")
+SIMS = "1/1_10r_500nq_1pctm_0.1h2_0.01ve"
+FORMATS = ["mrlocus"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -97,38 +98,34 @@ rule ptwas:
         scan = "out/{locus}.scan.tsv",
         dap = "out/{locus}.dap"
     output:
-        "out/{locus}.ptwas"
-    params:
-        path = "out/{locus}"
+        eqtl2 = "out/{locus}.eqtl2",
+        eqtlgwas = "out/{locus}.eqtl.gwas",
+        ptwas = "out/{locus}.ptwas"
     benchmark:
         "bench/{locus}_ptwas.bench"
     shell:
         """
         if [[ -s {input.dap} ]]
         then
-          grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
-          Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
-          {ptwas} -d {params.path}.eqtl.gwas --cluster_info > {output}
+          grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {output.eqtl2}
+          Rscript -e 'x <- read.table("{output.eqtl2}"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{output.eqtlgwas}", quote=FALSE, col.names=FALSE, row.names=FALSE)'
+          {ptwas} -d {output.eqtlgwas} --cluster_info > {output.ptwas}
         else
-          echo "0	0	0	0	0	0" > {output}
+          echo "0	0	0	0	0	0" > {output.ptwas}
         fi
         """
 
 rule ptwas_low_spip:
     input:
-        scan = "out/{locus}.scan.tsv",
-        dap = "out/{locus}.dap"
+        dap = "out/{locus}.dap",
+        eqtlgwas = "out/{locus}.eqtl.gwas"        
     output:
         "out/{locus}.ptwas_t0.1"
-    params:
-        path = "out/{locus}"
     shell:
         """
         if [[ -s {input.dap} ]]
         then
-          grep '((' {input.dap} | awk '{{ if ($5 != -1) print $2,$5,$3,$6,$7}}' | sort -nk2 > {params.path}.eqtl2
-          Rscript -e 'x <- read.table("{params.path}.eqtl2"); y <- read.delim("{input.scan}"); write.table(cbind(x, y[match(x$V1,y$snp),c("gwas.beta","gwas.se")]), file="{params.path}.eqtl.gwas", quote=FALSE, col.names=FALSE, row.names=FALSE)'
-          {ptwas} -d {params.path}.eqtl.gwas --cluster_info -t 0.1 > {output}
+          {ptwas} -d {input.eqtlgwas} --cluster_info -t 0.1 > {output}
         else
           echo "0	0	0	0	0	0" > {output}
         fi
