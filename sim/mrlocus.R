@@ -8,7 +8,7 @@ out.filename <- cmd_args[4]
 if (FALSE) {
   dir <- file.path("out/1")
   files <- list.files(dir, pattern="clumped")
-  file <- sub(".clumped","",files[11])
+  file <- sub(".clumped","",files[1])
   dir <- "out/1"
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
@@ -36,6 +36,14 @@ sum_stat <- lapply(clumps, function(x) {
   out$z2 <- out$gwas.beta/out$gwas.se # for testing ecaviar
   out
 })
+
+ld.idx <- sapply(sum_stat, function(x) x$snp[which.max(x$abs.z)])
+ld.idx <- match(ld.idx, big_sum_stat$snp)
+r2 <- big_ld_mat[ld.idx, ld.idx]^2
+r2.lower <- r2[lower.tri(r2)]
+
+# write out pairwise r2 of index eSNPs
+write(r2.lower, file=sub("mrlocus","mrl_r2",out.filename), ncolumns=length(r2.lower))
 
 # mrlocus
 

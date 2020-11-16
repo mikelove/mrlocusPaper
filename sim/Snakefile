@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["scan.tsv"]
+FORMATS = ["mrlocus","mrlocus_p1e-4"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -76,7 +76,7 @@ rule ld:
 
 rule dap:
     input:
-        scan = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
+        scan = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv",
         ld = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.ld"
     output:
         "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.dap"
@@ -134,18 +134,37 @@ rule clump:
     input:
         "out/{locus}.scan.tsv"
     output:
-        "out/{locus}.clumped"
+        clumped = "out/{locus}.clumped",
+        scan_p = "out/{locus}.scan.p.tsv"
     params:
         path = "out/{locus}",
-        scan_p = "out/{locus}.scan.p.tsv"
     benchmark:
         "bench/{locus}_clump.bench"
     shell:
         """
-        Rscript -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{params.scan_p}", quote=FALSE, row.names=FALSE, sep="\\t")'
-        {plink} --bfile {params.path} --clump {params.scan_p} --clump-snp-field snp \
+        Rscript -e 'y <- read.delim("{input}"); y$eqtl.p <- 2*pnorm(abs(y$eqtl.beta/y$eqtl.se),lower.tail=FALSE); write.table(y, file="{output.scan_p}", quote=FALSE, row.names=FALSE, sep="\\t")'
+        {plink} --bfile {params.path} --clump {output.scan_p} --clump-snp-field snp \
         --clump-p1 0.001 --clump-p2 1 --clump-r2 0.1 --clump-kb 500 \
         --clump-field eqtl.p --out {params.path} --silent
+        """
+
+rule clump_low_p:
+    input:
+        clumped = "out/{locus}.clumped",
+        scan_p = "out/{locus}.scan.p.tsv"
+    output:
+        "out/{locus}_p1e-4.clumped"
+    params:
+        path = "out/{locus}",
+    shell:
+        """
+        cat {input.clumped} | tr -s ' ' | cut -d ' ' -f6 | head -n -2 | tail -n +2 | awk '$1 < .0001' > {params.path}_p1e-4
+        if [[ -s {params.path}_p1e-4 ]]
+        then
+          {plink} --bfile {params.path} --clump {input.scan_p} --clump-snp-field snp --clump-p1 0.0001 --clump-p2 1 --clump-r2 0.1 --clump-kb 500 --clump-field eqtl.p --out {params.path}_p1e-4 --silent
+        else
+          touch {params.path}_p1e-4.clumped
+        fi
         """
 
 rule twmr:
@@ -160,6 +179,23 @@ rule twmr:
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
+
+rule twmr_low_p:
+    input:
+        clump = "out/{locus}_p1e-4.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.twmr_p1e-4"
+    shell:
+        """
+        if [[ -s {input.clump} ]]
+        then
+          R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' twmr.R
+        else
+          touch {output}
+        fi
+        """
 
 rule ecaviar:
     input:
@@ -204,6 +240,23 @@ rule mrlocus:
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' mrlocus.R"
+
+rule mrlocus_low_p:
+    input:
+        clump = "out/{locus}_p1e-4.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.mrlocus_p1e-4"
+    shell:
+        """
+        if [[ -s {input.clump} ]]
+        then
+          R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' mrlocus.R
+        else
+          touch {output}
+        fi
+        """
 
 rule collate:
     input:
