@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["final"]
+FORMATS = ["scan.tsv"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -76,19 +76,19 @@ rule ld:
 
 rule dap:
     input:
-        scan = "out/{locus}.scan.tsv",
-        ld = "out/{locus}.ld"
+        scan = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
+        ld = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.ld"
     output:
-        "out/{locus}.dap"
+        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.dap"
     params:
-        path = "out/{locus}"
+        path = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
     benchmark:
-        "bench/{locus}_dap.bench"
+        "bench/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve_dap.bench"
     shell:
         """
         tail -n +2 {input.scan} | awk '{{ print $2,$11,$12 }}' > {params.path}.eqtl
         {dap} -d_est {params.path}.eqtl -d_ld {input.ld} \
-        -d_n 500 -d_syy 500 --output_all \
+        -d_n {wildcards.nqtl} -d_syy {wildcards.nqtl} --output_all \
         -o {output} -l {params.path}.dap.log || true
         """
 

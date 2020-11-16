@@ -1,16 +1,16 @@
 i <- 1
   
-files <- sub(".final","",list.files("out", pattern="final"))
+files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
 files
 final <- list()
 for (k in seq_along(files)) {
-  final[[k]] <- read.table(paste0("out/",files[k],".final"),skip=1)
+  final[[k]] <- read.table(paste0("out/",i,"/",files[k],".final"),skip=1)
 }
 
 mrlocus <- list()
 for (k in seq_along(files)) {
-  mrlocus[[k]] <- read.table(paste0("out/",files[k],".mrlocus"))
+  mrlocus[[k]] <- read.table(paste0("out/",i,"/",files[k],".mrlocus"))
 }
 mrlocus10 <- sapply(mrlocus, function(x) x[2,1])
 mrlocus90 <- sapply(mrlocus, function(x) x[2,2])
@@ -20,13 +20,13 @@ ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
 ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.")
 ttl
 
-idx <- c(3,5,6:8)
-dat <- data.frame(rep=rep(1:20,each=5),
-                  true=rep(sapply(final, function(x) x[1,2]), each=5),
-                  method=rep(c("causal","all","twmr","ptwas","mrlocus"),times=20),
+idx <- c(3,5,6:9)
+dat <- data.frame(rep=rep(1:20, each=6),
+                  true=rep(sapply(final, function(x) x[1,2]), each=6),
+                  method=rep(c("causal","all","twmr","ptwas","ptwas_t0.1","mrlocus"),times=20),
                   estimate=as.vector(sapply(final, function(x) x$V2[idx])),
                   se=as.vector(sapply(final, function(x) x$V3[idx])))
-dat$method <- factor(dat$method, c("causal","all","twmr","ptwas","mrlocus"))
+dat$method <- factor(dat$method, c("causal","all","twmr","ptwas","ptwas_t0.1","mrlocus"))
 dat$est_nozero <- ifelse(dat$est == 0, NA, dat$est)
 q <- qnorm(.9)
 dat$min <- dat$estimate - q * dat$se
@@ -67,8 +67,9 @@ data.tb <- tibble(x=-lex*mx, y=lex*mx, tb=list(tab))
 library(ggplot2)
 library(ggpmisc)
 nl <-  nlevels(dat$method)
-cols <- unname(palette.colors( nl+2 ))[-c(1,5)]
-shps <- c(24,25,17,15,16, head(7:14,nl-5) )
+cols <- unname(palette.colors( nl+1 ))[-c(1,5)]
+cols <- cols[c(1:4,4,5:length(cols))]
+shps <- c(24,25,17,15,7,16,8:14)
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
 p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
@@ -81,6 +82,7 @@ p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
              stat="fmt_tb") +
   xlim(-lex*mx,lex*mx) + ylim(-lex*mx,lex*mx) +
   ggtitle(ttl)
+p1
 #dev.off()
 
 ###
