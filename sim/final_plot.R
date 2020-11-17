@@ -15,24 +15,41 @@ for (k in seq_along(files)) {
 mrlocus10 <- sapply(mrlocus, function(x) x[2,1])
 mrlocus90 <- sapply(mrlocus, function(x) x[2,2])
 
+# alternative threshold
+mrlocus2 <- list()
+for (k in seq_along(files)) {
+  mrl.file <- paste0("out/",i,"/",files[k],".mrlocus_p1e-4")
+  if (file.info(mrl.file)$size > 0) {
+    mrlocus2[[k]] <- read.table(mrl.file)
+  } else {
+    mrlocus2[[k]] <- matrix(c(0,0,0,0),ncol=2)
+  }
+}
+mrlocus2.10 <- sapply(mrlocus2, function(x) x[2,1])
+mrlocus2.90 <- sapply(mrlocus2, function(x) x[2,2])
+
 h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1]))
 ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
 ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.")
 ttl
 
-idx <- c(3,5,6:9)
-dat <- data.frame(rep=rep(1:20, each=6),
-                  true=rep(sapply(final, function(x) x[1,2]), each=6),
-                  method=rep(c("causal","all","twmr","ptwas","ptwas_t0.1","mrlocus"),times=20),
+idx <- c(3,5,6:nrow(final[[1]]))
+meths <- c("causal","all","twmr","twmr_p1e-4","ptwas","ptwas_t0.1","mrlocus","mrlocus_p1e-4")
+dat <- data.frame(rep=rep(1:20, each=length(idx)),
+                  true=rep(sapply(final, function(x) x[1,2]), each=length(idx)),
+                  method=rep(meths,times=20),
                   estimate=as.vector(sapply(final, function(x) x$V2[idx])),
                   se=as.vector(sapply(final, function(x) x$V3[idx])))
-dat$method <- factor(dat$method, c("causal","all","twmr","ptwas","ptwas_t0.1","mrlocus"))
+dat$method <- factor(dat$method, meths)
 dat$est_nozero <- ifelse(dat$est == 0, NA, dat$est)
 q <- qnorm(.9)
 dat$min <- dat$estimate - q * dat$se
 dat$max <- dat$estimate + q * dat$se
 dat$min[dat$method == "mrlocus"] <- mrlocus10
 dat$max[dat$method == "mrlocus"] <- mrlocus90
+dat$min[dat$method == "mrlocus_p1e-4"] <- mrlocus2.10
+dat$max[dat$method == "mrlocus_p1e-4"] <- mrlocus2.90
+
 
 if (FALSE) {
   # add additional methods

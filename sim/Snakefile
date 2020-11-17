@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["mrlocus","mrlocus_p1e-4"]
+FORMATS = ["final"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"

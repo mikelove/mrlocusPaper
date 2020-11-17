@@ -29,7 +29,11 @@ estimate <- function(filename) {
 twmr <- as.numeric(unname(read.table(twmr.filename, header=TRUE)[1,2:3]))
 
 # twmr at an alternative threshold
-twmr2 <- as.numeric(unname(read.table(twmr2.filename, header=TRUE)[1,2:3]))
+if (file.info(twmr2.filename)$size > 0) {
+  twmr2 <- as.numeric(unname(read.table(twmr2.filename, header=TRUE)[1,2:3]))
+} else {
+  twmr2 <- c(0,0)
+}
 
 ptwas <- scan(ptwas.filename, what="char", sep="\n")
 ptwas <- ptwas[length(ptwas)]
@@ -43,7 +47,11 @@ ptwas2 <- as.numeric(trimws(strsplit(ptwas2, "\t")[[1]][5:6]))
 mrlocus <- unname(as.matrix(read.table(mrlocus.filename, header=FALSE))[1,])
 
 # mrlocus at an alternative threshold
-mrlocus2 <- unname(as.matrix(read.table(mrlocus2.filename, header=FALSE))[1,])
+if (file.info(mrlocus2.filename)$size > 0) {
+  mrlocus2 <- unname(as.matrix(read.table(mrlocus2.filename, header=FALSE))[1,])
+} else {
+  mrlocus2 <- c(0,0)
+}
 
 out <- estimate(scan.filename)
 out <- t(out)
