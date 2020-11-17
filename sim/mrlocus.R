@@ -7,7 +7,7 @@ out.filename <- cmd_args[4]
 
 if (FALSE) {
   dir <- file.path("out/1")
-  files <- list.files(dir, pattern="clumped")
+  files <- list.files(dir, pattern="ve.clumped")
   file <- sub(".clumped","",files[1])
   dir <- "out/1"
   clumped.filename <- paste0(dir,"/",file,".clumped")
