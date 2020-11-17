@@ -1,4 +1,4 @@
-i <- "high_n"
+i <- "1"
   
 files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
@@ -120,6 +120,7 @@ p2 <- ggplot(dat, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) + 
   xlim(-1.2*mx,1.2*mx) + ylim(-1.2*mx,1.2*mx) +
   ggtitle(ttl)
+p2
 #dev.off()
 
 library(patchwork)

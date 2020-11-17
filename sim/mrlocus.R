@@ -9,7 +9,7 @@ if (FALSE) {
   i <- "1"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[14])
+  file <- sub(".clumped","",files[18])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
@@ -41,31 +41,33 @@ sum_stat <- lapply(clumps, function(x) {
 ld.idx <- sapply(sum_stat, function(x) x$snp[which.max(x$abs.z)])
 ld.idx <- match(ld.idx, big_sum_stat$snp)
 r2 <- big_ld_mat[ld.idx, ld.idx]^2
-diag(r2) <- 0 # useful for logic below
 
 # find clumps that have pairwise correlation with other clumps above a threshold
 r2.threshold <- 0.01
 trim.clumps <- c()
 nclumps <- length(sum_stat)
-if (nclumps > 1 & any(r2 > r2.threshold)) {
-  for (j in nclumps:2) {
-    if (any( (r2[j,] > r2.threshold)[!1:nclumps %in% trim.clumps] )) {
-      trim.clumps <- c(trim.clumps, j)
+if (nclumps > 1) {
+  diag(r2) <- 0 # useful for logic below
+  if (nclumps > 1 & any(r2 > r2.threshold)) {
+    for (j in nclumps:2) {
+      if (any( (r2[j,] > r2.threshold)[!1:nclumps %in% trim.clumps] )) {
+        trim.clumps <- c(trim.clumps, j)
+      }
     }
   }
-}
-trim.clumps <- rev(trim.clumps)
+  trim.clumps <- rev(trim.clumps)
 
-if (length(trim.clumps) > 0) {
-  r2.out <- r2[-trim.clumps,-trim.clumps]
-} else {
-  r2.out <- r2
-}
-r2.lower <- r2.out[lower.tri(r2.out)]
-
-# write out pairwise r2 of index eSNPs that remain
-if (length(sum_stat) > 1 & length(trim.clumps) < nclumps-1) {
-  write(r2.lower, file=sub("mrlocus","mrl_r2",out.filename), ncolumns=length(r2.lower))
+  # write out pairwise r2 of index eSNPs that remain
+  if (length(trim.clumps) > 0) {
+    r2.out <- r2[-trim.clumps,-trim.clumps]
+  } else {
+    r2.out <- r2
+  }
+  r2.lower <- r2.out[lower.tri(r2.out)]
+  if (length(trim.clumps) < nclumps-1) {
+    write(r2.lower, file=sub("mrlocus","mrl_r2",out.filename), ncolumns=length(r2.lower))
+  }
+  
 }
 
 # write out the clumps to keep
