@@ -5,10 +5,6 @@ scan.filename <- cmd_args[2]
 ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
-clumped.filename <- "out/1/1_2r_500nq_1pctm_0.1h2_0.01ve_p1e-4.clumped"
-scan.filename <- "out/1/1_2r_500nq_1pctm_0.1h2_0.01ve.scan.tsv"
-ld.filename <- "out/1/1_2r_500nq_1pctm_0.1h2_0.01ve.ld"
-
 if (FALSE) {
   dir <- file.path("out/1")
   files <- list.files(dir, pattern="clumped")

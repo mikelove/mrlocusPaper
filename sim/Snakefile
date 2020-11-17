@@ -262,11 +262,13 @@ rule collate:
     input:
         scan = "out/{locus}.scan.tsv",
 	twmr = "out/{locus}.twmr",
+	twmr2 = "out/{locus}.twmr_p1e-4",
 	ptwas = "out/{locus}.ptwas",
 	ptwas2 = "out/{locus}.ptwas_t0.1",
 	mrlocus = "out/{locus}.mrlocus",
+	mrlocus2 = "out/{locus}.mrlocus_p1e-4"
     output:
         "out/{locus}.final"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
-        "{input.ptwas} {input.ptwas2} {input.mrlocus} {output}' collate.R"
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} {input.twmr2} " 
+        "{input.ptwas} {input.ptwas2} {input.mrlocus} {input.mrlocus2} {output}' collate.R"

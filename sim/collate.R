@@ -2,10 +2,12 @@ cmd_args=commandArgs(TRUE)
 
 scan.filename <- cmd_args[1]
 twmr.filename <- cmd_args[2]
-ptwas.filename <- cmd_args[3]
-ptwas2.filename <- cmd_args[4]
-mrlocus.filename <- cmd_args[5]
-out.filename <- cmd_args[6]
+twmr2.filename <- cmd_args[3]
+ptwas.filename <- cmd_args[4]
+ptwas2.filename <- cmd_args[5]
+mrlocus.filename <- cmd_args[6]
+mrlocus2.filename <- cmd_args[7]
+out.filename <- cmd_args[8]
 
 ivw.fixed.effects <- function(eqtl.beta, gwas.beta, eqtl.se, gwas.se) {
   res <- TwoSampleMR::mr_ivw_fe(eqtl.beta, gwas.beta, eqtl.se, gwas.se)
@@ -26,6 +28,9 @@ estimate <- function(filename) {
 
 twmr <- as.numeric(unname(read.table(twmr.filename, header=TRUE)[1,2:3]))
 
+# twmr at an alternative threshold
+twmr2 <- as.numeric(unname(read.table(twmr2.filename, header=TRUE)[1,2:3]))
+
 ptwas <- scan(ptwas.filename, what="char", sep="\n")
 ptwas <- ptwas[length(ptwas)]
 ptwas <- as.numeric(trimws(strsplit(ptwas, "\t")[[1]][5:6]))
@@ -37,11 +42,14 @@ ptwas2 <- as.numeric(trimws(strsplit(ptwas2, "\t")[[1]][5:6]))
 
 mrlocus <- unname(as.matrix(read.table(mrlocus.filename, header=FALSE))[1,])
 
+# mrlocus at an alternative threshold
+mrlocus2 <- unname(as.matrix(read.table(mrlocus2.filename, header=FALSE))[1,])
+
 out <- estimate(scan.filename)
 out <- t(out)
 
-dimn <- list(c("twmr","ptwas","ptwas2","mrlocus"), c("Estimate","Std. Error"))
+dimn <- list(c("twmr","twmr2","ptwas","ptwas2","mrlocus","mrlocus2"), c("Estimate","Std. Error"))
 out <- rbind(out,
-             matrix(c(twmr, ptwas, ptwas2, mrlocus),
+             matrix(c(twmr, twmr2, ptwas, ptwas2, mrlocus, mrlocus2),
                     byrow=TRUE, ncol=2, dimnames=dimn))
 write.table(format(out, digits=2), file=out.filename, quote=FALSE, sep="\t")
