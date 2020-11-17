@@ -128,23 +128,6 @@ if ("stanfit" %in% res) {
   summary(res$stanfit, pars="alpha", probs=c(.1,.9))$summary
 }
 
-if (FALSE) {
-  coefs <- rstan::extract(res$stanfit)
-  x <- res$beta_hat_a
-  y <- res$beta_hat_b
-  sd_x <- res$sd_a
-  sd_y <- res$sd_b
-  plot(x,y,pch=19,
-       xlim=c(0,1.2*max(x)),
-       ylim=c(-1.2*max(abs(y)),1.2*max(abs(y))))
-  arrows(x-sd_x,y,x+sd_x,y,angle=90,length=.05,code=3)
-  arrows(x,y-sd_y,x,y+sd_y,angle=90,length=.05,code=3)
-  abline(v=0, h=0, lty=2)
-  abline(0, mean(coefs$alpha), lwd=2)
-  abline(mean(coefs$sigma), mean(coefs$alpha), col="blue")
-  abline(-mean(coefs$sigma), mean(coefs$alpha), col="blue")
-}
-
 if ("stanfit" %in% names(res)) {
   s <- summary(res$stanfit, pars="alpha", probs=c(.025,.05,.1,.9,.95,.975))$summary
   mrlocus.out <- matrix(s[,c("mean","sd","10%","90%","5%","95%","2.5%","97.5%")],

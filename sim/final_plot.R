@@ -1,4 +1,4 @@
-i <- 1
+i <- "high_n"
   
 files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
@@ -83,10 +83,9 @@ data.tb <- tibble(x=-lex*mx, y=lex*mx, tb=list(tab))
 
 library(ggplot2)
 library(ggpmisc)
-nl <-  nlevels(dat$method)
-cols <- unname(palette.colors( nl+1 ))[-c(1,5)]
-cols <- cols[c(1:4,4,5:length(cols))]
-shps <- c(24,25,17,15,7,16,8:14)
+cols <- unname(palette.colors())[-c(1,5)]
+cols <- cols[c(1:3,3,4,4,5,5)]
+shps <- c(24,25,17,18,15,7,16,13)
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
 p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
