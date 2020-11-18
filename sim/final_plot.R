@@ -35,9 +35,10 @@ ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
 meths <- c("causal","all","twmr","twmr_p1e-4","ptwas","ptwas_t0.1","mrlocus","mrlocus_p1e-4")
-dat <- data.frame(rep=rep(1:20, each=length(idx)),
+nsim <- 30
+dat <- data.frame(rep=rep(1:nsim, each=length(idx)),
                   true=rep(sapply(final, function(x) x[1,2]), each=length(idx)),
-                  method=rep(meths,times=20),
+                  method=rep(meths,times=nsim),
                   estimate=as.vector(sapply(final, function(x) x$V2[idx])),
                   se=as.vector(sapply(final, function(x) x$V3[idx])))
 dat$method <- factor(dat$method, meths)
@@ -61,10 +62,10 @@ if (FALSE) {
   }))
   ests <- c(est.lda, est.pmr)
   ests[is.na(ests)] <- 0
-  dat2 <- data.frame(rep=rep(1:20,2),
+  dat2 <- data.frame(rep=rep(1:nsim,2),
                      true=rep(dat$true[dat$method=="causal"],2),
-                     method=rep(c("lda-mr-egger","pmr-sum-egger"),each=20),
-                     estimate=ests, se=rep(1,40),
+                     method=rep(c("lda-mr-egger","pmr-sum-egger"),each=nsim),
+                     estimate=ests, se=rep(1,2*nsim),
                      est_nozero=ests,
                      min=ests, max=ests)
   dat <- rbind(dat, dat2)
@@ -105,8 +106,14 @@ p1
 
 dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
 
+if (FALSE) {
+  mrl_cover <- dat %>% filter(method=="mrlocus") %>% pull(contain)
+  num_instr <- unname(sapply(files, function(f) length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))))
+  addmargins(table(mrl_cover, num_instr), 1)
+}
+
 tab <- dat %>% group_by(method) %>%
-  summarize(cov=paste0("cov: ",100*mean(contain),"%"))
+  summarize(cov=paste0("cov: ",100*round(mean(contain),3),"%"))
 tab
 mx <- max(abs(dat$true))
 tab$x <- "left"
