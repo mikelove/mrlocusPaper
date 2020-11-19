@@ -28,13 +28,22 @@ for (k in seq_along(files)) {
 mrlocus2.10 <- sapply(mrlocus2, function(x) x[2,1])
 mrlocus2.90 <- sapply(mrlocus2, function(x) x[2,2])
 
+# ecaviar-mrlocus
+ecav.mrlocus <- list()
+for (k in seq_along(files)) {
+  ecav.mrlocus[[k]] <- read.table(paste0("out/",i,"/",files[k],".ecav-mrlocus"))
+}
+ecav.mrlocus10 <- sapply(ecav.mrlocus, function(x) x[2,1])
+ecav.mrlocus90 <- sapply(ecav.mrlocus, function(x) x[2,2])
+
+
 h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1]))
 ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
 ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.")
 ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
-meths <- c("causal","all","twmr","twmr_p1e-4","ptwas","ptwas_t0.1","mrlocus","mrlocus_p1e-4")
+meths <- c("causal","all","twmr","twmr_p1e-4","ptwas","ptwas_t0.1","mrlocus","mrlocus_p1e-4","ecaviar-mrlocus")
 nsim <- 30
 dat <- data.frame(rep=rep(1:nsim, each=length(idx)),
                   true=rep(sapply(final, function(x) x[1,2]), each=length(idx)),
@@ -50,7 +59,8 @@ dat$min[dat$method == "mrlocus"] <- mrlocus10
 dat$max[dat$method == "mrlocus"] <- mrlocus90
 dat$min[dat$method == "mrlocus_p1e-4"] <- mrlocus2.10
 dat$max[dat$method == "mrlocus_p1e-4"] <- mrlocus2.90
-
+dat$min[dat$method == "ecaviar-mrlocus"] <- ecav.mrlocus10
+dat$max[dat$method == "ecaviar-mrlocus"] <- ecav.mrlocus90
 
 if (FALSE) {
   # add additional methods
@@ -71,8 +81,13 @@ if (FALSE) {
   dat <- rbind(dat, dat2)
 }
 
+# check number of instruments
+num_instr <- unname(sapply(files, function(f) length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))))
+table(num_instr)
+dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
+
 library(dplyr)
-tab <- dat %>% group_by(method) %>%
+tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
   summarize(
     RMAE=mean(abs(est_nozero-true)/abs(true),na.rm=TRUE),
     MAE=mean(abs(est_nozero-true),na.rm=TRUE)
@@ -108,11 +123,10 @@ dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
 
 if (FALSE) {
   mrl_cover <- dat %>% filter(method=="mrlocus") %>% pull(contain)
-  num_instr <- unname(sapply(files, function(f) length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))))
   addmargins(table(mrl_cover, num_instr), 1)
 }
 
-tab <- dat %>% group_by(method) %>%
+tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
   summarize(cov=paste0("cov: ",100*round(mean(contain),3),"%"))
 tab
 mx <- max(abs(dat$true))

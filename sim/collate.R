@@ -7,7 +7,8 @@ ptwas.filename <- cmd_args[4]
 ptwas2.filename <- cmd_args[5]
 mrlocus.filename <- cmd_args[6]
 mrlocus2.filename <- cmd_args[7]
-out.filename <- cmd_args[8]
+ecav.mrlocus.filename <- cmd_args[8]
+out.filename <- cmd_args[9]
 
 ivw.fixed.effects <- function(eqtl.beta, gwas.beta, eqtl.se, gwas.se) {
   res <- TwoSampleMR::mr_ivw_fe(eqtl.beta, gwas.beta, eqtl.se, gwas.se)
@@ -53,11 +54,14 @@ if (file.info(mrlocus2.filename)$size > 0) {
   mrlocus2 <- c(0,0)
 }
 
+ecav.mrlocus <- unname(as.matrix(read.table(ecav.mrlocus.filename, header=FALSE))[1,])
+
 out <- estimate(scan.filename)
 out <- t(out)
 
-dimn <- list(c("twmr","twmr2","ptwas","ptwas2","mrlocus","mrlocus2"), c("Estimate","Std. Error"))
+dimn <- list(c("twmr","twmr2","ptwas","ptwas2","mrlocus","mrlocus2","ecav-mrlocus"),
+             c("Estimate","Std. Error"))
 out <- rbind(out,
-             matrix(c(twmr, twmr2, ptwas, ptwas2, mrlocus, mrlocus2),
+             matrix(c(twmr, twmr2, ptwas, ptwas2, mrlocus, mrlocus2, ecav.mrlocus),
                     byrow=TRUE, ncol=2, dimnames=dimn))
 write.table(format(out, digits=2), file=out.filename, quote=FALSE, sep="\t")
