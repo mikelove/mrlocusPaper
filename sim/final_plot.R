@@ -44,7 +44,7 @@ ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
 meths <- c("causal","all","twmr","twmr_p1e-4","ptwas","ptwas_t0.1","mrlocus","mrlocus_p1e-4","ecaviar-mrlocus")
-nsim <- 30
+nsim <- length(files)
 dat <- data.frame(rep=rep(1:nsim, each=length(idx)),
                   true=rep(sapply(final, function(x) x[1,2]), each=length(idx)),
                   method=rep(meths,times=nsim),
@@ -82,7 +82,9 @@ if (FALSE) {
 }
 
 # check number of instruments
-num_instr <- unname(sapply(files, function(f) length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))))
+num_instr <- unname(sapply(files, function(f) {
+  length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))
+}))
 table(num_instr)
 dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
 
@@ -100,8 +102,8 @@ data.tb <- tibble(x=-lex*mx, y=lex*mx, tb=list(tab))
 library(ggplot2)
 library(ggpmisc)
 cols <- unname(palette.colors())[-c(1,5)]
-cols <- cols[c(1:3,3,4,4,5,5)]
-shps <- c(24,25,17,18,15,7,16,13)
+cols <- cols[c(1:3,3,4,4,5,5,5)]
+shps <- c(24,25,17,18,15,7,16,13,10)
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
 p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
@@ -127,7 +129,7 @@ if (FALSE) {
 }
 
 tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
-  summarize(cov=paste0("cov: ",100*round(mean(contain),3),"%"))
+  summarize(cov=paste0("cov: ",100*round(mean(contain),2),"%"))
 tab
 mx <- max(abs(dat$true))
 tab$x <- "left"
