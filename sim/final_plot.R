@@ -1,4 +1,4 @@
-i <- "1"
+i <- "high_n"
   
 files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)

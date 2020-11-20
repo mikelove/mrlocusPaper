@@ -7,10 +7,10 @@ ecav.filename <- cmd_args[4]
 out.filename <- cmd_args[5]
 
 if (FALSE) {
-  i <- "1"
+  i <- "high_n"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[19])
+  file <- sub(".clumped","",files[24])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   keep.filename <- paste0(dir,"/",file,".mrl_keep")

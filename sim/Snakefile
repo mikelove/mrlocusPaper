@@ -114,21 +114,21 @@ rule ptwas:
         fi
         """
 
-rule ptwas_low_spip:
-    input:
-        dap = "out/{locus}.dap",
-        eqtlgwas = "out/{locus}.eqtl.gwas"        
-    output:
-        "out/{locus}.ptwas_t0.1"
-    shell:
-        """
-        if [[ -s {input.dap} ]]
-        then
-          {ptwas} -d {input.eqtlgwas} --cluster_info -t 0.1 > {output}
-        else
-          echo "0	0	0	0	0	0" > {output}
-        fi
-        """
+# rule ptwas_low_spip:
+#     input:
+#         dap = "out/{locus}.dap",
+#         eqtlgwas = "out/{locus}.eqtl.gwas"        
+#     output:
+#         "out/{locus}.ptwas_t0.1"
+#     shell:
+#         """
+#         if [[ -s {input.dap} ]]
+#         then
+#           {ptwas} -d {input.eqtlgwas} --cluster_info -t 0.1 > {output}
+#         else
+#           echo "0	0	0	0	0	0" > {output}
+#         fi
+#         """
 
 rule clump:
     input:
@@ -148,24 +148,24 @@ rule clump:
         --clump-field eqtl.p --out {params.path} --silent
         """
 
-rule clump_low_p:
-    input:
-        clumped = "out/{locus}.clumped",
-        scan_p = "out/{locus}.scan.p.tsv"
-    output:
-        "out/{locus}_p1e-4.clumped"
-    params:
-        path = "out/{locus}",
-    shell:
-        """
-        cat {input.clumped} | tr -s ' ' | cut -d ' ' -f6 | head -n -2 | tail -n +2 | awk '$1 < .0001' > {params.path}_p1e-4
-        if [[ -s {params.path}_p1e-4 ]]
-        then
-          {plink} --bfile {params.path} --clump {input.scan_p} --clump-snp-field snp --clump-p1 0.0001 --clump-p2 1 --clump-r2 0.1 --clump-kb 500 --clump-field eqtl.p --out {params.path}_p1e-4 --silent
-        else
-          touch {params.path}_p1e-4.clumped
-        fi
-        """
+# rule clump_low_p:
+#     input:
+#         clumped = "out/{locus}.clumped",
+#         scan_p = "out/{locus}.scan.p.tsv"
+#     output:
+#         "out/{locus}_p1e-4.clumped"
+#     params:
+#         path = "out/{locus}",
+#     shell:
+#         """
+#         cat {input.clumped} | tr -s ' ' | cut -d ' ' -f6 | head -n -2 | tail -n +2 | awk '$1 < .0001' > {params.path}_p1e-4
+#         if [[ -s {params.path}_p1e-4 ]]
+#         then
+#           {plink} --bfile {params.path} --clump {input.scan_p} --clump-snp-field snp --clump-p1 0.0001 --clump-p2 1 --clump-r2 0.1 --clump-kb 500 --clump-field eqtl.p --out {params.path}_p1e-4 --silent
+#         else
+#           touch {params.path}_p1e-4.clumped
+#         fi
+#         """
 
 rule twmr:
     input:
@@ -180,22 +180,22 @@ rule twmr:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
 
-rule twmr_low_p:
-    input:
-        clump = "out/{locus}_p1e-4.clumped",
-        scan = "out/{locus}.scan.tsv",
-        ld = "out/{locus}.ld"
-    output:
-        "out/{locus}.twmr_p1e-4"
-    shell:
-        """
-        if [[ -s {input.clump} ]]
-        then
-          R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' twmr.R
-        else
-          touch {output}
-        fi
-        """
+# rule twmr_low_p:
+#     input:
+#         clump = "out/{locus}_p1e-4.clumped",
+#         scan = "out/{locus}.scan.tsv",
+#         ld = "out/{locus}.ld"
+#     output:
+#         "out/{locus}.twmr_p1e-4"
+#     shell:
+#         """
+#         if [[ -s {input.clump} ]]
+#         then
+#           R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' twmr.R
+#         else
+#           touch {output}
+#         fi
+#         """
 
 rule ecaviar:
     input:
@@ -242,22 +242,22 @@ rule mrlocus:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
         "{input.ld} {output.mrl}' mrlocus.R"
 
-rule mrlocus_low_p:
-    input:
-        clump = "out/{locus}_p1e-4.clumped",
-        scan = "out/{locus}.scan.tsv",
-        ld = "out/{locus}.ld"
-    output:
-        "out/{locus}.mrlocus_p1e-4"
-    shell:
-        """
-        if [[ -s {input.clump} ]]
-        then
-          R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' mrlocus.R
-        else
-          touch {output}
-        fi
-        """
+# rule mrlocus_low_p:
+#     input:
+#         clump = "out/{locus}_p1e-4.clumped",
+#         scan = "out/{locus}.scan.tsv",
+#         ld = "out/{locus}.ld"
+#     output:
+#         "out/{locus}.mrlocus_p1e-4"
+#     shell:
+#         """
+#         if [[ -s {input.clump} ]]
+#         then
+#           R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' mrlocus.R
+#         else
+#           touch {output}
+#         fi
+#         """
 
 rule ecaviar_mrlocus:
     input:
@@ -277,15 +277,12 @@ rule collate:
     input:
         scan = "out/{locus}.scan.tsv",
 	twmr = "out/{locus}.twmr",
-	twmr2 = "out/{locus}.twmr_p1e-4",
 	ptwas = "out/{locus}.ptwas",
-	ptwas2 = "out/{locus}.ptwas_t0.1",
 	mrlocus = "out/{locus}.mrlocus",
-	mrlocus2 = "out/{locus}.mrlocus_p1e-4",
 	ecav_mrlocus = "out/{locus}.ecav-mrlocus"
     output:
         "out/{locus}.final"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} {input.twmr2} " 
-        "{input.ptwas} {input.ptwas2} {input.mrlocus} {input.mrlocus2} "
-        "{input.ecav_mrlocus} {output}' collate.R"
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
+        "{input.ptwas} {input.mrlocus} {input.ecav_mrlocus} "
+        "{output}' collate.R"
