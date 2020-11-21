@@ -1,5 +1,7 @@
-i <- "high_n"
-  
+i <- "3"
+
+extra_methods <- FALSE
+
 files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
 files
@@ -15,18 +17,20 @@ for (k in seq_along(files)) {
 mrlocus10 <- sapply(mrlocus, function(x) x[2,1])
 mrlocus90 <- sapply(mrlocus, function(x) x[2,2])
 
-# alternative threshold
-mrlocus2 <- list()
-for (k in seq_along(files)) {
-  mrl.file <- paste0("out/",i,"/",files[k],".mrlocus_p1e-4")
-  if (file.info(mrl.file)$size > 0) {
-    mrlocus2[[k]] <- read.table(mrl.file)
-  } else {
-    mrlocus2[[k]] <- matrix(c(0,0,0,0),ncol=2)
+if (extra_methods) {
+  # alternative threshold
+  mrlocus2 <- list()
+  for (k in seq_along(files)) {
+    mrl.file <- paste0("out/",i,"/",files[k],".mrlocus_p1e-4")
+    if (file.info(mrl.file)$size > 0) {
+      mrlocus2[[k]] <- read.table(mrl.file)
+    } else {
+      mrlocus2[[k]] <- matrix(c(0,0,0,0),ncol=2)
+    }
   }
+  mrlocus2.10 <- sapply(mrlocus2, function(x) x[2,1])
+  mrlocus2.90 <- sapply(mrlocus2, function(x) x[2,2])
 }
-mrlocus2.10 <- sapply(mrlocus2, function(x) x[2,1])
-mrlocus2.90 <- sapply(mrlocus2, function(x) x[2,2])
 
 # ecaviar-mrlocus
 ecav.mrlocus <- list()
@@ -43,7 +47,16 @@ ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.")
 ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
-meths <- c("causal","all","twmr","twmr_p1e-4","ptwas","ptwas_t0.1","mrlocus","mrlocus_p1e-4","ecaviar-mrlocus")
+if (extra_methods) {
+  meths <- c("causal","all","twmr","twmr_p1e-4","ptwas",
+             "ptwas_t0.1","mrlocus","mrlocus_p1e-4","ecaviar-mrlocus")
+} else {
+  meths <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus")
+}
+meths.big <- c("causal","all","twmr","twmr_p1e-4","ptwas",
+               "ptwas_t0.1","mrlocus","mrlocus_p1e-4","ecaviar-mrlocus")
+
+
 nsim <- length(files)
 dat <- data.frame(rep=rep(1:nsim, each=length(idx)),
                   true=rep(sapply(final, function(x) x[1,2]), each=length(idx)),
@@ -57,13 +70,15 @@ dat$min <- dat$estimate - q * dat$se
 dat$max <- dat$estimate + q * dat$se
 dat$min[dat$method == "mrlocus"] <- mrlocus10
 dat$max[dat$method == "mrlocus"] <- mrlocus90
-dat$min[dat$method == "mrlocus_p1e-4"] <- mrlocus2.10
-dat$max[dat$method == "mrlocus_p1e-4"] <- mrlocus2.90
 dat$min[dat$method == "ecaviar-mrlocus"] <- ecav.mrlocus10
 dat$max[dat$method == "ecaviar-mrlocus"] <- ecav.mrlocus90
+if (extra_methods) {
+  dat$min[dat$method == "mrlocus_p1e-4"] <- mrlocus2.10
+  dat$max[dat$method == "mrlocus_p1e-4"] <- mrlocus2.90
+}
 
 if (FALSE) {
-  # add additional methods
+  # add even more methods (one plot only)
   est.lda <- unname(sapply(files, function(f)
     scan(paste0("ldamregger/",f,".ldamregger"),quiet=TRUE)[1]))
   est.pmr <- unname(sapply(files, function(f) {
@@ -72,11 +87,9 @@ if (FALSE) {
   }))
   ests <- c(est.lda, est.pmr)
   ests[is.na(ests)] <- 0
-  dat2 <- data.frame(rep=rep(1:nsim,2),
-                     true=rep(dat$true[dat$method=="causal"],2),
+  dat2 <- data.frame(rep=rep(1:nsim,2), true=rep(dat$true[dat$method=="causal"],2),
                      method=rep(c("lda-mr-egger","pmr-sum-egger"),each=nsim),
-                     estimate=ests, se=rep(1,2*nsim),
-                     est_nozero=ests,
+                     estimate=ests, se=rep(1,2*nsim), est_nozero=ests,
                      min=ests, max=ests)
   dat <- rbind(dat, dat2)
 }
@@ -103,7 +116,9 @@ library(ggplot2)
 library(ggpmisc)
 cols <- unname(palette.colors())[-c(1,5)]
 cols <- cols[c(1:3,3,4,4,5,5,5)]
+names(cols) <- meths.big
 shps <- c(24,25,17,18,15,7,16,13,10)
+names(shps) <- meths.big
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
 p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
@@ -147,7 +162,7 @@ p2
 #dev.off()
 
 library(patchwork)
-png(file="../supp/figs/fig2.png", res=170, width=2000, height=800)
+#png(file="../supp/figs/fig2.png", res=170, width=2000, height=800)
 p1 + p2 + plot_annotation(tag_levels = "A")
-dev.off()
+#dev.off()
 
