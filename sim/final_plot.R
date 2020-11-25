@@ -1,6 +1,6 @@
-i <- "3"
+i <- "high_n"
 
-extra_methods <- FALSE
+extra_methods <- (i %in% c("1","high_n"))
 
 files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
