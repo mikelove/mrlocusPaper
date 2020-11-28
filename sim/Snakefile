@@ -107,7 +107,7 @@ rule null_sim_trait:
         --nqtl {wildcards.nqtl} \
         --model {wildcards.model} \
         --eqtl-h2 {wildcards.h2g} \
-        --var-explained {wildcards.ve} \
+        --var-explained 0.01 \
         --output {params.path}.trait \
         --seed {wildcards.r2}
         """
