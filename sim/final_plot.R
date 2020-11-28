@@ -1,4 +1,4 @@
-i <- "high_n"
+i <- "9"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -109,9 +109,10 @@ tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
     )
 tab
 mx <- max(abs(dat$true))
-lex <- 1.75 # 1.2 # limits expansion
-data.tb <- tibble(x=-lex*mx, y=lex*mx, tb=list(tab))
+lex <- 1.2 # limits expansion
+data.tb <- tibble(x=0, y=lex*mx, tb=list(tab))
 
+dat2 <- dat %>% mutate(estimate = sign(true) * estimate, true = abs(true))
 library(ggplot2)
 library(ggpmisc)
 cols <- unname(palette.colors())[-c(1,5)]
@@ -121,7 +122,7 @@ shps <- c(24,25,17,18,15,7,16,13,10)
 names(shps) <- meths.big
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
-p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
+p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_point(size=2) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=cols) +
@@ -129,7 +130,7 @@ p1 <- ggplot(dat, aes(true,estimate,color=method,shape=method)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-  xlim(-lex*mx,lex*mx) + ylim(-lex*mx,lex*mx) +
+  xlim(0,lex*mx) + ylim(-.25*lex*mx,lex*mx) +
   ggtitle(ttl)
 p1
 #dev.off()

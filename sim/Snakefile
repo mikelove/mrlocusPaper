@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["final"]
+FORMATS = ["gene.scan.tsv","trait.scan.tsv"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -14,16 +14,27 @@ rule all:
     input: 
         expand("out/{sim}.{ext}", sim=SIMS, ext=FORMATS),
 
-rule sample_genes:
+# rule sample_genes:
+#     input:
+#         "sims/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
+#     output:
+#         list = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
+#         txt = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
+#     shell:
+#         "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
+#         "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
+#         "--seed {wildcards.rep}"
+
+rule null_sample_genes:
     input:
-        "sims/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
+        "sims/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
     output:
-        list = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
-        txt = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
+        list = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
+        txt = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
     shell:
         "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
         "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
-        "--seed {wildcards.rep}"
+        "--seed {wildcards.r1}"
 
 rule twas_sim_plink:
     input:
@@ -44,13 +55,32 @@ rule twas_sim_plink:
         --keep {ts}/EUR.samples --extract {ts}/HAPMAP_SNPS/hm.$numchr.snp --silent
         """
 
-rule sim:
+# rule sim:
+#     input:
+#         "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+#     output:
+#         "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
+#     params:
+#         path = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+#     shell:
+#         """
+#         conda activate twas_sim
+#         python {ts}/sim.py {params.path} --ngwas 100000 \
+#         --nqtl {wildcards.nqtl} \
+#         --model {wildcards.model} \
+#         --eqtl-h2 {wildcards.h2g} \
+#         --var-explained {wildcards.ve} \
+#         --output {params.path} \
+#         --seed {wildcards.rep}
+#         """
+
+rule null_sim_gene:
     input:
-        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
     output:
-        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.scan.tsv"
     params:
-        path = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+        path = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
     shell:
         """
         conda activate twas_sim
@@ -59,8 +89,27 @@ rule sim:
         --model {wildcards.model} \
         --eqtl-h2 {wildcards.h2g} \
         --var-explained {wildcards.ve} \
-        --output {params.path} \
-        --seed {wildcards.rep}
+        --output {params.path}.gene \
+        --seed {wildcards.r1}
+        """
+
+rule null_sim_trait:
+    input:
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+    output:
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.trait.scan.tsv"
+    params:
+        path = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+    shell:
+        """
+        conda activate twas_sim
+        python {ts}/sim.py {params.path} --ngwas 100000 \
+        --nqtl {wildcards.nqtl} \
+        --model {wildcards.model} \
+        --eqtl-h2 {wildcards.h2g} \
+        --var-explained {wildcards.ve} \
+        --output {params.path}.trait \
+        --seed {wildcards.r2}
         """
 
 rule ld:
