@@ -76,11 +76,14 @@ names(dap) <- c(1:9,paste0("null",1:3))
 #save(i2, causal, clumps, dap, file="sim_review.rda")
 
 ### number of clumps kept
-kept <- lapply(1:9, function(i) {
+kept <- lapply(c(1:9,"null1"), function(i) {
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="mrl_keep$", full.names=TRUE)
   unname(sapply(files, function(x) length(scan(x, quiet=TRUE))))
 })
+lengths(kept)
+sapply(kept, function(x) sum(x[1:20] > 1)) # 15 or less => more reps
+sapply(kept, function(x) sum(x > 1))
 
 load("sim_review.rda")
 

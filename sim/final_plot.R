@@ -1,4 +1,4 @@
-i <- "9"
+i <- "4"
 
 extra_methods <- (i %in% c("1","high_n"))
 
