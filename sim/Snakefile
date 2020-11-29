@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["gene.scan.tsv","trait.scan.tsv"]
+FORMATS = ["twmr"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -110,6 +110,24 @@ rule null_sim_trait:
         --var-explained 0.01 \
         --output {params.path}.trait \
         --seed {wildcards.r2}
+        """
+
+rule null_combine_eqtl_gwas:
+    input:
+        gene = "out/{locus}.gene.scan.tsv",
+        trait = "out/{locus}.trait.scan.tsv",
+        summary = "out/{locus}.gene.summary.tsv"
+    output:
+        scan = "out/{locus}.scan.tsv",
+        summary = "out/{locus}.summary.tsv"
+    shell:
+        """
+        cut -f 1-7 {input.gene} > tmp1
+        cut -f 8-10 {input.trait} > tmp2
+        cut -f 11-13 {input.gene} > tmp3
+        paste tmp1 tmp2 tmp3 > {output.scan}
+        rm -f tmp1 tmp2 tmp3
+        cp {input.summary} {output.summary}
         """
 
 rule ld:
