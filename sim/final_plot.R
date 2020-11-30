@@ -2,7 +2,7 @@ i <- "4"
 
 extra_methods <- (i %in% c("1","high_n"))
 
-files <- sub(".final","",list.files(paste0("out/",i,""), pattern="final"))
+files <- sub(".final","",list.files(paste0("out/",i), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
 files
 final <- list()
@@ -55,7 +55,6 @@ if (extra_methods) {
 }
 meths.big <- c("causal","all","twmr","twmr_p1e-4","ptwas",
                "ptwas_t0.1","mrlocus","mrlocus_p1e-4","ecaviar-mrlocus")
-
 
 nsim <- length(files)
 dat <- data.frame(rep=rep(1:nsim, each=length(idx)),
