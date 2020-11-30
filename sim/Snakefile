@@ -35,56 +35,24 @@ rule twas_sim_plink:
 
 # non-null rules:
 
-rule sample_genes:
-    input:
-        "sims/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
-    output:
-        list = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
-        txt = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
-    shell:
-        "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
-        "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
-        "--seed {wildcards.rep}"
-
-rule sim:
-    input:
-        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
-    output:
-        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
-    params:
-        path = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
-    shell:
-        """
-        conda activate twas_sim
-        python {ts}/sim.py {params.path} --ngwas 100000 \
-        --nqtl {wildcards.nqtl} \
-        --model {wildcards.model} \
-        --eqtl-h2 {wildcards.h2g} \
-        --var-explained {wildcards.ve} \
-        --output {params.path} \
-        --seed {wildcards.rep}
-        """
-
-# null rules:
-
-# rule null_sample_genes:
+# rule sample_genes:
 #     input:
-#         "sims/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
+#         "sims/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
 #     output:
-#         list = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
-#         txt = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
+#         list = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
+#         txt = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
 #     shell:
 #         "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
 #         "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
-#         "--seed {wildcards.r1}"
+#         "--seed {wildcards.rep}"
 
-# rule null_sim_gene:
+# rule sim:
 #     input:
-#         "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+#         "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
 #     output:
-#         "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.scan.tsv"
+#         "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv"
 #     params:
-#         path = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+#         path = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
 #     shell:
 #         """
 #         conda activate twas_sim
@@ -93,46 +61,83 @@ rule sim:
 #         --model {wildcards.model} \
 #         --eqtl-h2 {wildcards.h2g} \
 #         --var-explained {wildcards.ve} \
-#         --output {params.path}.gene \
-#         --seed {wildcards.r1}
+#         --output {params.path} \
+#         --seed {wildcards.rep}
 #         """
 
-# rule null_sim_trait:
-#     input:
-#         "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
-#     output:
-#         "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.trait.scan.tsv"
-#     params:
-#         path = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
-#     shell:
-#         """
-#         conda activate twas_sim
-#         python {ts}/sim.py {params.path} --ngwas 100000 \
-#         --nqtl {wildcards.nqtl} \
-#         --model {wildcards.model} \
-#         --eqtl-h2 {wildcards.h2g} \
-#         --var-explained 0.01 \
-#         --output {params.path}.trait \
-#         --seed {wildcards.r2}
-#         """
+# null rules:
 
-# rule null_combine_eqtl_gwas:
-#     input:
-#         gene = "out/{locus}.gene.scan.tsv",
-#         trait = "out/{locus}.trait.scan.tsv",
-#         summary = "out/{locus}.gene.summary.tsv"
-#     output:
-#         scan = "out/{locus}.scan.tsv",
-#         summary = "out/{locus}.summary.tsv"
-#     shell:
-#         """
-#         cut -f 1-7 {input.gene} > tmp1
-#         cut -f 8-10 {input.trait} > tmp2
-#         cut -f 11-13 {input.gene} > tmp3
-#         paste tmp1 tmp2 tmp3 > {output.scan}
-#         rm -f tmp1 tmp2 tmp3
-#         cp {input.summary} {output.summary}
-#         """
+rule null_sample_genes:
+    input:
+        "sims/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.sim"
+    output:
+        list = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.gene.list",
+        txt = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.locus.txt"
+    shell:
+        "python {ts}/sample_genes.py {ts}/ind_loci.bed {ts}/glist-hg19.nodupe.autosome "
+        "-l 5 -u 20 -o {output.list} --loc_output {output.txt} "
+        "--seed {wildcards.r1}"
+
+rule null_sim_gene:
+    input:
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+    output:
+        genescan = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.genescan.tsv",
+        genesum = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.genesummary.tsv"
+    params:
+        path = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+    shell:
+        """
+        conda activate twas_sim
+        python {ts}/sim.py {params.path} --ngwas 100000 \
+        --nqtl {wildcards.nqtl} \
+        --model {wildcards.model} \
+        --eqtl-h2 {wildcards.h2g} \
+        --var-explained {wildcards.ve} \
+        --output {params.path}.gene \
+        --seed {wildcards.r1}
+        mv {params.path}.gene.scan.tsv {params.path}.genescan.tsv
+        mv {params.path}.gene.summary.tsv {params.path}.genesummary.tsv
+        """
+
+rule null_sim_trait:
+    input:
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.bed"
+    output:
+        "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.traitscan.tsv"
+    params:
+        path = "out/{type}/{type}_{r1}-{r2}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve"
+    shell:
+        """
+        conda activate twas_sim
+        python {ts}/sim.py {params.path} --ngwas 100000 \
+        --nqtl {wildcards.nqtl} \
+        --model {wildcards.model} \
+        --eqtl-h2 {wildcards.h2g} \
+        --var-explained 0.01 \
+        --output {params.path}.trait \
+        --seed {wildcards.r2}
+        mv {params.path}.trait.scan.tsv {params.path}.traitscan.tsv
+        mv {params.path}.trait.summary.tsv {params.path}.traitsummary.tsv
+        """
+
+rule null_combine_eqtl_gwas:
+    input:
+        gene = "out/{locus}.genescan.tsv",
+        trait = "out/{locus}.traitscan.tsv",
+        summary = "out/{locus}.genesummary.tsv"
+    output:
+        scan = "out/{locus}.scan.tsv",
+        summary = "out/{locus}.summary.tsv"
+    shell:
+        """
+        cut -f 1-7 {input.gene} > tmp1
+        cut -f 8-10 {input.trait} > tmp2
+        cut -f 11-13 {input.gene} > tmp3
+        paste tmp1 tmp2 tmp3 > {output.scan}
+        rm -f tmp1 tmp2 tmp3
+        cp {input.summary} {output.summary}
+        """
 
 # end of null rules
 
