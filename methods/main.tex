@@ -248,10 +248,11 @@ The hierarchical model for the slope fitting step is given by:
   \beta_j^A &\sim N(0, \textrm{SD}_\beta) \\
   \beta_j^B &\sim N(\alpha \beta_j^A, \sigma) \\
   \alpha &\sim N(\mu_\alpha, \textrm{SD}_\alpha) \\
-  \sigma &\sim N(0, \textrm{SD}_\sigma)
+  \sigma &\sim HN(0, \textrm{SD}_\sigma)
 \end{align}
 
-where the first four equations are defined for $j \in 1,\dots,J$.
+where the first four equations are defined for $j \in 1,\dots,J$,
+and where $HN$ specifies the Half-Normal distribution.
 In words, $\beta_j^B$ is assumed to follow a normal distribution
 centered on the predicted value from a line with slope $\alpha$ and no
 intercept, and with dispersion $\sigma$ around the fitted line.
