@@ -1,11 +1,16 @@
+cmd_args=commandArgs(TRUE)
+
+n <- as.numeric(cmd_args[1])
+r2 <- as.numeric(cmd_args[2])
+outfile <- cmd_args[3]
+
 devtools::load_all("../../mrlocus")
 library(pbapply)
+niter <- 200
 
-niter <- 100
+set.seed(n + r2)
 out <- pbsapply(1:niter, function(i) {
-  n <- 6
-  r2 <- 0.9
-  sdev <- .5
+  sdev <- 1
   corr <- sqrt(r2)
   Sigma <- matrix(corr, nrow=n, ncol=n)
   diag(Sigma) <- 1
@@ -21,4 +26,6 @@ out <- pbsapply(1:niter, function(i) {
   bnds <- rstan::summary(fit$stanfit, pars="alpha", probs=c(.1,.9))$summary[1,c("10%","90%")]
   unname(bnds)
 })
-mean(apply(out, 2, function(x) sign(x[1]) == sign(x[2])))
+
+err <- mean(apply(out, 2, function(x) sign(x[1]) == sign(x[2])))
+write(c(n, r2, err), ncolumns=3, file=outfile)

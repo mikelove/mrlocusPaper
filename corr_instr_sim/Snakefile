@@ -1,0 +1,11 @@
+configfile: "config.json"
+
+rule all:
+    input:
+        expand("{n}_{r2}.txt", n=config["n"], r2=config["r2"])
+
+rule sim:
+    output:
+        "{n}_{r2}.txt"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {wildcards.n} {wildcards.r2} {output}' corr_instr_sim.R"
