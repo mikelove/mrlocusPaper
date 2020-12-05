@@ -11,5 +11,5 @@ ggplot(dat, aes(r2, FPR, col=n, group=n, ymin=ymin, ymax=ymax)) +
   geom_point() + 
   geom_errorbar(width=.2) +
   geom_line() +
-  geom_hline(yintercept=0.2, lty=2)
-  
+  geom_hline(yintercept=0.2, lty=2) +
+  ylim(0,1)
