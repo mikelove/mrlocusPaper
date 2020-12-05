@@ -6,7 +6,7 @@ outfile <- cmd_args[3]
 
 devtools::load_all("../../mrlocus")
 library(pbapply)
-niter <- 200
+niter <- 400
 
 set.seed(n + r2)
 out <- pbsapply(1:niter, function(i) {
