@@ -1,4 +1,4 @@
-i <- "4"
+i <- "1"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -91,6 +91,7 @@ if (FALSE) {
                      estimate=ests, se=rep(1,2*nsim), est_nozero=ests,
                      min=ests, max=ests)
   dat <- rbind(dat, dat2)
+  meths <- c(meths, c("lda-mr-egger", "pmr-sum-egger"))
 }
 
 # check number of instruments
@@ -119,6 +120,14 @@ cols <- cols[c(1:3,3,4,4,5,5,5)]
 names(cols) <- meths.big
 shps <- c(24,25,17,18,15,7,16,13,10)
 names(shps) <- meths.big
+if (length(meths) == 11) { # for the plot with LDA and PMR
+  cols <- unname(palette.colors())[-c(1,5)]
+  cols <- cols[c(1:3,3,4,4,5,5,5,6,7)]
+  names(cols) <- meths
+  shps <- c(24,25,17,18,15,7,16,13,10,3,8)
+  names(shps) <- meths
+  mx <- max(abs(dat$estimate))
+}
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
 p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
@@ -129,7 +138,8 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-  xlim(0,lex*mx) + ylim(-.25*lex*mx,lex*mx) +
+#  xlim(0,lex*mx) + ylim(-.25*lex*mx,lex*mx) +
+  xlim(0,lex*mx) + ylim(-.6,2.1) +
   ggtitle(ttl)
 p1
 #dev.off()
