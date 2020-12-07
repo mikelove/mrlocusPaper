@@ -1,28 +1,45 @@
 cmd_args=commandArgs(TRUE)
 
-Ngwas <- 100000
-N_eQTLs <- 500
 out <- c("gene","alpha","SE","P","Nsnps","Ngene")
 
-# arg 1 is clumped
-# arg 2 is scan.tsv
-# arg 3 is LD matrix
-# arg 4 is output
+# arg 1 is TSV files
+# arg 2 is output
 
-clumped <- read.table(cmd_args[1], header=TRUE)[,-12]
-sum_stat <- read.table(cmd_args[2], header=TRUE)
-ld_mat <- as.matrix(read.table(cmd_args[3]))
+tsv_files <- scan(cmd_args[1], what="char")
+dir <- dirname(cmd_args[1])
+info <- read.table(list.files(dir, pattern="indexinfo", full=TRUE), header=TRUE)
+ld <- as.matrix(read.table(list.files(dir, pattern="indexLD", full=TRUE)))
+ld <- ld[info$idx, info$idx] # reorder according to indexinfo
 
-idx <- sum_stat$snp %in% clumped$SNP
+# check that the TSV files in same order as 'c_i' in indexinfo file
+stopifnot(all(sub(".*_(.*).eQTLBase.tsv","\\1",tsv_files) == as.character(info$c_i)))
+
+# TODO fix
+Ngwas <- 100000
+N_eQTLs <- 500
+
+sum_stat <- t(sapply(seq_along(tsv_files), function(i) {
+  x <- read.table(file.path(dir,tsv_files[i]),header=TRUE)
+  row <- x[x$SNP == info$idxSNP[i],]
+  swap <- row[1,"Ref_GWAS"] != row[1,"Ref_eQTL"]
+  beta_eqtl <- row[1,"beta_eQTL"]
+  beta_gwas <- row[1,"beta_GWAS"]
+  if (swap) {
+    beta_gwas <- -1 * beta_gwas
+  }
+  c(beta_eqtl=beta_eqtl, beta_gwas=beta_gwas)
+}))
+
+sum_stat <- as.data.frame(sum_stat)
 
 # beta is a matrix of gene effect sizes
-beta <- as.matrix(sum_stat$eqtl.beta[idx], ncol=1)
+beta <- as.matrix(sum_stat$beta_eqtl, ncol=1)
 
 # gamma is a matrix of GWAS effect sizes
-gamma <- as.matrix(sum_stat$gwas.beta[idx], ncol=1)
+gamma <- as.matrix(sum_stat$beta_gwas, ncol=1)
 
 # C is the LD matrix
-C <- ld_mat[idx,idx]
+C <- ld
 
 S<-t(beta)%*%solve(C)%*%beta
 H<-(1-1/sqrt(3781))*S+(1/sqrt(3781))*diag(length(S[,1]))
@@ -53,4 +70,4 @@ pval<-2*pnorm(abs(Z),lower.tail=FALSE)
 line<-c("gene",alpha[1],se,pval,N,Ngene)
 out<-rbind(out,line)
 
-write.table(out,file=cmd_args[4],quote=F,col.names=F,row.names=F)
+write.table(out,file=cmd_args[2],quote=F,col.names=F,row.names=F)
