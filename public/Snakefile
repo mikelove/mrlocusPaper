@@ -1,0 +1,76 @@
+shell.executable("/bin/bash")
+shell.prefix("source ~/.bashrc; ")
+
+DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", "Blood_LIPC_HDL",
+            "Liver_CEPT_HDL", "Liver_LIPC_HDL", "Liver_SORT1_LDL"]
+FORMATS = ["twmr"]
+
+rule all:
+    input: 
+        expand("{data}/{data}.{ext}", data=DATASETS, ext=FORMATS),
+
+rule twmr:
+    input:
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.twmr"
+    benchmark:
+        "bench/{locus}_twmr.bench"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{input.ld} {output}' twmr.R"
+
+rule ecaviar:
+    input:
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.ecav"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{input.ld} {output}' ecaviar.R"
+
+rule mrlocus:
+    input:
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        mrl = "out/{locus}.mrlocus",
+        keep = "out/{locus}.mrl_keep"
+    benchmark:
+        "bench/{locus}_mrlocus.bench"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{input.ld} {output.mrl}' mrlocus.R"
+
+rule ecaviar_mrlocus:
+    input:
+        clump = "out/{locus}.clumped",
+        scan = "out/{locus}.scan.tsv",
+        keep = "out/{locus}.mrl_keep",
+        ecav = "out/{locus}.ecav"
+    output:
+        "out/{locus}.ecav-mrlocus"
+    benchmark:
+        "bench/{locus}_ecav-mrlocus.bench"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "{input.keep} {input.ecav} {output}' ecaviar-mrlocus.R"
+
+rule collate:
+    input:
+        scan = "out/{locus}.scan.tsv",
+	twmr = "out/{locus}.twmr",
+	ptwas = "out/{locus}.ptwas",
+	mrlocus = "out/{locus}.mrlocus",
+	ecav_mrlocus = "out/{locus}.ecav-mrlocus"
+    output:
+        "out/{locus}.final"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
+        "{input.ptwas} {input.mrlocus} {input.ecav_mrlocus} "
+        "{output}' collate.R"
