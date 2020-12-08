@@ -9,6 +9,7 @@ plink = "/proj/milovelab/bin/plink/plink"
 okg = "/proj/milovelab/anno/1000G_EUR_Phase3_plink"
 dap = "/proj/milovelab/love/bin/dap/dap_src/dap-g"
 ptwas = "/proj/milovelab/love/bin/ptwas/PTWAS_est/PTWAS_est"
+ecaviar = "/proj/milovelab/love/bin/caviar/caviar/eCAVIAR"
 
 rule all:
     input: 
@@ -283,7 +284,7 @@ rule ecaviar:
     output:
         "out/{locus}.ecav"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "R CMD BATCH --no-save --no-restore '--args {ecaviar} {input.clump} {input.scan} " 
         "{input.ld} {output}' ecaviar.R"
 
 rule ldamregger:

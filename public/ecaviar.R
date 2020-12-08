@@ -1,13 +1,24 @@
 cmd_args=commandArgs(TRUE)
 
-clumped.filename <- cmd_args[1]
-scan.filename <- cmd_args[2]
-ld.filename <- cmd_args[3]
-out.filename <- cmd_args[4]
+ecav.bin <- cmd_args[1]
+dir <- cmd_args[2]
+tsv.filename <- cmd_args[3]
+ld.filename <- cmd_args[4]
+out.filename <- cmd_args[5]
 
-clumped <- read.table(clumped.filename, strings=FALSE, header=TRUE)
-big_sum_stat <- read.delim(scan.filename, strings=FALSE)
-big_ld_mat <- as.matrix(read.table(ld.filename))
+ecav.bin <- "/proj/milovelab/love/bin/caviar/caviar/eCAVIAR"
+dir <- "Artery_MRAS_CAD"
+tsv.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.tsv"
+ld.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ld"
+
+tsv_files <- scan(tsv.filename, what="char")
+ld_files <- scan(ld.filename, what="char")
+stopifnot(length(tsv_files) == length(ld_files))
+info <- read.table(list.files(dir, pattern="indexinfo", full=TRUE), header=TRUE)
+ld <- as.matrix(read.table(list.files(dir, pattern="indexLD", full=TRUE)))
+ld <- ld[info$idx, info$idx] # reorder according to indexinfo
+
+# TODO
 
 noparen <- function(z) sub("\\(1\\)","",z)
 clumps <- lapply(strsplit(clumped$SP2,split=","), noparen)

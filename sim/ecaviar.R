@@ -1,9 +1,10 @@
 cmd_args=commandArgs(TRUE)
 
-clumped.filename <- cmd_args[1]
-scan.filename <- cmd_args[2]
-ld.filename <- cmd_args[3]
-out.filename <- cmd_args[4]
+ecav.bin <- cmd_args[1]
+clumped.filename <- cmd_args[2]
+scan.filename <- cmd_args[3]
+ld.filename <- cmd_args[4]
+out.filename <- cmd_args[5]
 
 clumped <- read.table(clumped.filename, strings=FALSE, header=TRUE)
 big_sum_stat <- read.delim(scan.filename, strings=FALSE)
@@ -29,7 +30,6 @@ sum_stat <- lapply(clumps, function(x) {
 
 # write out files for testing ecaviar
 nclust <- length(ld_mat)
-ecav.bin <- "/proj/milovelab/love/bin/caviar/caviar/eCAVIAR"
 ecav.coloc <- list()
 for (j in seq_len(nclust)) {
   tmp <- sub("ecav", paste0("ecav_out_j",j), out.filename)
