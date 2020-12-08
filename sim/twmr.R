@@ -1,17 +1,19 @@
 cmd_args=commandArgs(TRUE)
 
-Ngwas <- 100000
-N_eQTLs <- 500
 out <- c("gene","alpha","SE","P","Nsnps","Ngene")
 
-# arg 1 is clumped
-# arg 2 is scan.tsv
-# arg 3 is LD matrix
-# arg 4 is output
+# arg 1 is nQTL
+# arg 2 is clumped
+# arg 3 is scan.tsv
+# arg 4 is LD matrix
+# arg 5 is output
 
-clumped <- read.table(cmd_args[1], header=TRUE)[,-12]
-sum_stat <- read.table(cmd_args[2], header=TRUE)
-ld_mat <- as.matrix(read.table(cmd_args[3]))
+Ngwas <- 100000 # constant in the sims
+N_eQTLs <- as.numeric(cmd_args[1]) # variable
+
+clumped <- read.table(cmd_args[2], header=TRUE)[,-12]
+sum_stat <- read.table(cmd_args[3], header=TRUE)
+ld_mat <- as.matrix(read.table(cmd_args[4]))
 
 idx <- sum_stat$snp %in% clumped$SNP
 
@@ -53,4 +55,4 @@ pval<-2*pnorm(abs(Z),lower.tail=FALSE)
 line<-c("gene",alpha[1],se,pval,N,Ngene)
 out<-rbind(out,line)
 
-write.table(out,file=cmd_args[4],quote=F,col.names=F,row.names=F)
+write.table(out,file=cmd_args[5],quote=F,col.names=F,row.names=F)

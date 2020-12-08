@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["pmr"]
+FORMATS = ["final"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -247,29 +247,29 @@ rule clump:
 
 rule twmr:
     input:
-        clump = "out/{locus}.clumped",
-        scan = "out/{locus}.scan.tsv",
-        ld = "out/{locus}.ld"
+        clump = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.clumped",
+        scan = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv",
+        ld = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.ld"
     output:
-        "out/{locus}.twmr"
+        "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.twmr"
     benchmark:
-        "bench/{locus}_twmr.bench"
+        "bench/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve_twmr.bench"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} " 
+        "R CMD BATCH --no-save --no-restore '--args {wildcards.nqtl} {input.clump} {input.scan} " 
         "{input.ld} {output}' twmr.R"
 
 # rule twmr_low_p:
 #     input:
-#         clump = "out/{locus}_p1e-4.clumped",
-#         scan = "out/{locus}.scan.tsv",
-#         ld = "out/{locus}.ld"
+#         clump = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve_p1e-4.clumped",
+#         scan = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.scan.tsv",
+#         ld = "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.ld"
 #     output:
-#         "out/{locus}.twmr_p1e-4"
+#         "out/{type}/{type}_{rep}r_{nqtl}nq_{model}m_{h2g}h2_{ve}ve.twmr_p1e-4"
 #     shell:
 #         """
 #         if [[ -s {input.clump} ]]
 #         then
-#           R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} {output}' twmr.R
+#           R CMD BATCH --no-save --no-restore '--args {wildcards.nqtl} {input.clump} {input.scan} {input.ld} {output}' twmr.R
 #         else
 #           touch {output}
 #         fi
