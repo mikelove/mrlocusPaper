@@ -80,4 +80,4 @@ pval<-2*pnorm(abs(Z),lower.tail=FALSE)
 line<-c("gene",alpha[1],se,pval,N,Ngene)
 out<-rbind(out,line)
 
-write.table(out,file=cmd_args[2],quote=F,col.names=F,row.names=F)
+write.table(out,file=cmd_args[3],quote=F,col.names=F,row.names=F)
