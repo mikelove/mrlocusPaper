@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", 
-            "Liver_CEPT_HDL", "Liver_SORT1_LDL"]
+            "Liver_CETP_HDL", "Liver_LIPC_HDL", "Liver_SORT1_LDL"]
 FORMATS = ["twmr"]
 
 rule all:
@@ -11,11 +11,12 @@ rule all:
 
 rule twmr:
     input:
+        dir = "{data}",
         tsv = "{data}/{data}.tsv"
     output:
         "{data}/{data}.twmr"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.tsv} {output}' twmr.R"
+        "R CMD BATCH --no-save --no-restore '--args {input.dir} {input.tsv} {output}' twmr.R"
 
 rule ecaviar:
     input:

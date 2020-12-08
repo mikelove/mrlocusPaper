@@ -2,11 +2,12 @@ cmd_args=commandArgs(TRUE)
 
 out <- c("gene","alpha","SE","P","Nsnps","Ngene")
 
-# arg 1 is TSV files
-# arg 2 is output
+# arg 1 is directory
+# arg 2 is TSV files
+# arg 3 is output
 
-tsv_files <- scan(cmd_args[1], what="char")
-dir <- dirname(cmd_args[1])
+dir <- cmd_args[1]
+tsv_files <- scan(cmd_args[2], what="char")
 info <- read.table(list.files(dir, pattern="indexinfo", full=TRUE), header=TRUE)
 ld <- as.matrix(read.table(list.files(dir, pattern="indexLD", full=TRUE)))
 ld <- ld[info$idx, info$idx] # reorder according to indexinfo
@@ -14,9 +15,18 @@ ld <- ld[info$idx, info$idx] # reorder according to indexinfo
 # check that the TSV files in same order as 'c_i' in indexinfo file
 stopifnot(all(sub(".*_(.*).eQTLBase.tsv","\\1",tsv_files) == as.character(info$c_i)))
 
-# TODO fix
-Ngwas <- 100000
-N_eQTLs <- 500
+# get the tissue and trait
+tissue <- sub("_.*","",dir)
+trait <- sub(".*_","",dir)
+
+# hard-code sample sizes
+CAD <- c(cases=60801, controls=123504)
+eqtl_samp_size <- c(Artery=663, Liver=588)
+gwas_samp_size <- c(CAD=4/(1/CAD[1] + 1/CAD[2]), HDL=315133, LDL=343621)
+
+# set from hard-coded values
+N_eQTLs <- eqtl_samp_size[tissue]
+Ngwas <- gwas_samp_size[trait]
 
 sum_stat <- t(sapply(seq_along(tsv_files), function(i) {
   x <- read.table(file.path(dir,tsv_files[i]),header=TRUE)
