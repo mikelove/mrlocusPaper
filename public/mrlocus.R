@@ -5,10 +5,6 @@ tsv.filename <- cmd_args[2]
 ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
-dir <- "Artery_MRAS_CAD"
-tsv.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.tsv"
-ld.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ld"
-
 set.seed(1)
 
 source("common.R") # common function for mrlocus and ecaviar-mrlocus
@@ -28,6 +24,10 @@ out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
                              a2_plink=a2_plink,
                              snp_id="SNP", sep="_",
                              ab_last=TRUE, plot=FALSE)
+
+png(file=file.path(dir,"initial.png"))
+plotInitEstimates(out2)
+dev.off()
 
 library(Matrix)
 Sigma_npd <- out2$Sigma

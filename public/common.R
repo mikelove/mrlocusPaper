@@ -1,4 +1,4 @@
-getTrimmedSumStat <- function(dir, tsv.filename, ld.filename) {
+getTrimmedSumStats <- function(dir, tsv.filename, ld.filename) {
 
   # read in the summary stats and LD matrices
   tsv_files <- scan(tsv.filename, what="char")
@@ -48,5 +48,5 @@ getTrimmedSumStat <- function(dir, tsv.filename, ld.filename) {
   sum_stat <- sum_stat[-trim.clumps]
   ld_mat <- ld_mat[-trim.clumps]
 
-  list(sum_stat=sum_stat, ld_mat=ld_mat)
+  list(sum_stat=sum_stat, ld_mat=ld_mat, trim.clumps=trim.clumps)
 }
