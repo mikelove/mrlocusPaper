@@ -13,15 +13,15 @@ ld <- as.matrix(read.table(list.files(dir, pattern="indexLD", full=TRUE)))
 ld <- ld[info$idx, info$idx] # reorder according to indexinfo
 
 # check that the TSV files in same order as 'c_i' in indexinfo file
-stopifnot(all(sub(".*_(.*).eQTLBase.tsv","\\1",tsv_files) == as.character(info$c_i)))
+stopifnot(all(sub(".*_(.*).eQTLBase.intersect.tsv","\\1",tsv_files) == as.character(info$c_i)))
 
 # get the tissue and trait
 tissue <- sub("_.*","",dir)
 trait <- sub(".*_","",dir)
 
 # hard-code sample sizes
-CAD <- c(cases=60801, controls=123504)
-eqtl_samp_size <- c(Artery=663, Liver=588)
+CAD <- c(60801, 123504) # cases / controls
+eqtl_samp_size <- c(Artery=663, Blood=31684, Liver=588)
 gwas_samp_size <- c(CAD=4/(1/CAD[1] + 1/CAD[2]), HDL=315133, LDL=343621)
 
 # set from hard-coded values

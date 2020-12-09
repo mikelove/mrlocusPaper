@@ -1,15 +1,25 @@
 shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
-DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", 
-            "Liver_CETP_HDL", "Liver_SORT1_LDL"]
-FORMATS = ["twmr"]
+DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", "Blood_LIPC_HDL", 
+            "Liver_CETP_HDL", "Liver_LIPC_HDL", "Liver_SORT1_LDL"]
+FORMATS = ["ecav"]
 
 ecaviar = "/proj/milovelab/love/bin/caviar/caviar/eCAVIAR"
 
 rule all:
     input: 
         expand("{data}/{data}.{ext}", data=DATASETS, ext=FORMATS),
+
+rule list_files:
+    output:
+        tsv = "{data}/{data}.tsv",
+        ld = "{data}/{data}.ld"
+    shell:
+        """
+        ls -1 {wildcards.data} | grep eQTLBase.intersect.tsv | sort -V > {output.tsv}
+        ls -1 {wildcards.data} | grep intersect.ld | sort -V > {output.ld}
+        """
 
 rule twmr:
     input:
