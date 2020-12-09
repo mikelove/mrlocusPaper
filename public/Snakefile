@@ -37,29 +37,37 @@ rule ecaviar:
         ld = "{data}/{data}.ld"
     output:
         "{data}/{data}.ecav"
+    benchmark:
+        "bench/{data}_ecav.bench"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {ecaviar} {input.dir} {input.tsv} " 
         "{input.ld} {output}' ecaviar.R"
 
 rule mrlocus:
     input:
+        dir = "{data}",
         tsv = "{data}/{data}.tsv",
         ld = "{data}/{data}.ld"
     output:
-        mrl = "{data}/{data}.mrlocus",
+        "{data}/{data}.mrlocus"
+    benchmark:
+        "bench/{data}_mrlocus.bench"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.tsv} " 
-        "{input.ld} {output.mrl}' mrlocus.R"
+        "R CMD BATCH --no-save --no-restore '--args {input.dir} {input.tsv} " 
+        "{input.ld} {output}' mrlocus.R"
 
 rule ecaviar_mrlocus:
     input:
+        dir = "{data}",
         tsv = "{data}/{data}.tsv",
         ld = "{data}/{data}.ld",
         ecav = "{data}/{data}.ecav"
     output:
         "{data}/{data}.ecav-mrlocus"
+    benchmark:
+        "bench/{data}_ecav-mrlocus.bench"
     shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.tsv} " 
+        "R CMD BATCH --no-save --no-restore '--args {input.dir} {input.tsv} " 
         "{input.ld} {input.ecav} {output}' ecaviar-mrlocus.R"
 
 rule collate:

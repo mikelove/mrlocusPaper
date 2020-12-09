@@ -66,8 +66,7 @@ if (nclumps > 1) {
   r2.lower <- r2.out[lower.tri(r2.out)]
   if (length(trim.clumps) < nclumps-1) {
     write(r2.lower, file=sub("mrlocus","mrl_r2",out.filename), ncolumns=length(r2.lower))
-  }
-  
+  }  
 }
 
 # write out the clumps to keep
