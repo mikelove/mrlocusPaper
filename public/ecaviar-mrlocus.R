@@ -6,11 +6,6 @@ ld.filename <- cmd_args[3]
 ecav.filename <- cmd_args[4]
 out.filename <- cmd_args[5]
 
-dir <- "Artery_MRAS_CAD"
-tsv.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.tsv"
-ld.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ld"
-ecav.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ecav"
-
 set.seed(1)
 
 source("common.R") # common function for mrlocus and ecaviar-mrlocus
@@ -34,7 +29,12 @@ for (j in seq_len(nclumps)) {
   idx <- ecav.coloc[[j]]$SNP_ID[ which.max(ecav.coloc[[j]]$CLPP) ]
   row <- sum_stat[[j]][ sum_stat[[j]]$SNP == idx,]
   beta_hat_a[j] <- abs(row$beta_eQTL)
+  # flip sign so that eQTL effect size is > 0
   beta_hat_b[j] <- sign(row$beta_eQTL) * row$beta_GWAS
+  # flip sign to deal with the reference allele being different
+  if (row$Ref_eQTL != row$Ref_GWAS) {
+    beta_hat_b[j] <- -1 * beta_hat_b[j]
+  }
   sd_a[j] <- row$se_eQTL
   sd_b[j] <- row$se_GWAS
 }
