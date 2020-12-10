@@ -44,9 +44,11 @@ getTrimmedSumStats <- function(dir, tsv.filename, ld.filename) {
     trim.clumps <- rev(trim.clumps)
   }
 
-  # trim those clumps
-  sum_stat <- sum_stat[-trim.clumps]
-  ld_mat <- ld_mat[-trim.clumps]
+  if (length(trim.clumps) > 0) {
+    # trim those clumps
+    sum_stat <- sum_stat[-trim.clumps]
+    ld_mat <- ld_mat[-trim.clumps]
+  }
 
   list(sum_stat=sum_stat, ld_mat=ld_mat, trim.clumps=trim.clumps)
 }

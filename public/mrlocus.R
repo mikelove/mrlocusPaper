@@ -8,7 +8,7 @@ out.filename <- cmd_args[4]
 set.seed(1)
 
 source("common.R") # common function for mrlocus and ecaviar-mrlocus
-out <- getTrimmedSumStats(dir, tsv.filename,ld.filename)
+out <- getTrimmedSumStats(dir, tsv.filename, ld.filename)
 sum_stat <- out$sum_stat
 ld_mat <- out$ld_mat
 

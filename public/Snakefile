@@ -1,9 +1,9 @@
 shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
-DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", "Blood_LIPC_HDL", 
+DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", "Blood_LIPC_HDL",
             "Liver_CETP_HDL", "Liver_LIPC_HDL", "Liver_SORT1_LDL"]
-FORMATS = ["ecav"]
+FORMATS = ["mrlocus"]
 
 ecaviar = "/proj/milovelab/love/bin/caviar/caviar/eCAVIAR"
 
@@ -69,17 +69,3 @@ rule ecaviar_mrlocus:
     shell:
         "R CMD BATCH --no-save --no-restore '--args {input.dir} {input.tsv} " 
         "{input.ld} {input.ecav} {output}' ecaviar-mrlocus.R"
-
-rule collate:
-    input:
-        tsv = "{data}/{data}.tsv",
-	twmr = "{data}/{data}.twmr",
-	ptwas = "{data}/{data}.ptwas",
-	mrlocus = "{data}/{data}.mrlocus",
-	ecav_mrlocus = "{data}/{data}.ecav-mrlocus"
-    output:
-        "{data}/{data}.final"
-    shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.tsv} {input.twmr} " 
-        "{input.ptwas} {input.mrlocus} {input.ecav_mrlocus} "
-        "{output}' collate.R"
