@@ -7,9 +7,13 @@ getTrimmedSumStats <- function(dir, tsv.filename, ld.filename) {
   nclumps <- length(tsv_files)
   ld_mat <- list()
   sum_stat <- list()
+  cc <- c("character", "character", "numeric",
+          "character", "character", "numeric", "numeric", # GWAS
+          "character", "character", "numeric", "numeric", # eQTL
+          "character", "character") # plink
   for (j in 1:nclumps) {
     filename <- file.path(dir,tsv_files[j])
-    out <- read.table(filename, header=TRUE)
+    out <- read.delim(filename, header=TRUE, colClasses=cc)
     out$z <- out$beta_eQTL/out$se_eQTL
     out$abs.z <- abs(out$z)
     sum_stat[[j]] <- out
