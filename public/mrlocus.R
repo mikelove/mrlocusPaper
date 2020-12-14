@@ -68,9 +68,12 @@ for (j in seq_along(nsnp)) {
 res <- list(beta_hat_a=beta_hat_a,
             beta_hat_b=beta_hat_b,
             sd_a=out2$se_a,
-            sd_b=out2$se_b)
+            sd_b=out2$se_b,
+            alleles=out2$alleles)
 
 res <- extractForSlope(res, plot=FALSE)
+write.table(res$alleles, file.path(dir,"mrlocus_alleles.txt"), row.names=FALSE, quote=FALSE)
+
 res <- fitSlope(res, iter=10000)
 
 save(res, file=out.filename)
