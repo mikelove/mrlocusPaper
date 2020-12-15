@@ -232,21 +232,21 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{figs/sigma_est.png}
+  \includegraphics[width=.7\textwidth]{figs/sigma_est.png}
   \caption{Simulation assessing MRLocus' estimation of the scale of
-    dispersion ($\sigma$) across independent signal
-    clusters. The summary statistics for eQTL and GWAS were generated from
-    a multivariate normal distribution as in the eCAVIAR model, using
-    a simulated LD matrix. The true slope ($\alpha$) was set to 1, the
-    true $\sigma$ varied from 0.25 to 1 in increments of 0.25
+    dispersion ($\sigma$) across independent signal clusters. The
+    summary statistics for eQTL and GWAS were generated from a
+    multivariate normal distribution as in the eCAVIAR model, using a
+    simulated LD matrix. The true slope ($\alpha$) was set to 1, the
+    true $\sigma$ varied among the values $\{0.25, 0.5, 1, 1.5\}$
     (x-axis), and the number of LD-independent clusters varied between
-    4, 6, and 8 (left, middle, and right panels), with 10 iterations
-    per setting (plotted with spacing to avoid overplotting). The
-    posterior mean is indicated with a dot, while 80\% quantile-based
-    credible intervals and their coverage of the true value are
-    indicated with the line and its color. The simulation script is
-    included within the MRLocus package test directory, as an R
-    script \texttt{"test\_sigma.R"}.}
+    4, 6, and 8 (top, middle, bottom panels), with 20 iterations
+    per setting (plotted with horizontal spacing to avoid
+    overplotting).  The posterior mean is indicated with a dot, while
+    80\% quantile-based credible intervals and their coverage of the
+    true value are indicated with the line and its color. The
+    simulation script is included within the MRLocus package test
+    directory, as an R script \texttt{"test\_sigma.R"}.}
 \end{figure}
 
 \begin{figure}[!ht]
