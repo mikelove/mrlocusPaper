@@ -11,10 +11,10 @@ source("common.R") # common function for mrlocus and ecaviar-mrlocus
 out <- getTrimmedSumStats(dir, tsv.filename,ld.filename)
 sum_stat <- out$sum_stat
 ld_mat <- out$ld_mat
-trim.clumps <- out$trim.clumps
+trim_clusters <- out$trim_clusters
 
-if (length(trim.clumps) > 0) {
-  write(trim.clumps, file=out.filename, ncolumns=length(trim.clumps))
+if (length(trim_clusters) > 0) {
+  write(trim_clusters, file=out.filename, ncolumns=length(trim_clusters))
 } else {
   write(NA, file=out.filename)
 }

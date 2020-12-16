@@ -1,4 +1,4 @@
-getTrimmedSumStats <- function(dir, tsv.filename, ld.filename) {
+getTrimmedSumStats <- function(dir, tsv.filename, ld.filename, r2_threshold) {
 
   # read in the summary stats and LD matrices
   tsv_files <- scan(tsv.filename, what="char")
@@ -33,26 +33,13 @@ getTrimmedSumStats <- function(dir, tsv.filename, ld.filename) {
   z_stat <- sapply(seq_along(sum_stat), function(i) sum_stat[[i]][sum_stat[[i]]$SNP == info$idxSNP[i],"abs.z"])
   stopifnot(all(z_stat == sort(z_stat, decreasing=TRUE)))
 
-  # find clumps that have pairwise correlation with other clumps above a threshold
-  r2.threshold <- 0.01
-  trim.clumps <- c()
-  if (nclumps > 1) {
-    diag(r2) <- 0 # useful for logic below
-    if (nclumps > 1 & any(r2 > r2.threshold)) {
-      for (j in nclumps:2) {
-        if (any( (r2[j,] > r2.threshold)[!1:nclumps %in% trim.clumps] )) {
-          trim.clumps <- c(trim.clumps, j)
-        }
-      }
-    }
-    trim.clumps <- rev(trim.clumps)
-  }
+  trim_clusters <- clusterTrimmer(r2, r2_threshold=r2_threshold)
 
-  if (length(trim.clumps) > 0) {
+  if (length(trim_clusters) > 0) {
     # trim those clumps
-    sum_stat <- sum_stat[-trim.clumps]
-    ld_mat <- ld_mat[-trim.clumps]
+    sum_stat <- sum_stat[-trim_clusters]
+    ld_mat <- ld_mat[-trim_clusters]
   }
 
-  list(sum_stat=sum_stat, ld_mat=ld_mat, trim.clumps=trim.clumps)
+  list(sum_stat=sum_stat, ld_mat=ld_mat, trim_clusters=trim_clusters)
 }
