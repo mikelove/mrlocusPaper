@@ -12,4 +12,4 @@ ggplot(dat, aes(r2, FPR, col=n, group=n, ymin=ymin, ymax=ymax)) +
   geom_errorbar(width=.2) +
   geom_line() +
   geom_hline(yintercept=0.2, lty=2) +
-  ylim(0,1)
+  scale_y_continuous(breaks=c(1:5/10))

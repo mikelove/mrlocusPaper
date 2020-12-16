@@ -12,9 +12,13 @@ set.seed(n + r2)
 out <- pbsapply(1:niter, function(i) {
   sdev <- 1
   corr <- sqrt(r2)
-  Sigma <- matrix(corr, nrow=n, ncol=n)
+  Sigma <- matrix(0, nrow=n, ncol=n)
   diag(Sigma) <- 1
-  beta_hat_a <- MASS::mvrnorm(1, mu=rep(5,n), Sigma)  
+  idx <- 2:n
+  Sigma[cbind(idx-1,idx)] <- corr
+  Sigma[cbind(idx,idx-1)] <- corr
+  Sigma <- as.matrix(Matrix::nearPD(Sigma)$mat)
+  beta_hat_a <- MASS::mvrnorm(1, mu=rep(10,n), Sigma)
   beta_hat_b <- MASS::mvrnorm(1, mu=rep(0,n), Sigma)
   sd_b <- sd_a <- rep(sdev,n)
   res <- list(beta_hat_a=beta_hat_a, sd_a=sd_a, beta_hat_b=beta_hat_b, sd_b=sd_b)
@@ -27,5 +31,6 @@ out <- pbsapply(1:niter, function(i) {
   unname(bnds)
 })
 
-err <- mean(apply(out, 2, function(x) sign(x[1]) == sign(x[2])))
+(err <- mean(apply(out, 2, function(x) sign(x[1]) == sign(x[2]))))
+
 write(c(n, r2, err), ncolumns=3, file=outfile)
