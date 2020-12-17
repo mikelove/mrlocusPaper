@@ -78,7 +78,7 @@ load("LDmatrix_allSNPs.rda")
 r2 <-  get(paste0("LD_", dir))
 idx <- sapply(res$alleles$id, function(snp) grep(snp, colnames(r2)))
 r2 <- r2[idx,idx]
-trim_clusters <- clusterTrimmer(r2, r2_threshold=0.05)
+trim_clusters <- trimClusters(r2, r2_threshold=0.05)
 trim2.filename <- file.path(dir, paste0(dir, "_mrlocus.trim2"))
 if (length(trim_clusters) > 0) {
   res <- lapply(res, function(x) {

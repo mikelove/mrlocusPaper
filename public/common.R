@@ -33,7 +33,7 @@ getTrimmedSumStats <- function(dir, tsv.filename, ld.filename, r2_threshold) {
   z_stat <- sapply(seq_along(sum_stat), function(i) sum_stat[[i]][sum_stat[[i]]$SNP == info$idxSNP[i],"abs.z"])
   stopifnot(all(z_stat == sort(z_stat, decreasing=TRUE)))
 
-  trim_clusters <- clusterTrimmer(r2, r2_threshold=r2_threshold)
+  trim_clusters <- trimClusters(r2, r2_threshold=r2_threshold)
 
   if (length(trim_clusters) > 0) {
     # trim those clumps

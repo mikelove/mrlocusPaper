@@ -9,7 +9,7 @@ if (FALSE) {
   i <- "1"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[18])
+  file <- sub(".clumped","",files[38])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
@@ -42,49 +42,43 @@ ld.idx <- sapply(sum_stat, function(x) x$snp[which.max(x$abs.z)])
 ld.idx <- match(ld.idx, big_sum_stat$snp)
 r2 <- big_ld_mat[ld.idx, ld.idx]^2
 
-# find clumps that have pairwise correlation with other clumps above a threshold
-r2.threshold <- 0.01
-trim.clumps <- c()
-nclumps <- length(sum_stat)
-if (nclumps > 1) {
-  diag(r2) <- 0 # useful for logic below
-  if (nclumps > 1 & any(r2 > r2.threshold)) {
-    for (j in nclumps:2) {
-      if (any( (r2[j,] > r2.threshold)[!1:nclumps %in% trim.clumps] )) {
-        trim.clumps <- c(trim.clumps, j)
-      }
-    }
-  }
-  trim.clumps <- rev(trim.clumps)
+# trim clusters using index eSNP
+devtools::load_all("../../mrlocus")
+
+nclusters <- length(sum_stat)
+if (nclusters > 1) {
+  # find clusters that have pairwise r2 with other clumps above a threshold
+  trim_clusters <- trimClusters(r2, r2_threshold=0.05)
 
   # write out pairwise r2 of index eSNPs that remain
-  if (length(trim.clumps) > 0) {
-    r2.out <- r2[-trim.clumps,-trim.clumps]
+  if (length(trim_clusters) > 0) {
+    r2.out <- r2[-trim_clusters,-trim_clusters]
   } else {
     r2.out <- r2
   }
   r2.lower <- r2.out[lower.tri(r2.out)]
-  if (length(trim.clumps) < nclumps-1) {
+  # if trim_clusters is n-1 then there is no pairwise r2 to write out...
+  if (length(trim_clusters) < nclusters-1) {
     write(r2.lower, file=sub("mrlocus","mrl_r2",out.filename), ncolumns=length(r2.lower))
   }  
+} else {
+  trim_clusters <- numeric(0)
 }
 
-# write out the clumps to keep
-keep.clumps <- 1:nclumps
-if (length(trim.clumps) > 0) {
-  keep.clumps <- keep.clumps[-trim.clumps]
+# write out the clusters to keep
+keep_clusters <- 1:nclusters
+if (length(trim_clusters) > 0) {
+  keep_clusters <- keep_clusters[-trim_clusters]
 }
-write(keep.clumps, file=sub("mrlocus","mrl_keep",out.filename), ncolumns=length(keep.clumps))
+write(keep_clusters, file=sub("mrlocus","mrl_keep",out.filename), ncolumns=length(keep_clusters))
 
-# trim clumps
-if (length(trim.clumps) > 0) {
-  sum_stat <- sum_stat[-trim.clumps]
-  ld_mat <- ld_mat[-trim.clumps]
+# trim clusters
+if (length(trim_clusters) > 0) {
+  sum_stat <- sum_stat[-trim_clusters]
+  ld_mat <- ld_mat[-trim_clusters]
 }
 
-# mrlocus
-
-devtools::load_all("../../mrlocus")
+# mrlocus pre-processing steps
 
 sapply(sum_stat, function(x) any(x$eqtl.true != 0))
 out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE, snp_id="snp")
@@ -115,7 +109,6 @@ out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
 library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
-library(matrixStats)
 options(mc.cores=4)
 nsnp <- lengths(out2$beta_hat_a)
 beta_hat_a <- list()
@@ -155,8 +148,37 @@ res <- list(beta_hat_a=beta_hat_a,
 save(res, file=sub("mrlocus","mrl_coloc",out.filename))
 
 res <- extractForSlope(res, plot=FALSE)
-res <- fitSlope(res, iter=10000)
 
+if (nrow(res$alleles) > 1) {
+  # second round of trimming
+  ld.idx <- match(res$alleles$id, big_sum_stat$snp)
+  r2 <- big_ld_mat[ld.idx, ld.idx]^2
+  
+  if (nrow(res$alleles) > 1) {
+    trim_clusters <- trimClusters(r2, r2_threshold=0.05)
+    if (length(trim_clusters) > 0) {
+      res <- lapply(res, function(x) {
+        if (is.numeric(x)) {
+          x[-trim_clusters]
+        } else {
+          x[-trim_clusters,,drop=FALSE]
+        }
+      })
+    }
+  }
+} else {
+  trim_clusters <- numeric(0)
+}
+
+# write out the second round clusters that are kept
+nclusters <- nrow(res$alleles)
+keep_clusters <- 1:nclusters
+if (length(trim_clusters) > 0) {
+  keep_clusters <- keep_clusters[-trim_clusters]
+}
+write(keep_clusters, file=sub("mrlocus","mrl_keep2",out.filename), ncolumns=length(keep_clusters))
+
+res <- fitSlope(res, iter=10000)
 #rstan::stan_plot(res$stanfit, pars=c("alpha","sigma"))
 if ("stanfit" %in% res) {
   print(res$stanfit, pars=c("alpha","sigma"), digits=3)
