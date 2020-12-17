@@ -1,8 +1,7 @@
 cmd_args=commandArgs(TRUE)
 
 prefix <- sub("out/(.*)/.*","\\1",cmd_args[1])
-#extra_methods <- (prefix %in% c("1","high_n"))
-extra_methods <- FALSE
+extra_methods <- (prefix %in% c("1","high_n"))
 
 if (extra_methods) {
   scan.filename <- cmd_args[1]

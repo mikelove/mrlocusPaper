@@ -167,7 +167,7 @@ if (nrow(res$alleles) > 1) {
     }
   }
 } else {
-  trim_clusters <- numeric(0)
+  trim_clusters <- numeric()
 }
 
 # write out the second round clusters that are kept

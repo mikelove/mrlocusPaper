@@ -1,7 +1,6 @@
 i <- "1"
 
-#extra_methods <- (i %in% c("1","high_n"))
-extra_methods <- FALSE
+extra_methods <- (i %in% c("1","high_n"))
 
 files <- sub(".final","",list.files(paste0("out/",i), pattern="final"))
 files <- grep(paste0("^",i,"_"),files,value=TRUE)
@@ -110,7 +109,7 @@ tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
     )
 tab
 mx <- max(abs(dat$true))
-lex <- 1.2 # limits expansion
+lex <- 2 # limits expansion
 data.tb <- tibble(x=0, y=lex*mx, tb=list(tab))
 
 dat2 <- dat %>% mutate(estimate = sign(true) * estimate, true = abs(true))
@@ -139,8 +138,8 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-#  xlim(0,lex*mx) + ylim(-.25*lex*mx,lex*mx) +
-  xlim(0,lex*mx) + ylim(-.6,2.1) +
+  xlim(0,lex*mx) + ylim(-.25*lex*mx,lex*mx) +
+#  xlim(0,lex*mx) + ylim(-.6,2.1) +
   ggtitle(ttl)
 p1
 #dev.off()
