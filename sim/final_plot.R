@@ -1,4 +1,4 @@
-i <- "1"
+i <- "4"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -43,7 +43,8 @@ ecav.mrlocus90 <- sapply(ecav.mrlocus, function(x) x[2,2])
 
 h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1]))
 ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
-ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.")
+high_n_ttl <- if (i == "high_n") ", eQTL N=1000" else ""
+ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.",high_n_ttl)
 ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
@@ -109,8 +110,9 @@ tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
     )
 tab
 mx <- max(abs(dat$true))
-lex <- 2 # limits expansion
-data.tb <- tibble(x=0, y=lex*mx, tb=list(tab))
+my <- max(abs(dat$estimate))
+lex <- 1.1 # limits expansion
+data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 
 dat2 <- dat %>% mutate(estimate = sign(true) * estimate, true = abs(true))
 library(ggplot2)
@@ -138,11 +140,14 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-  xlim(0,lex*mx) + ylim(-.25*lex*mx,lex*mx) +
+  xlim(0,lex*mx) + ylim(0,lex*my) +
 #  xlim(0,lex*mx) + ylim(-.6,2.1) +
   ggtitle(ttl)
 p1
 #dev.off()
+
+# any negative?
+dat2 %>% filter(estimate < 0)
 
 ###
 
