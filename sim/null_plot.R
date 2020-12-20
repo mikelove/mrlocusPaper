@@ -66,18 +66,22 @@ tab$x <- "left"
 tab$y <- "top"
 
 # also show MAE
-dat %>% filter(two_plus_instr=="yes") %>%
+tab2 <- dat %>% filter(two_plus_instr=="yes") %>%
   group_by(h2, method) %>%
-  summarize(MAE=mean(abs(estimate)))
+  summarize(MAE=round(mean(abs(estimate)),3))
+tab2
+tab2$x <- "left"
+tab2$y <- "bottom"
 
 library(ggplot2)
 library(ggpmisc)
 dat2 <- dat %>% filter(two_plus_instr=="yes")
 #png(file="../supp/figs/nullplot.png", res=125, width=1200, height=800)
 ggplot(dat2, aes(estimate,rep,xmin=min,xmax=max,color=contain)) +
-  geom_pointrange(shape="square",size=.5) + facet_grid(h2 ~ method, scales="free_y") +
+  geom_pointrange(shape="square",size=.5) +
+  facet_grid(h2 ~ method, scales="free_y") +
   geom_vline(xintercept=0) +
   scale_color_manual(values=c(2,1)) +
-  geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov))
+  geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
+  geom_text_npc(data=tab2, aes(npcx=x, npcy=y, label=MAE))
 #dev.off()
-
