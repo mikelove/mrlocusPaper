@@ -1,4 +1,8 @@
-i <- "4"
+library(dplyr)
+library(ggplot2)
+library(ggpmisc)
+
+i <- "9"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -102,7 +106,6 @@ num_instr <- unname(sapply(files, function(f) {
 table(num_instr)
 dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
 
-library(dplyr)
 tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
   summarize(
     RMAE=mean(abs(est_nozero-true)/abs(true),na.rm=TRUE),
@@ -110,13 +113,13 @@ tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
     )
 tab
 mx <- max(abs(dat$true))
-my <- max(abs(dat$estimate))
+my <- max(abs(dat$estimate), na.rm=TRUE)
 lex <- 1.1 # limits expansion
 data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 
-dat2 <- dat %>% mutate(estimate = sign(true) * estimate, true = abs(true))
-library(ggplot2)
-library(ggpmisc)
+dat2 <- dat %>%
+  filter(two_plus_instr == "yes") %>%
+  mutate(estimate = sign(true) * estimate, true = abs(true))
 cols <- unname(palette.colors())[-c(1,5)]
 cols <- cols[c(1:3,3,4,4,5,5,5)]
 names(cols) <- meths.big
@@ -130,6 +133,7 @@ if (length(meths) == 11) { # for the plot with LDA and PMR
   names(shps) <- meths
   mx <- max(abs(dat$estimate))
 }
+
 #png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
 p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
@@ -141,7 +145,6 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
   xlim(0,lex*mx) + ylim(0,lex*my) +
-#  xlim(0,lex*mx) + ylim(-.6,2.1) +
   ggtitle(ttl)
 p1
 #dev.off()
@@ -149,10 +152,8 @@ p1
 # any negative?
 dat2 %>% filter(estimate < 0)
 
-###
-
+# look at coverage
 dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
-
 if (FALSE) {
   mrl_cover <- dat %>% filter(method=="mrlocus") %>% pull(contain)
   addmargins(table(mrl_cover, num_instr), 1)
@@ -170,8 +171,8 @@ p2 <- ggplot(dat, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_pointrange(shape="square", size=.5) + facet_wrap(~method) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=c(2,1)) +
-  geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) + 
-  xlim(-1.2*mx,1.2*mx) + ylim(-1.2*mx,1.2*mx) +
+  geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
+  coord_cartesian(xlim=c(-1.2*mx,1.2*mx), ylim=c(-1.5*mx,1.5*mx)) + 
   ggtitle(ttl)
 p2
 #dev.off()

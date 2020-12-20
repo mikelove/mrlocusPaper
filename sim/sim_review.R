@@ -82,7 +82,7 @@ kept <- lapply(c(1:9,paste0("null",1:3)), function(i) {
   unname(sapply(files, function(x) length(scan(x, quiet=TRUE))))
 })
 lengths(kept)
-sapply(kept, function(x) sum(x[1:20] > 1)) # 15 or less => more reps
+sapply(kept, function(x) sum(x[1:20] > 1)) # 17 or less => more reps
 sapply(kept, function(x) sum(x > 1))
 
 load("sim_review.rda")
