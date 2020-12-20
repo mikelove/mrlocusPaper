@@ -2,12 +2,14 @@ key <- read.table("sim_review.tsv", header=TRUE)
 key <- key[1:12,2:3]
 key <- rbind(key, data.frame(sim="High-N", id="high_n"))
 
+library(pbapply)
+
+key$mrlocus <- NA
+key$ecaviar <- NA
 for (type in key$id) {
   print(paste("---",type,"---"))
   dir <- file.path("out",type)
   files <- list.files(dir, pattern="ve.clumped")
-
-  library(pbapply)
   out <- pblapply(seq_along(files), function(i) {
     file <- sub(".clumped","",files[i])
     clumped.filename <- paste0(dir,"/",file,".clumped")
@@ -42,7 +44,7 @@ for (type in key$id) {
         snps <- res$alleles[[j]]$collapsed[ which.max(res$beta_hat_a[[j]]) ]
         any(sapply(eqtl.nms, function(p) grepl(p, snps)))
       })
-      eCAVIAR <- sapply(which(in.clump), function(j) {
+      ecaviar <- sapply(which(in.clump), function(j) {
         eqtl.true <- sum_stat[[j]]$eqtl.true != 0
         eqtl.nms <- sum_stat[[j]]$snp[eqtl.true]
         snp <- ecav.coloc[[j]]$SNP_ID[which.max(ecav.coloc[[j]]$CLPP)]
@@ -50,13 +52,20 @@ for (type in key$id) {
         snps <- grep(snp, res$alleles[[j]]$collapsed, value=TRUE)
         any(sapply(eqtl.nms, function(p) grepl(p, snps)))
       })
-      data.frame(mrlocus=mrlocus, eCAVIAR=eCAVIAR)
+      data.frame(mrlocus=mrlocus, ecaviar=ecaviar)
     } else {
       NULL
     }
   })
-
   dat <- do.call(rbind, out)
-  print(colMeans(dat))
+  key[key$id == type,c("mrlocus","ecaviar")] <- colMeans(dat)
 }
 
+library(reshape)
+dat <- melt(key, id=c("sim","id"), variable_name="method")
+names(dat)[4] <- "accuracy"
+dat$sim <- factor(dat$sim, levels=c("A","High-N",LETTERS[2:9],"Null-0.05","Null-0.1","Null-0.2"))
+library(ggplot2)
+ggplot(dat, aes(sim, accuracy, fill=method)) +
+  geom_bar(stat="identity", position="dodge") +
+  ylim(0,1)
