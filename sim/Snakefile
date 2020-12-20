@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["final"]
+FORMATS = ["ptwas","ecav"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -283,6 +283,8 @@ rule ecaviar:
         ld = "out/{locus}.ld"
     output:
         "out/{locus}.ecav"
+    benchmark:
+        "bench/{locus}_ecav.bench"
     shell:
         "R CMD BATCH --no-save --no-restore '--args {ecaviar} {input.clump} {input.scan} " 
         "{input.ld} {output}' ecaviar.R"
