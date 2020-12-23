@@ -59,12 +59,16 @@ for (type in key$id) {
   dat <- do.call(rbind, out)
   key[key$id == type,c("mrlocus","ecaviar")] <- colMeans(dat)
 }
+#save(key, file="assess_coloc.rda")
+load("assess_coloc.rda")
 
 library(reshape)
 dat <- melt(key, id=c("sim","id"), variable_name="method")
 names(dat)[4] <- "accuracy"
 dat$sim <- factor(dat$sim, levels=c("A","High-N",LETTERS[2:9],"Null-0.05","Null-0.1","Null-0.2"))
 library(ggplot2)
+pdf(file="../supp/figs/assess_coloc.pdf", width=10, height=5)
 ggplot(dat, aes(sim, accuracy, fill=method)) +
-  geom_bar(stat="identity", position="dodge") +
-  ylim(0,1)
+  geom_bar(stat="identity", position="dodge", width=.66) +
+  ylim(0,1) + ylab("accuracy in colocalization")
+dev.off()

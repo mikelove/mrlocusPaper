@@ -7,7 +7,7 @@ dat <- data.frame(type=factor(rep(c("pre","post"),
                   number=c(pre,post))
 
 library(ggplot2)
-pdf(file="../supp/figs/snps-per-clump.pdf", height=4)
+pdf(file="../supp/figs/snps_per_clump.pdf", height=4)
 ggplot(dat, aes(number, after_stat(density), color=type)) +
   geom_histogram(aes(fill=type), position="identity", alpha=.2, color="grey50", breaks=0:30*5) +
   geom_density(size=1) + 
