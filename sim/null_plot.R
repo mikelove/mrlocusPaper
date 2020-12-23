@@ -71,17 +71,31 @@ tab2 <- dat %>% filter(two_plus_instr=="yes") %>%
   summarize(MAE=round(mean(abs(estimate)),3))
 tab2
 tab2$x <- "left"
-tab2$y <- "bottom"
+tab2$y <- "middle"
+
+dat2 <- dat %>% filter(two_plus_instr=="yes")
+
+ord10 <- dat2 %>% filter(h2 == "h2: 10%" & method == "causal") %>%
+  arrange(estimate) %>% pull(rep)
+ord20 <- dat2 %>% filter(h2 == "h2: 20%" & method == "causal") %>%
+  arrange(estimate) %>% pull(rep)
+ord5 <- dat2 %>% filter(h2 == "h2: 5%" & method == "causal") %>%
+  arrange(estimate) %>% pull(rep)
+
+dat2$replicate <- NA
+dat2$replicate[dat2$h2 == "h2: 10%"] <- match(dat2$rep[dat2$h2 == "h2: 10%"], ord10)
+dat2$replicate[dat2$h2 == "h2: 20%"] <- match(dat2$rep[dat2$h2 == "h2: 20%"], ord20)
+dat2$replicate[dat2$h2 == "h2: 5%"] <- match(dat2$rep[dat2$h2 == "h2: 5%"], ord5)
 
 library(ggplot2)
 library(ggpmisc)
-dat2 <- dat %>% filter(two_plus_instr=="yes")
-#png(file="../supp/figs/nullplot.png", res=125, width=1200, height=800)
-ggplot(dat2, aes(estimate,rep,xmin=min,xmax=max,color=contain)) +
-  geom_pointrange(shape="square",size=.5) +
+png(file="../supp/figs/nullplot.png", res=125, width=1200, height=800)
+ggplot(dat2, aes(estimate,replicate,xmin=min,xmax=max,color=contain)) +
+  geom_pointrange(shape="square",size=.35) +
   facet_grid(h2 ~ method, scales="free_y") +
+  coord_cartesian(xlim=c(-1,1)) + 
   geom_vline(xintercept=0) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
   geom_text_npc(data=tab2, aes(npcx=x, npcy=y, label=MAE))
-#dev.off()
+dev.off()
