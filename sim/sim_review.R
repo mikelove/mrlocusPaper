@@ -158,17 +158,17 @@ plotit <- function(x, dot=FALSE, bee=TRUE) {
   g
 }
 
-plotit(i2, dot=FALSE, bee=TRUE) + ggtitle("I2 values for PTWAS")
-
+#plotit(i2, dot=FALSE, bee=TRUE) + ggtitle("I2 values for PTWAS")
 scl <- scale_y_continuous(limits=c(0,10), breaks=0:5*2)
+twomore <- function(x) x[x >= 2]
 
 library(patchwork)
 pdf(file="../supp/figs/sim_details.pdf", width=14, height=14)
 p1 <- plotit(causal) + ylim(0,15) + ggtitle("# of true eQTL SNPs")
 p2 <- plotit(clumps) + ylim(0,15) + ggtitle("# of PLINK clumps")
 p3 <- plotit(lapply(dap, na.omit)) + ylim(0,40) + ggtitle("# of DAP signal clusters")
-p4 <- plotit(kept) + scl + ggtitle("# of clusters passing 1st round trim")
-p5 <- plotit(mrl.kept) + scl + ggtitle("# of clusters passing 2nd round trim - MRLocus")
-p6 <- plotit(ecav.kept) + scl + ggtitle("# of clusters passing 2nd round trim - eCAVAIR")
+p4 <- plotit(lapply(kept,twomore)) + scl + ggtitle("# of clusters passing 1st round LD-based trimming")
+p5 <- plotit(lapply(mrl.kept,twomore)) + scl + ggtitle("# of clusters passing 2nd round LD-based trimming - MRLocus")
+p6 <- plotit(lapply(ecav.kept,twomore)) + scl + ggtitle("# of clusters passing 2nd round LD-based trimming - eCAVAIR")
 (p1 | p2) / (p3 | p4) / (p5 + p6) + plot_annotation(tag_levels="A")
 dev.off()
