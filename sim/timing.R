@@ -29,7 +29,7 @@ twmr.time <- sapply(twmr, myscan, USE.NAMES=FALSE)
 length(twmr.time)
 hist(twmr.time)
 
-#save(twmr.time,ptw.time,mrl.time, file="timing.rda")
+#save(twmr.time, ptw.time, ecav.time, emrl.time, mrl.time, file="timing.rda")
 load("timing.rda")
 
 library(ggplot2)
@@ -48,8 +48,7 @@ tab <- data.frame(
   seconds=c(10,10,10,60,300),
   label=paste("mean:",round(ms,2),"s"))
 
-#pdf(file="../supp/figs/runtime.pdf", width=4, height=4)
-
+pdf(file="../supp/figs/runtime.pdf", width=6, height=6)
 ggplot(dat, aes(method,seconds)) +
   geom_boxplot() +
   scale_y_log10(limits=c(1,300), breaks=c(1,2,5,10,30,60,120,300)) +
@@ -62,8 +61,7 @@ ggplot(dat, aes(method,seconds)) +
   geom_label(aes(method,seconds,label=label),
              fill="cornsilk",
              tab)
-
-#dev.off()
+dev.off()
 
 mean(mrl.time)
 mean(twmr.time)
