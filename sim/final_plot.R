@@ -44,7 +44,6 @@ for (k in seq_along(files)) {
 ecav.mrlocus10 <- sapply(ecav.mrlocus, function(x) x[2,1])
 ecav.mrlocus90 <- sapply(ecav.mrlocus, function(x) x[2,2])
 
-
 h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1]))
 ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
 high_n_ttl <- if (i == "high_n") ", eQTL N=1000" else ""
@@ -91,11 +90,10 @@ if (FALSE) {
   }))
   ests <- c(est.lda, est.pmr)
   ests[is.na(ests)] <- 0
-  dat2 <- data.frame(rep=rep(1:nsim,2), true=rep(dat$true[dat$method=="causal"],2),
-                     method=rep(c("lda-mr-egger","pmr-sum-egger"),each=nsim),
-                     estimate=ests, se=rep(1,2*nsim), est_nozero=ests,
-                     min=ests, max=ests)
-  dat <- rbind(dat, dat2)
+  dat.ext <- data.frame(rep=rep(1:nsim,2), true=rep(dat$true[dat$method=="causal"],2),
+                        method=rep(c("lda-mr-egger","pmr-sum-egger"),each=nsim),
+                        estimate=ests, se=rep(1,2*nsim), est_nozero=ests, min=ests, max=ests)
+  dat <- rbind(dat, dat.ext)
   meths <- c(meths, c("lda-mr-egger", "pmr-sum-egger"))
 }
 
@@ -120,6 +118,7 @@ data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 dat2 <- dat %>%
   filter(two_plus_instr == "yes") %>%
   mutate(estimate = sign(true) * estimate, true = abs(true))
+
 cols <- unname(palette.colors())[-c(1,5)]
 cols <- cols[c(1:3,3,4,4,5,5,5)]
 names(cols) <- meths.big
@@ -131,11 +130,23 @@ if (length(meths) == 11) { # for the plot with LDA and PMR
   names(cols) <- meths
   shps <- c(24,25,17,18,15,7,16,13,10,3,8)
   names(shps) <- meths
-  mx <- max(abs(dat$estimate))
+  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","lda-mr-egger","pmr-sum-egger")
+  dat2 <- dat2 %>% filter(method %in% meth.sub)
+  tab <- tab %>% filter(method %in% meth.sub)
+  my <- 1.25 # exclude one large lda-mr estimate
+  data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 }
 
-#png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
-#png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800)
+if (FALSE) { # clean plot for 1 and high_n
+  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus")
+  dat2 <- dat2 %>% filter(method %in% meth.sub)
+  tab <- tab %>% filter(method %in% meth.sub)
+  data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
+}
+
+png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
+#png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800) # thresholds
+#png(file=paste0("../supp/figs/sim",i,"extra2.png"), res=150, width=1200, height=800) # other methods
 p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_point(size=2) +
   geom_abline(intercept=0, slope=1) +
@@ -147,17 +158,13 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   xlim(0,lex*mx) + ylim(0,lex*my) +
   ggtitle(ttl)
 p1
-#dev.off()
+dev.off()
 
 # any negative?
-dat2 %>% filter(estimate < 0)
+#dat2 %>% filter(estimate < 0)
 
 # look at coverage
 dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
-if (FALSE) {
-  mrl_cover <- dat %>% filter(method=="mrlocus") %>% pull(contain)
-  addmargins(table(mrl_cover, num_instr), 1)
-}
 
 tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
   summarize(cov=paste0("cov: ",100*round(mean(contain),2),"%"))
@@ -166,19 +173,38 @@ mx <- max(abs(dat$true))
 tab$x <- "left"
 tab$y <- "top"
 
-#png(file=paste0("../supp/figs/cover",i,".png"), res=170, width=1200, height=800)
-p2 <- ggplot(dat, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
-  geom_pointrange(shape="square", size=.5) + facet_wrap(~method) +
+dat3 <- dat %>%
+  filter(two_plus_instr == "yes") %>%
+  mutate(estimate = sign(true) * estimate,
+         min = sign(true) * min,
+         max = sign(true) * max,
+         true = abs(true))
+
+if (length(meths) == 11) { # for the plot with LDA and PMR
+  dat3 <- dat3 %>% filter(method %in% meth.sub)
+  tab <- tab %>% filter(method %in% meth.sub)
+}
+
+if (FALSE) { # clean plot for 1 and high_n
+  dat3 <- dat3 %>% filter(method %in% meth.sub)
+  tab <- tab %>% filter(method %in% meth.sub)
+}
+
+png(file=paste0("../supp/figs/cover",i,".png"), res=170, width=1200, height=800)
+#png(file=paste0("../supp/figs/cover",i,"extra.png"), res=170, width=1400, height=1200) # thresholds
+#png(file=paste0("../supp/figs/cover",i,"extra2.png"), res=170, width=1400, height=1200) # other methods
+p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
+  geom_pointrange(shape="square", size=.25) + facet_wrap(~method) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
-  coord_cartesian(xlim=c(-1.2*mx,1.2*mx), ylim=c(-1.5*mx,1.5*mx)) + 
+  coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) + 
   ggtitle(ttl)
 p2
-#dev.off()
+dev.off()
 
-library(patchwork)
+#library(patchwork)
 #png(file="../supp/figs/fig2.png", res=170, width=2000, height=800)
-p1 + p2 + plot_annotation(tag_levels = "A")
+#p1 + p2 + plot_annotation(tag_levels = "A")
 #dev.off()
 
