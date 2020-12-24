@@ -105,7 +105,6 @@ if (FALSE) {
   meths <- c(meths, c("lda-mr-egger", "pmr-sum-egger"))
 }
 
-
 tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
   summarize(
     RMAE=mean(abs(est_nozero-true)/abs(true),na.rm=TRUE),
@@ -157,8 +156,8 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-  xlim(0,lex*mx) + ylim(0,lex*my) +
-  ggtitle(ttl)
+  xlim(0,lex*mx) + ylim(0,lex*my) 
+#  ggtitle(ttl)
 p1
 dev.off()
 
@@ -200,13 +199,14 @@ p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
-  coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) + 
-  ggtitle(ttl)
+#  coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
+  coord_cartesian(xlim=c(.5*mx,1.5*mx), ylim=c(0,1)) # for fig2
+#  ggtitle(ttl)
 p2
 dev.off()
 
-#library(patchwork)
-#png(file="../supp/figs/fig2.png", res=170, width=2000, height=800)
-#p1 + p2 + plot_annotation(tag_levels = "A")
-#dev.off()
+library(patchwork)
+png(file="../supp/figs/fig2.png", res=170, width=2000, height=800)
+p1 + p2 + plot_annotation(tag_levels = "A")
+dev.off()
 
