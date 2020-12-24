@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "9"
+i <- "1"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -80,6 +80,13 @@ if (extra_methods) {
   dat$max[dat$method == "mrlocus_p1e-4"] <- mrlocus2.90
 }
 
+# check number of instruments
+num_instr <- unname(sapply(files, function(f) {
+  length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))
+}))
+table(num_instr)
+dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
+
 if (FALSE) {
   # add even more methods (one plot only)
   est.lda <- unname(sapply(files, function(f)
@@ -92,17 +99,12 @@ if (FALSE) {
   ests[is.na(ests)] <- 0
   dat.ext <- data.frame(rep=rep(1:nsim,2), true=rep(dat$true[dat$method=="causal"],2),
                         method=rep(c("lda-mr-egger","pmr-sum-egger"),each=nsim),
-                        estimate=ests, se=rep(1,2*nsim), est_nozero=ests, min=ests, max=ests)
+                        estimate=ests, se=rep(1,2*nsim), est_nozero=ests, min=ests, max=ests,
+                        two_plus_instr=rep(dat$two_plus_instr[dat$method=="causal"],2))
   dat <- rbind(dat, dat.ext)
   meths <- c(meths, c("lda-mr-egger", "pmr-sum-egger"))
 }
 
-# check number of instruments
-num_instr <- unname(sapply(files, function(f) {
-  length(scan(paste0("out/",i,"/",f,".mrl_keep"),quiet=TRUE))
-}))
-table(num_instr)
-dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
 
 tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
   summarize(
@@ -133,7 +135,7 @@ if (length(meths) == 11) { # for the plot with LDA and PMR
   meth.sub <- c("causal","all","twmr","ptwas","mrlocus","lda-mr-egger","pmr-sum-egger")
   dat2 <- dat2 %>% filter(method %in% meth.sub)
   tab <- tab %>% filter(method %in% meth.sub)
-  my <- 1.25 # exclude one large lda-mr estimate
+  my <- 1.1 # exclude one large lda-mr estimate
   data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 }
 
