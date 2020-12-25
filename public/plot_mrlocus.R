@@ -33,8 +33,13 @@ for (tissue in names(genes)) {
     dir <- paste(tissue, gene, trait, sep="_")
     for (method in c("mrlocus","ecav-mrlocus")) {
       load(file.path(dir, paste0(dir, ".", method)))
-      out <- rstan::summary(res$stanfit, pars="alpha", probs=c(.1,.9))$summary[,c("mean","sd","10%","90%"),drop=FALSE]
-      write.table(format(out, digits=4), file=file.path(dir, paste0(dir, "_", method, ".txt")), quote=FALSE, row.names=FALSE)
+      out <- rstan::summary(
+                      res$stanfit, pars="alpha",
+                      probs=c(.1,.9)
+                    )$summary[,c("mean","sd","10%","90%"),drop=FALSE]
+      write.table(format(out, digits=4),
+                  file=file.path(dir, paste0(dir, "_", method, ".txt")),
+                  quote=FALSE, row.names=FALSE)
     }
   }
 }
