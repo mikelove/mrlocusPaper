@@ -4,12 +4,13 @@ genes <- list(Artery=c("MRAS","PHACTR1"),
               Liver=c("CETP","LIPC","SORT1"))
 traits <- c(MRAS="CAD",PHACTR1="CAD",CETP="HDL",LIPC="HDL",SORT1="LDL")
 
-#png(file="../supp/figs/realloci.png", width=1000, height=1000, res=120)
+xmax <- c(MRAS=.7, PHACTR1=.5, CETP=.3, LIPC=.8, SORT1=3.5)
+ymax <- c(MRAS=.15, PHACTR1=.2, CETP=1, LIPC=.3, SORT1=.15)
+
 #png(file="../supp/figs/sort1.png", width=1200, height=1200, res=200)
 method <- "mrlocus"
 method <- "ecav-mrlocus"
-xmax <- c(MRAS=.7, PHACTR1=.5, CETP=.3, LIPC=.8, SORT1=3.5)
-ymax <- c(MRAS=.15, PHACTR1=.2, CETP=1, LIPC=.3, SORT1=.15)
+png(file=paste0("../supp/figs/real_loci_",method,".png"), width=1800, height=1400, res=175)
 par(mfrow=c(2,3), mar=c(5,5,2,1))
 for (tissue in names(genes)) {
   for (gene in genes[[tissue]]) {
@@ -20,7 +21,7 @@ for (tissue in names(genes)) {
     plotMrlocus(res, main=main, xlim=c(0,xmax[gene]), ylim=c(-ymax[gene],ymax[gene]))
   }
 }
-#dev.off()
+dev.off()
 
 # this chunk before final plot
 genes <- list(Artery=c("MRAS","PHACTR1"),
