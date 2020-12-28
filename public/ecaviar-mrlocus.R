@@ -27,9 +27,12 @@ beta_hat_b <- numeric(nclusters)
 sd_a <- numeric(nclusters)
 sd_b <- numeric(nclusters)
 alleles <- data.frame(id=character(nclusters), ref=character(nclusters), eff=character(nclusters))
+z.thr <- qnorm(.001/2, lower.tail=FALSE)
 for (j in seq_len(nclusters)) {
-  idx <- ecav.coloc[[j]]$SNP_ID[ which.max(ecav.coloc[[j]]$CLPP) ]
-  row <- sum_stat[[j]][ sum_stat[[j]]$SNP == idx,]
+  m <- merge(sum_stat[[j]], ecav.coloc[[j]], by.x="SNP", by.y="SNP_ID")
+  m <- m[ m$abs.z > z.thr,]
+  if (nrow(m) == 0) next
+  row <- m[ which.max(m$CLPP), ]
   beta_hat_a[j] <- abs(row$beta_eQTL)
   ref <- ifelse(row$beta_eQTL > 0, row$Ref_eQTL, row$Effect_eQTL)
   eff <- ifelse(row$beta_eQTL > 0, row$Effect_eQTL, row$Ref_eQTL)
@@ -46,6 +49,10 @@ for (j in seq_len(nclusters)) {
   alleles$eff[j] <- eff
 }
 res <- list(beta_hat_a=beta_hat_a, beta_hat_b=beta_hat_b, sd_a=sd_a, sd_b=sd_b)
+
+# remove any clusters that were below p threshold
+alleles <- alleles[res$beta_hat_a != 0,]
+res <- lapply(res, function(x) x[x != 0])
 
 # second round trimming based on candidate SNPs
 load("LDmatrix_allSNPs.rda")

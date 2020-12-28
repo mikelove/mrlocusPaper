@@ -59,8 +59,8 @@ for (j in seq_along(nsnp)) {
     beta_hat_a[[j]] <- fit$beta_hat_a
     beta_hat_b[[j]] <- fit$beta_hat_b
   } else {
-    beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
-    beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
+    beta_hat_a[[j]] <- unname(out2$beta_hat_a[[j]])
+    beta_hat_b[[j]] <- unname(out2$beta_hat_b[[j]])
   }
 }
 
@@ -72,6 +72,17 @@ res <- list(beta_hat_a=beta_hat_a,
             alleles=out2$alleles)
 
 res <- extractForSlope(res, plot=FALSE)
+
+# remove any clusters that were below p threshold
+z.thr <- qnorm(.001/2, lower.tail=FALSE)
+z.idx <- res$beta_hat_a/res$sd_a > z.thr
+res <- lapply(res, function(x) {
+  if (is.numeric(x)) {
+    x[z.idx]
+  } else {
+    x[z.idx,]
+  }
+})
 
 # second round trimming based on candidate SNPs
 load("LDmatrix_allSNPs.rda")

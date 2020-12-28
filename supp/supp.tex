@@ -3,6 +3,7 @@
 \usepackage{amsmath,amssymb}
 \DeclareMathOperator{\se}{\textrm{se}}
 \usepackage{graphicx}
+\usepackage{grffile} % better for finding image extensions
 \usepackage[hidelinks]{hyperref}
 \usepackage{breakurl}
 \usepackage{xspace}
@@ -108,7 +109,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/snps-per-clump}
+  \includegraphics[width=.7\textwidth]{figs/snps_per_clump}
   \caption{SNPs per clump in the 240 simulations, before and after
     collapsing with MRLocus’ \texttt{collapseHighCorSNPs}
     function. The mean number of SNPs per clump was 19.9 and 8.8, and
@@ -266,7 +267,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/region_mras.jpg}
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.MRAS_Artery_Tibial_CAD.20201218.png}
   \caption{Colocalized signals in the \emph{MRAS} region. From top panel to
     bottom, gene model (NCBI Refseq), eQTL for MRAS in artery tibial
     (GTEx; N = 663) and CAD association within CARDIoGRAMplusC4D
@@ -280,7 +281,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/region_phactr1.jpg}
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.PHACTR1_Artery_Tibial_CAD.20201218.edit.png}
   \caption{Colocalized signals in the \emph{PHACTR1} region. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for PHACTR1 in
     artery tibial (GTEx; N = 663) and CAD association within
@@ -294,7 +295,14 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/region_cetp.jpg}
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Blood_HDL_UKBB.20201218.edit.png}
+  \caption{Colocalized signals in the \emph{LIPC} region for blood
+    eQTL.}
+\end{figure}  
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.CETP_Liver_HDL_UKBB.20201218.edit.png}
   \caption{Colocalized signals in the \emph{CETP} region. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for CETP in liver
     (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
@@ -307,8 +315,8 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/region_lipc.jpg}
-  \caption{Colocalized signals in the \emph{LIPC} region. From top
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Liver_HDL_UKBB.20201218.edit.png}
+  \caption{Colocalized signals in the \emph{LIPC} region for liver eQTL. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for LIPC in liver
     (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
     = 315,133). LD was calculated to independent SNPs within 1KG EUR
@@ -320,7 +328,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/heatmap_mras.jpg}
+  \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Artery_MRAS_CAD.20201217.png}
   \caption{LD pattern across independent clusters from \emph{MRAS}
     eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
     independent clumps from \emph{MRAS} in artery tibial (columns) and
@@ -333,7 +341,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/heatmap_phactr1.jpg}
+  \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Artery_PHACTR1_CAD.20201217.png}
   \caption{LD pattern across independent clusters from \emph{PHACTR1}
     eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
     independent clumps from \emph{PHACTR1} in artery tibial (columns)
@@ -345,7 +353,14 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/heatmap_cetp}
+  \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Blood_LIPC_HDL.20201217.png}
+  \caption{LD pattern across independent clusters from \emph{LIPC}
+    eQTL (Blood) and HDL GWAS.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Liver_CETP_HDL.20201217.png}
   \caption{LD pattern across independent clusters from \emph{CETP}
     eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
     clumps from \emph{CETP} in liver (columns) and HDL GWAS SNPs
@@ -357,7 +372,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/heatmap_lipc}
+  \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Liver_LIPC_HDL.20201217.png}
   \caption{LD pattern across independent clusters from \emph{LIPC}
     eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
     clumps from \emph{LIPC} in liver (columns) and HDL GWAS SNPs
@@ -369,7 +384,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/heatmap_sort1.jpg}
+  \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Liver_SORT1_LDL.20201217.png}
   \caption{LD pattern across independent clusters from \emph{SORT1}
     eQTL (liver) and LDL GWAS. LD ($r^2$) between SNPs in independent
     clumps from \emph{SORT1} in liver (columns) and LDL GWAS SNPs
@@ -382,9 +397,14 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{figs/realloci.png}
-  \caption{MRLocus plots for the four additional gene-trait pairs, in
-    addition to \emph{SORT1} in Figure 4.}
+  \includegraphics[width=\textwidth]{figs/real_loci_ecav-mrlocus.png}
+  \caption{MRLocus plots for six gene-trait pairs, using eCAVIAR for colocalization.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/real_loci_mrlocus.png}
+  \caption{MRLocus plots for six gene-trait pairs, using MRLocus for colocalization.}
 \end{figure}
 
 \end{document}
