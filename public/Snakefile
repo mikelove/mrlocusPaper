@@ -3,7 +3,7 @@ shell.prefix("source ~/.bashrc; ")
 
 DATASETS = ["Artery_MRAS_CAD", "Artery_PHACTR1_CAD", "Blood_LIPC_HDL",
             "Liver_CETP_HDL", "Liver_LIPC_HDL", "Liver_SORT1_LDL"]
-FORMATS = ["mrlocus"]
+FORMATS = ["trim"]
 
 ecaviar = "/proj/milovelab/love/bin/caviar/caviar/eCAVIAR"
 
