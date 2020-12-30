@@ -5,6 +5,12 @@ tsv.filename <- cmd_args[2]
 ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
+if (FALSE) {
+  dir <- "Artery_MRAS_CAD"
+  tsv.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.tsv"
+  ld.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ld"
+}
+
 set.seed(1)
 
 devtools::load_all("../../mrlocus")
@@ -73,17 +79,6 @@ res <- list(beta_hat_a=beta_hat_a,
 
 res <- extractForSlope(res, plot=FALSE)
 
-# remove any clusters that were below p threshold
-z.thr <- qnorm(.001/2, lower.tail=FALSE)
-z.idx <- res$beta_hat_a/res$sd_a > z.thr
-res <- lapply(res, function(x) {
-  if (is.numeric(x)) {
-    x[z.idx]
-  } else {
-    x[z.idx,]
-  }
-})
-
 # second round trimming based on candidate SNPs
 load("LDmatrix_allSNPs.rda")
 r2 <-  get(paste0("LD_", dir))
@@ -104,10 +99,10 @@ if (length(trim_clusters) > 0) {
   write(NA, file=trim2.filename)
 }
 
-write.table(res$alleles, file.path(dir,"mrlocus_alleles.txt"), row.names=FALSE, quote=FALSE)
+write.table(res$alleles, file.path(dir,"mrlocus_alleles.txt"),
+            row.names=FALSE, quote=FALSE)
 
 res <- fitSlope(res, iter=10000)
-
 save(res, file=out.filename)
 
 sessionInfo()

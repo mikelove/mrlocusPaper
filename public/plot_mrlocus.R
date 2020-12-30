@@ -19,7 +19,12 @@ for (tissue in names(genes)) {
     dir <- paste(tissue, gene, trait, sep="_")
     load(file.path(dir, paste0(dir, ".", method)))
     main <- paste0("SNPs → ",gene," (",sub("_"," ",tissue),") → ",trait)
-    plotMrlocus(res, main=main, xlim=c(0,xmax[gene]), ylim=c(-ymax[gene],ymax[gene]))
+    if (!"stanfit" %in% names(res)) {
+      plot(1,1)
+    } else {
+      plotMrlocus(res, main=main, xlim=c(0,xmax[gene]),
+                  ylim=c(-ymax[gene],ymax[gene]))
+    }
   }
 }
 dev.off()
@@ -35,10 +40,18 @@ for (tissue in names(genes)) {
     dir <- paste(tissue, gene, trait, sep="_")
     for (method in c("mrlocus","ecav-mrlocus")) {
       load(file.path(dir, paste0(dir, ".", method)))
-      out <- rstan::summary(
-                      res$stanfit, pars="alpha",
-                      probs=c(.1,.9)
-                    )$summary[,c("mean","sd","10%","90%"),drop=FALSE]
+      if (!is.list(res)) {
+        out <- data.frame(mean=0,sd=0,"10%"=0,"90%"=0)
+      } else if ("stanfit" %in% names(res)) {
+        out <- rstan::summary(
+                        res$stanfit, pars="alpha",
+                        probs=c(.1,.9)
+                      )$summary[,c("mean","sd","10%","90%"),drop=FALSE]
+      } else {
+        out <- data.frame(mean=res$est[1], sd=res$est[2])
+        out$"10%" <- out$mean + qnorm(.1) * out$sd
+        out$"90%" <- out$mean + qnorm(.9) * out$sd
+      }
       write.table(format(out, digits=4),
                   file=file.path(dir, paste0(dir, "_", method, ".txt")),
                   quote=FALSE, row.names=FALSE)

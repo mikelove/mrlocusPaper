@@ -9,7 +9,7 @@ if (FALSE) {
   i <- "1"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[38])
+  file <- sub(".clumped","",files[1])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
