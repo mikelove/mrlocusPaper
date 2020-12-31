@@ -13,6 +13,7 @@ if (FALSE) {
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
+  out.filename <- paste0(dir,"/",file,".mrlocus")
 }
 
 clumped <- read.table(clumped.filename, strings=FALSE, header=TRUE)
@@ -109,43 +110,53 @@ out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
 library(Matrix)
 Sigma <- lapply(out2$Sigma, function(x) as.matrix(nearPD(x)$mat))
 
-options(mc.cores=4)
-nsnp <- lengths(out2$beta_hat_a)
-beta_hat_a <- list()
-beta_hat_b <- list()
-for (j in seq_along(nsnp)) {
-  print(j)
-  if (nsnp[j] > 1) {
-    fit <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
-                        beta_hat_b=out2$beta_hat_b[[j]],
-                        se_a=out2$se_a[[j]],
-                        se_b=out2$se_b[[j]],
-                        Sigma_a=Sigma[[j]],
-                        Sigma_b=Sigma[[j]],
-                        verbose=FALSE,
-                        open_progress=FALSE,
-                        show_messages=FALSE,
-                        refresh=-1)
-    ## rstan::stan_plot(fit$stan,
-    ##                  pars=c(paste0("beta_a[",1:nsnp[j],"]"),
-    ##                         paste0("beta_b[",1:nsnp[j],"]")))
-    beta_hat_a[[j]] <- fit$beta_hat_a
-    beta_hat_b[[j]] <- fit$beta_hat_b
-  } else {
-    beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
-    beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
+# save runtime by rerunning slope fitting from after colocalization
+coloc.filename <- sub("mrlocus","mrl_coloc",out.filename)
+if (file.exists(coloc.filename)) {
+
+  load(coloc.filename)
+  
+} else {
+
+  # mrlocus colocalization
+  
+  options(mc.cores=4)
+  nsnp <- lengths(out2$beta_hat_a)
+  beta_hat_a <- list()
+  beta_hat_b <- list()
+  for (j in seq_along(nsnp)) {
+    print(j)
+    if (nsnp[j] > 1) {
+      fit <- fitBetaColoc(beta_hat_a=out2$beta_hat_a[[j]],
+                          beta_hat_b=out2$beta_hat_b[[j]],
+                          se_a=out2$se_a[[j]],
+                          se_b=out2$se_b[[j]],
+                          Sigma_a=Sigma[[j]],
+                          Sigma_b=Sigma[[j]],
+                          verbose=FALSE,
+                          open_progress=FALSE,
+                          show_messages=FALSE,
+                          refresh=-1)
+      ## rstan::stan_plot(fit$stan,
+      ##                  pars=c(paste0("beta_a[",1:nsnp[j],"]"),
+      ##                         paste0("beta_b[",1:nsnp[j],"]")))
+      beta_hat_a[[j]] <- fit$beta_hat_a
+      beta_hat_b[[j]] <- fit$beta_hat_b
+    } else {
+      beta_hat_a[[j]] <- out2$beta_hat_a[[j]]
+      beta_hat_b[[j]] <- out2$beta_hat_b[[j]]
+    }
   }
+  # make a results list for slope fitting
+  res <- list(beta_hat_a=beta_hat_a,
+              beta_hat_b=beta_hat_b,
+              sd_a=out2$se_a,
+              sd_b=out2$se_b,
+              alleles=out2$alleles)
+  # save the colocalization output
+  save(res, file=sub("mrlocus","mrl_coloc",out.filename))
+
 }
-
-# make a results list for slope fitting
-res <- list(beta_hat_a=beta_hat_a,
-            beta_hat_b=beta_hat_b,
-            sd_a=out2$se_a,
-            sd_b=out2$se_b,
-            alleles=out2$alleles)
-
-# save the colocalization output
-save(res, file=sub("mrlocus","mrl_coloc",out.filename))
 
 res <- extractForSlope(res, plot=FALSE)
 
