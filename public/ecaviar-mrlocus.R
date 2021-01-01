@@ -30,6 +30,7 @@ alleles <- data.frame(id=character(nclusters), ref=character(nclusters), eff=cha
 z.thr <- qnorm(.001/2, lower.tail=FALSE)
 for (j in seq_len(nclusters)) {
   m <- merge(sum_stat[[j]], ecav.coloc[[j]], by.x="SNP", by.y="SNP_ID")
+  # remove clusters that were below p threshold
   m <- m[ m$abs.z > z.thr,]
   if (nrow(m) == 0) next
   row <- m[ which.max(m$CLPP), ]

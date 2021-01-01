@@ -11,7 +11,7 @@ if (FALSE) {
   i <- "1"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[3])
+  file <- sub(".clumped","",files[5])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
@@ -63,6 +63,18 @@ for (j in seq_len(nclusters)) {
 }
 res <- list(beta_hat_a=beta_hat_a, beta_hat_b=beta_hat_b, sd_a=sd_a, sd_b=sd_b, snp=snp)
 
+# remove clusters that were below p threshold
+z.thr <- qnorm(.001/2, lower.tail=FALSE)
+abs.z <- with(res, abs(beta_hat_a/sd_a))
+z.idx <- abs.z > z.thr
+if (!any(z.idx)) {
+  # such a sim won't contribute to sim eval,
+  # bc it doesn't have allelic heterogeneity.
+  # just run slope fitting with one SNP to produce output
+  z.idx <- abs.z == max(abs.z) 
+}
+res <- lapply(res, `[`, z.idx)
+
 # construct LD matrix of eCAVIAR candidate SNPs
 ld.idx <- match(res$snp, big_sum_stat$snp)
 r2 <- big_ld_mat[ld.idx, ld.idx]^2
@@ -74,7 +86,7 @@ nclusters <- length(sum_stat)
 if (nclusters > 1) {
   # find clusters that have pairwise r2 with other clumps above a threshold
   trim_clusters <- trimClusters(r2, r2_threshold=0.05)
-
+  
   if (length(trim_clusters) > 0) {
     res <- lapply(res, function(x) x[-trim_clusters])
   }  

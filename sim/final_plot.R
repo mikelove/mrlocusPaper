@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "1"
+i <- "high_n"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -156,8 +156,8 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_table(data=data.tb, aes(x, y, label=tb),
              table.theme = ttheme_gtlight,
              stat="fmt_tb") +
-  xlim(0,lex*mx) + ylim(0,lex*my) 
-#  ggtitle(ttl)
+  xlim(0,lex*mx) + ylim(0,lex*my) +
+  ggtitle(ttl)
 p1
 dev.off()
 
@@ -199,9 +199,9 @@ p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
-#  coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
-  coord_cartesian(xlim=c(.5*mx,1.5*mx), ylim=c(0,1)) # for fig2
-#  ggtitle(ttl)
+  coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
+  # coord_cartesian(xlim=c(.5*mx,1.5*mx), ylim=c(0,1)) # for fig2
+  ggtitle(ttl)
 p2
 dev.off()
 
