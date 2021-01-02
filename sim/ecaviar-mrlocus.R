@@ -8,10 +8,10 @@ ecav.filename <- cmd_args[5]
 out.filename <- cmd_args[6]
 
 if (FALSE) {
-  i <- "1"
+  i <- "null3"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[5])
+  file <- sub(".clumped","",files[13])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
@@ -52,9 +52,12 @@ beta_hat_b <- numeric(nclusters)
 sd_a <- numeric(nclusters)
 sd_b <- numeric(nclusters)
 snp <- character(nclusters)
+z.thr <- qnorm(.001/2, lower.tail=FALSE)
 for (j in seq_len(nclusters)) {
-  idx <- ecav.coloc[[j]]$SNP_ID[ which.max(ecav.coloc[[j]]$CLPP) ]
-  row <- sum_stat[[j]][ sum_stat[[j]]$snp == idx,]
+  m <- merge(sum_stat[[j]], ecav.coloc[[j]], by.x="snp", by.y="SNP_ID")
+  m <- m[ m$abs.z > z.thr, ]
+  stopifnot(nrow(m) > 0) # shouldn't happen given clumping
+  row <- m[ which.max(m$CLPP), ]
   beta_hat_a[j] <- abs(row$eqtl.beta)
   beta_hat_b[j] <- sign(row$eqtl.beta) * row$gwas.beta
   sd_a[j] <- row$eqtl.se
@@ -63,18 +66,6 @@ for (j in seq_len(nclusters)) {
 }
 res <- list(beta_hat_a=beta_hat_a, beta_hat_b=beta_hat_b, sd_a=sd_a, sd_b=sd_b, snp=snp)
 
-# remove clusters that were below p threshold
-z.thr <- qnorm(.001/2, lower.tail=FALSE)
-abs.z <- with(res, abs(beta_hat_a/sd_a))
-z.idx <- abs.z > z.thr
-if (!any(z.idx)) {
-  # such a sim won't contribute to sim eval,
-  # bc it doesn't have allelic heterogeneity.
-  # just run slope fitting with one SNP to produce output
-  z.idx <- abs.z == max(abs.z) 
-}
-res <- lapply(res, `[`, z.idx)
-
 # construct LD matrix of eCAVIAR candidate SNPs
 ld.idx <- match(res$snp, big_sum_stat$snp)
 r2 <- big_ld_mat[ld.idx, ld.idx]^2
@@ -82,7 +73,7 @@ r2 <- big_ld_mat[ld.idx, ld.idx]^2
 # second round of trimming using eCAVIAR candidate SNPs
 devtools::load_all("../../mrlocus")
 
-nclusters <- length(sum_stat)
+nclusters <- length(res$beta_hat_a)
 if (nclusters > 1) {
   # find clusters that have pairwise r2 with other clumps above a threshold
   trim_clusters <- trimClusters(r2, r2_threshold=0.05)
@@ -99,7 +90,8 @@ keep_clusters <- 1:nclusters
 if (length(trim_clusters) > 0) {
   keep_clusters <- keep_clusters[-trim_clusters]
 }
-write(keep_clusters, file=sub("ecav-mrlocus","ecav-mrl_keep2",out.filename), ncolumns=length(keep_clusters))
+write(keep_clusters, file=sub("ecav-mrlocus","ecav-mrl_keep2",out.filename),
+      ncolumns=length(keep_clusters))
 
 # mrlocus slop fitting
 res <- fitSlope(res, iter=10000)

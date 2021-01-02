@@ -55,12 +55,38 @@ num_instr <- unname(sapply(seq_along(files), function(k) {
 sapply(split(num_instr, dir), table)
 dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
 
-dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
+# check 2+ instruments for mrlocus and ecav-mrlocus
+mrl_instr <- unname(sapply(seq_along(files), function(k) {
+  length(scan(paste0("out/",dir[k],"/",files[k],".mrl_keep2"),quiet=TRUE))
+}))
+sapply(split(mrl_instr, dir), table)
+x <- "mrlocus"
+idx <- mrl_instr == 1
+dat$est_nozero[dat$method == x][idx] <- NA
+dat$estimate[dat$method == x][idx] <- NA
+dat$min[dat$method == x][idx] <- 0
+dat$max[dat$method == x][idx] <- 0
+
+ecav_instr <- unname(sapply(seq_along(files), function(k) {
+  length(scan(paste0("out/",dir[k],"/",files[k],".ecav-mrl_keep2"),quiet=TRUE))
+}))
+sapply(split(ecav_instr, dir), table)
+x <- "ecaviar-mrlocus"
+idx <- ecav_instr == 1
+dat$est_nozero[dat$method == x][idx] <- NA
+dat$estimate[dat$method == x][idx] <- NA
+dat$min[dat$method == x][idx] <- 0
+dat$max[dat$method == x][idx] <- 0
+
+dat$estimate[dat$method == "ptwas" & is.na(dat$est_nozero)] <- NA
+
+dat$contain <- dat$true > dat$min & dat$true < dat$max
+dat$contain[is.na(dat$est_nozero)] <- NA
 
 library(dplyr)
 tab <- dat %>% filter(two_plus_instr=="yes") %>%
   group_by(h2, method) %>%
-  summarize(cov=paste0(100*round(mean(contain),2),"%"))
+  summarize(cov=paste0(100*round(mean(contain, na.rm=TRUE),2),"%"))
 tab
 tab$x <- "left"
 tab$y <- "top"
@@ -68,7 +94,7 @@ tab$y <- "top"
 # also show MAE
 tab2 <- dat %>% filter(two_plus_instr=="yes") %>%
   group_by(h2, method) %>%
-  summarize(MAE=round(mean(abs(estimate)),3))
+  summarize(MAE=round(mean(abs(estimate), na.rm=TRUE),3))
 tab2
 tab2$x <- "left"
 tab2$y <- "middle"
