@@ -355,33 +355,33 @@ rule ecaviar_mrlocus:
         "R CMD BATCH --no-save --no-restore '--args {input.clump} {input.scan} {input.ld} " 
         "{input.keep} {input.ecav} {output}' ecaviar-mrlocus.R"
 
-rule collate:
-    input:
-        scan = "out/{locus}.scan.tsv",
-	twmr = "out/{locus}.twmr",
-	ptwas = "out/{locus}.ptwas",
-	mrlocus = "out/{locus}.mrlocus",
-	ecav_mrlocus = "out/{locus}.ecav-mrlocus"
-    output:
-        "out/{locus}.final"
-    shell:
-        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
-        "{input.ptwas} {input.mrlocus} {input.ecav_mrlocus} "
-        "{output}' collate.R"
-
 # rule collate:
 #     input:
 #         scan = "out/{locus}.scan.tsv",
-#         twmr = "out/{locus}.twmr",
-#         twmr2 = "out/{locus}.twmr_p1e-4",
-#         ptwas = "out/{locus}.ptwas",
-#         ptwas2 = "out/{locus}.ptwas_t0.1",
-#         mrlocus = "out/{locus}.mrlocus",
-#         mrlocus2 = "out/{locus}.mrlocus_p1e-4",
-#         ecav_mrlocus = "out/{locus}.ecav-mrlocus"
+# 	  twmr = "out/{locus}.twmr",
+# 	  ptwas = "out/{locus}.ptwas",
+# 	  mrlocus = "out/{locus}.mrlocus",
+# 	  ecav_mrlocus = "out/{locus}.ecav-mrlocus"
 #     output:
 #         "out/{locus}.final"
 #     shell:
-#         "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} {input.twmr2} " 
-#         "{input.ptwas} {input.ptwas2} {input.mrlocus} {input.mrlocus2} {input.ecav_mrlocus} "
+#         "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} " 
+#         "{input.ptwas} {input.mrlocus} {input.ecav_mrlocus} "
 #         "{output}' collate.R"
+
+rule collate:
+    input:
+        scan = "out/{locus}.scan.tsv",
+        twmr = "out/{locus}.twmr",
+        twmr2 = "out/{locus}.twmr_p1e-4",
+        ptwas = "out/{locus}.ptwas",
+        ptwas2 = "out/{locus}.ptwas_t0.1",
+        mrlocus = "out/{locus}.mrlocus",
+        mrlocus2 = "out/{locus}.mrlocus_p1e-4",
+        ecav_mrlocus = "out/{locus}.ecav-mrlocus"
+    output:
+        "out/{locus}.final"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} {input.twmr} {input.twmr2} " 
+        "{input.ptwas} {input.ptwas2} {input.mrlocus} {input.mrlocus2} {input.ecav_mrlocus} "
+        "{output}' collate.R"

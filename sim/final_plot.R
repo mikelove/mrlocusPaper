@@ -87,8 +87,29 @@ num_instr <- unname(sapply(files, function(f) {
 table(num_instr)
 dat$two_plus_instr <- factor(rep( ifelse(num_instr > 1, "yes", "no"), each=length(meths) ))
 
+# check 2+ instruments for mrlocus and ecav-mrlocus
+mrl_instr <- unname(sapply(files, function(f) {
+  length(scan(paste0("out/",i,"/",f,".mrl_keep2"),quiet=TRUE))
+}))
+x <- "mrlocus"
+idx <- mrl_instr == 1
+dat$est_nozero[dat$method == x][idx] <- NA
+dat$estimate[dat$method == x][idx] <- 0
+dat$min[dat$method == x][idx] <- 0
+dat$max[dat$method == x][idx] <- 0
+
+ecav_instr <- unname(sapply(files, function(f) {
+  length(scan(paste0("out/",i,"/",f,".ecav-mrl_keep2"),quiet=TRUE))
+}))
+x <- "ecaviar-mrlocus"
+idx <- ecav_instr == 1
+dat$est_nozero[dat$method == x][idx] <- NA
+dat$estimate[dat$method == x][idx] <- 0
+dat$min[dat$method == x][idx] <- 0
+dat$max[dat$method == x][idx] <- 0
+
 if (FALSE) {
-  # add even more methods (one plot only)
+  # add LDA and PMR (one plot only)
   est.lda <- unname(sapply(files, function(f)
     scan(paste0("ldamregger/",f,".ldamregger"),quiet=TRUE)[1]))
   est.pmr <- unname(sapply(files, function(f) {
@@ -165,10 +186,11 @@ dev.off()
 #dat2 %>% filter(estimate < 0)
 
 # look at coverage
-dat$contain <- dat$true > dat$min & dat$true < dat$max & !is.na(dat$est_nozero)
+dat$contain <- dat$true > dat$min & dat$true < dat$max
+dat$contain[is.na(dat$est_nozero)] <- NA
 
 tab <- dat %>% filter(two_plus_instr == "yes") %>% group_by(method) %>%
-  summarize(cov=paste0("cov: ",100*round(mean(contain),2),"%"))
+  summarize(cov=paste0("cov: ",100*round(mean(contain, na.rm=TRUE),2),"%"))
 tab
 mx <- max(abs(dat$true))
 tab$x <- "left"
