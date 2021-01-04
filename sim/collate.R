@@ -22,6 +22,8 @@ if (extra_methods) {
   out.filename <- cmd_args[6]
 }
 
+stopifnot(grepl("\\.mrlocus$", mrlocus.filename)) # ensure correct inputs
+
 ivw.fixed.effects <- function(eqtl.beta, gwas.beta, eqtl.se, gwas.se) {
   res <- TwoSampleMR::mr_ivw_fe(eqtl.beta, gwas.beta, eqtl.se, gwas.se)
   c("Estimate"=res$b, "Std. Error"=res$se)

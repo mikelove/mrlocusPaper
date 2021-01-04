@@ -6,6 +6,13 @@ ld.filename <- cmd_args[3]
 ecav.filename <- cmd_args[4]
 out.filename <- cmd_args[5]
 
+if (FALSE) {
+  dir <- "Artery_MRAS_CAD"
+  tsv.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.tsv"
+  ld.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ld"
+  ecav.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ecav"
+}
+
 set.seed(1)
 
 devtools::load_all("../../mrlocus")
@@ -30,7 +37,7 @@ alleles <- data.frame(id=character(nclusters), ref=character(nclusters), eff=cha
 z.thr <- qnorm(.001/2, lower.tail=FALSE)
 for (j in seq_len(nclusters)) {
   m <- merge(sum_stat[[j]], ecav.coloc[[j]], by.x="SNP", by.y="SNP_ID")
-  # remove clusters that were below p threshold
+  # remove SNPs below p threshold
   m <- m[ m$abs.z > z.thr,]
   if (nrow(m) == 0) next
   row <- m[ which.max(m$CLPP), ]
