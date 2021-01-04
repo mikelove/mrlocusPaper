@@ -88,16 +88,16 @@ tab <- dat %>% filter(two_plus_instr=="yes") %>%
   group_by(h2, method) %>%
   summarize(cov=paste0(100*round(mean(contain, na.rm=TRUE),2),"%"))
 tab
-tab$x <- "left"
-tab$y <- "top"
+tab$x <- .05
+tab$y <- .95
 
 # also show MAE
 tab2 <- dat %>% filter(two_plus_instr=="yes") %>%
   group_by(h2, method) %>%
   summarize(MAE=round(mean(abs(estimate), na.rm=TRUE),3))
 tab2
-tab2$x <- "left"
-tab2$y <- "middle"
+tab2$x <- .05
+tab2$y <- .8
 
 dat2 <- dat %>% filter(two_plus_instr=="yes")
 
@@ -117,9 +117,9 @@ library(ggplot2)
 library(ggpmisc)
 png(file="../supp/figs/nullplot.png", res=125, width=1200, height=800)
 ggplot(dat2, aes(estimate,replicate,xmin=min,xmax=max,color=contain)) +
-  geom_pointrange(shape="square",size=.35) +
+  geom_pointrange(shape="square",size=.25) +
   facet_grid(h2 ~ method, scales="free_y") +
-  coord_cartesian(xlim=c(-1,1)) + 
+  coord_cartesian(xlim=c(-.5,.5)) + 
   geom_vline(xintercept=0) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
