@@ -6,10 +6,10 @@ ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
 if (FALSE) {
-  i <- "1"
+  i <- "high_n"
   dir <- file.path("out",i)
   files <- list.files(dir, pattern="ve.clumped")
-  file <- sub(".clumped","",files[1])
+  file <- sub(".clumped","",files[5])
   clumped.filename <- paste0(dir,"/",file,".clumped")
   scan.filename <- paste0(dir,"/",file,".scan.tsv")
   ld.filename <- paste0(dir,"/",file,".ld")
@@ -160,12 +160,12 @@ if (file.exists(coloc.filename)) {
 
 res <- extractForSlope(res, plot=FALSE)
 
-if (nrow(res$alleles) > 1) {
+nclusters <- nrow(res$alleles)
+if (nclusters > 1) {
   # second round of trimming
   ld.idx <- match(res$alleles$id, big_sum_stat$snp)
   r2 <- big_ld_mat[ld.idx, ld.idx]^2
-  
-  if (nrow(res$alleles) > 1) {
+  if (nclusters > 1) {
     trim_clusters <- trimClusters(r2, r2_threshold=0.05)
     if (length(trim_clusters) > 0) {
       res <- lapply(res, function(x) {
@@ -182,7 +182,6 @@ if (nrow(res$alleles) > 1) {
 }
 
 # write out the second round clusters that are kept
-nclusters <- nrow(res$alleles)
 keep_clusters <- 1:nclusters
 if (length(trim_clusters) > 0) {
   keep_clusters <- keep_clusters[-trim_clusters]

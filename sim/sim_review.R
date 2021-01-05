@@ -121,7 +121,7 @@ key <- data.frame(value=c(h2,ve),
                   id=rep(c(1,"high_n",3,2, 4,6,8, 5,7,9, "null1","null2","null3"),2),
                   type=rep(c("eQTL h2","variance explained"),each=13),
                   group=factor(rep(rep(1:4,c(4,3,3,3)),2)))
-write.table(key, file="sim_review.tsv", row.names=FALSE, sep="\t")
+#write.table(key, file="sim_review.tsv", row.names=FALSE, sep="\t")
 library(ggplot2)
 cols <- palette.colors(4, palette="Set 2")
 

@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "9"
+i <- "high_n"
 
 extra_methods <- (i %in% c("1","high_n"))
 
