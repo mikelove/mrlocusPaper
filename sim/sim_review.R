@@ -74,6 +74,15 @@ lengths(kept)
 sapply(kept, function(x) sum(x[1:20] > 1)) # 17 or less => more reps
 sapply(kept, function(x) sum(x > 1))
 
+# r2 of kept clumps
+r2 <- lapply(idx, function(i) {
+  out <- filesvec(i, "*\\.mrl_r2")
+  dir <- out$dir; files <- out$files
+  unlist(lapply(files, function(f) {
+    scan(file.path(dir,f), quiet=TRUE)
+  }))
+})
+
 # number of clumps kept in round two
 mrl.kept <- lapply(idx, function(i) {
   out <- filesvec(i, "*\\.mrl_keep2$")
@@ -90,7 +99,7 @@ ecav.kept <- lapply(idx, function(i) {
 })
 lengths(ecav.kept)
 
-#save(i2, causal, clumps, dap, kept, mrl.kept, ecav.kept, file="sim_review.rda")
+#save(i2, causal, clumps, dap, kept, r2, mrl.kept, ecav.kept, file="sim_review.rda")
 
 load("sim_review.rda")
 
@@ -125,6 +134,7 @@ key <- data.frame(value=c(h2,ve),
 library(ggplot2)
 cols <- palette.colors(4, palette="Set 2")
 
+# sim types plot
 pdf(file="../supp/figs/sim_types.pdf", height=5, width=8)
 ggplot(key, aes(sim, value, fill=group)) +
   geom_bar(stat="identity", show.legend=FALSE) +
@@ -132,13 +142,16 @@ ggplot(key, aes(sim, value, fill=group)) +
   scale_fill_manual(values=cols) + ylab("")
 dev.off()
 
+# subset
 key2 <- key[1:13,c("sim","id","group")]
 
 library(ggbeeswarm)
-plotit <- function(x, dot=FALSE, bee=TRUE) {
+plotit <- function(x, dot=FALSE, bee=TRUE, noise=TRUE) {
   dat <- data.frame(number=unlist(x),
                     id=rep(names(x), lengths(x)))
-  dat$number <- dat$number + runif(nrow(dat),-.25,.25)
+  if (noise) {
+    dat$number <- dat$number + runif(nrow(dat),-.25,.25)
+  }
   idx <- match(dat$id, key2$id)
   dat$sim <- key2$sim[idx]
   dat$group <- key2$group[idx]
@@ -159,6 +172,13 @@ plotit <- function(x, dot=FALSE, bee=TRUE) {
 }
 
 #plotit(i2, dot=FALSE, bee=TRUE) + ggtitle("I2 values for PTWAS")
+
+# r2 of kept clusters plot
+pdf(file="../supp/figs/sim_cluster_r2.pdf", height=5, width=8)
+plotit(r2, noise=FALSE) + ggtitle("Pairwise r2 of clusters provided to eCAVIAR/MRLocus colocalization") + ylab("r2") + scale_y_log10() +
+  geom_hline(yintercept=0.05, color="red", lty=2)
+dev.off()
+
 scl <- scale_y_continuous(limits=c(0,10), breaks=0:5*2)
 twomore <- function(x) x[x >= 2]
 
