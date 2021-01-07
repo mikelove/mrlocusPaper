@@ -192,3 +192,38 @@ p5 <- plotit(lapply(mrl.kept,twomore)) + scl + ggtitle("# of clusters passing 2n
 p6 <- plotit(lapply(ecav.kept,twomore)) + scl + ggtitle("# of clusters passing 2nd round LD-based trimming - eCAVAIR")
 (p1 | p2) / (p3 | p4) / (p5 + p6) + plot_annotation(tag_levels="A")
 dev.off()
+
+###
+
+# how much are eQTL beta over-estimated?
+overest <- lapply(idx, function(i) {
+  out <- filesvec(i, "scan.tsv$")
+  dir <- out$dir; files <- out$files
+  z.thr <- qnorm(.001/2, lower.tail=FALSE)
+  oe <- lapply(files, function(f) {
+    x <- read.table(file.path(dir, f), header=TRUE)
+    x <- x[which.max(abs(x$eqtl.true)),]
+    x$abs.z <- with(x, abs(eqtl.beta/eqtl.se))
+    x <- x[x$abs.z > z.thr,]
+    if (nrow(x) > 0) {
+      pmax(x$eqtl.beta/x$eqtl.true, 0)
+    } else {
+      NULL
+    }
+  })
+  unlist(oe)
+})
+
+library(ggplot2)
+key3 <- key[1:13,]
+dat <- data.frame(ratio=unlist(overest),
+                  id=factor(rep(names(overest), lengths(overest))))
+dat$h2g <- key3$value[match(dat$id, key2$id)]
+pdf(file="../supp/figs/sim_overest.pdf", width=10, height=5)
+ggplot(dat, aes(ratio)) +
+  geom_histogram(fill="dodgerblue", alpha=0.5, bins=20) +
+  geom_vline(xintercept=1, lty=2, col="red") +
+  scale_x_log10() +
+  xlab("eQTL coefficient estimate:true ratio") +
+  facet_wrap(~h2g)
+dev.off()
