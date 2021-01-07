@@ -225,5 +225,5 @@ ggplot(dat, aes(ratio)) +
   geom_vline(xintercept=1, lty=2, col="red") +
   scale_x_log10() +
   xlab("eQTL coefficient estimate:true ratio") +
-  facet_wrap(~h2g)
+  facet_wrap(~h2g, labeller=label_both)
 dev.off()
