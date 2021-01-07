@@ -219,7 +219,7 @@ key3 <- key[1:13,]
 dat <- data.frame(ratio=unlist(overest),
                   id=factor(rep(names(overest), lengths(overest))))
 dat$h2g <- key3$value[match(dat$id, key2$id)]
-pdf(file="../supp/figs/sim_overest.pdf", width=10, height=5)
+pdf(file="../supp/figs/sim_overest.pdf", width=10, height=3)
 ggplot(dat, aes(ratio)) +
   geom_histogram(fill="dodgerblue", alpha=0.5, bins=20) +
   geom_vline(xintercept=1, lty=2, col="red") +
