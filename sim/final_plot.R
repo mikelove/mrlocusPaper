@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "high_n"
+i <- "1"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -44,10 +44,10 @@ for (k in seq_along(files)) {
 ecav.mrlocus10 <- sapply(ecav.mrlocus, function(x) x[2,1])
 ecav.mrlocus90 <- sapply(ecav.mrlocus, function(x) x[2,2])
 
-h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1]))
-ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1]))
+h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1])) # heritability of gene exp
+ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1])) # twas_sim v.e. => now called h2med
 high_n_ttl <- if (i == "high_n") ", eQTL N=1000" else ""
-ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% var. exp.",high_n_ttl)
+ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% h2med",high_n_ttl)
 ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
@@ -216,6 +216,7 @@ if (FALSE) { # clean plot for 1 and high_n
 png(file=paste0("../supp/figs/cover",i,".png"), res=170, width=1200, height=800)
 #png(file=paste0("../supp/figs/cover",i,"extra.png"), res=170, width=1400, height=1200) # thresholds
 #png(file=paste0("../supp/figs/cover",i,"extra2.png"), res=170, width=1400, height=1200) # other methods
+png(file=paste0("../supp/figs/cover",i,"_minus_bias.png"), res=170, width=1200, height=800)
 p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_pointrange(shape="square", size=.25) + facet_wrap(~method) +
   geom_abline(intercept=0, slope=1) +
@@ -223,7 +224,7 @@ p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
   coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
   # coord_cartesian(xlim=c(.7*mx,1.1*mx), ylim=c(0,.9)) # for fig2
-  ggtitle(ttl)
+  ggtitle(paste(ttl,"(bias removed)"))
 p2
 dev.off()
 
@@ -233,3 +234,41 @@ dev.off()
 # png(file="../supp/figs/fig2.png", res=170, width=2000, height=800)
 # p1 + p2 + plot_annotation(tag_levels = "A")
 # dev.off()
+
+### examine bias
+
+h2g <- .1; h2med <- .01
+pop_slope <- sqrt(h2med/h2g)
+bias <- dat2 %>%
+  filter(method %in% c("twmr","ptwas","mrlocus","ecaviar-mrlocus")) %>%
+  group_by(method) %>%
+  summarize(bias=mean(estimate)-pop_slope)
+## 1 twmr            -0.112
+## 2 ptwas           -0.0793
+## 3 mrlocus         -0.00367
+## 4 ecaviar-mrlocus -0.0527
+dat4 <- dat
+for (m in bias$method) {
+  idx <- dat4$method == m
+  sgn <- sign(dat4$estimate[idx])
+  b <- as.numeric(bias[bias$method == m,"bias"])
+  dat4$estimate[idx] <- dat4$estimate[idx] - sgn * b
+  dat4$min[idx] <- dat4$min[idx] - sgn * b
+  dat4$max[idx] <- dat4$max[idx] - sgn * b
+}
+dat4$contain <- dat4$true > dat4$min & dat4$true < dat4$max
+dat4$contain[is.na(dat$est_nozero)] <- NA
+tab <- dat4 %>% filter(method %in% bias$method) %>%
+  filter(two_plus_instr == "yes") %>% group_by(method) %>%
+  summarize(cov=paste0("cov: ",100*round(mean(contain, na.rm=TRUE),2),"%"))
+tab
+mx <- max(abs(dat4$true))
+tab$x <- "left"
+tab$y <- "top"
+dat3 <- dat4 %>%
+  filter(method %in% bias$method) %>%
+  filter(two_plus_instr == "yes") %>%
+  mutate(estimate = sign(true) * estimate,
+         min = sign(true) * min,
+         max = sign(true) * max,
+         true = abs(true))

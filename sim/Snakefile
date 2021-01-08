@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["final"]
+FORMATS = ["twmr","ptwas"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -57,7 +57,7 @@ rule sim:
     shell:
         """
         conda activate twas_sim
-        python {ts}/sim.py {params.path} --ngwas 100000 \
+        python {ts}/sim_hp.py {params.path} --ngwas 100000 \
         --nqtl {wildcards.nqtl} \
         --model {wildcards.model} \
         --eqtl-h2 {wildcards.h2g} \
