@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "1"
+i <- "4"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -216,7 +216,7 @@ if (FALSE) { # clean plot for 1 and high_n
 png(file=paste0("../supp/figs/cover",i,".png"), res=170, width=1200, height=800)
 #png(file=paste0("../supp/figs/cover",i,"extra.png"), res=170, width=1400, height=1200) # thresholds
 #png(file=paste0("../supp/figs/cover",i,"extra2.png"), res=170, width=1400, height=1200) # other methods
-png(file=paste0("../supp/figs/cover",i,"_minus_bias.png"), res=170, width=1200, height=800)
+#png(file=paste0("../supp/figs/cover",i,"_minus_bias.png"), res=170, width=1200, height=800)
 p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_pointrange(shape="square", size=.25) + facet_wrap(~method) +
   geom_abline(intercept=0, slope=1) +
@@ -235,10 +235,11 @@ dev.off()
 # p1 + p2 + plot_annotation(tag_levels = "A")
 # dev.off()
 
-### examine bias
 
-h2g <- .1; h2med <- .01
-pop_slope <- sqrt(h2med/h2g)
+
+### examine bias ###
+
+pop_slope <- sqrt(ve/h2)
 bias <- dat2 %>%
   filter(method %in% c("twmr","ptwas","mrlocus","ecaviar-mrlocus")) %>%
   group_by(method) %>%
