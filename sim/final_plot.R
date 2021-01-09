@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "4"
+i <- "hp"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -223,6 +223,7 @@ p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
   coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
+  # coord_cartesian(xlim=c(0,1.2*mx), ylim=c(0,1.75*mx)) +
   # coord_cartesian(xlim=c(.7*mx,1.1*mx), ylim=c(0,.9)) # for fig2
   ggtitle(paste(ttl,"(bias removed)"))
 p2

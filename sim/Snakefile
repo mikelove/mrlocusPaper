@@ -2,7 +2,7 @@ shell.executable("/bin/bash")
 shell.prefix("source ~/.bashrc; ")
 
 SIMS, = glob_wildcards("sims/{sim}.sim")
-FORMATS = ["twmr","ptwas"]
+FORMATS = ["scan.tsv"]
 
 ts = "/proj/milovelab/love/bin/twas_sim"
 plink = "/proj/milovelab/bin/plink/plink"
@@ -289,25 +289,25 @@ rule ecaviar:
         "R CMD BATCH --no-save --no-restore '--args {ecaviar} {input.clump} {input.scan} " 
         "{input.ld} {output}' ecaviar.R"
 
-# rule ldamregger:
-#     input:
-#         scan = "out/{locus}.scan.tsv",
-#         ld = "out/{locus}.ld"
-#     output:
-#         "out/{locus}.ldamregger"
-#     shell:
-#         "R CMD BATCH --no-save --no-restore '--args {input.scan} " 
-#         "{input.ld} {output}' lda_mr_egger.R"
+rule ldamregger:
+    input:
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.ldamregger"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} " 
+        "{input.ld} {output}' lda_mr_egger.R"
 
-# rule pmr:
-#     input:
-#         scan = "out/{locus}.scan.tsv",
-#         ld = "out/{locus}.ld"
-#     output:
-#         "out/{locus}.pmr"
-#     shell:
-#         "R CMD BATCH --no-save --no-restore '--args {input.scan} "
-#         "{input.ld} {output}' pmr_summary_egger.R"
+rule pmr:
+    input:
+        scan = "out/{locus}.scan.tsv",
+        ld = "out/{locus}.ld"
+    output:
+        "out/{locus}.pmr"
+    shell:
+        "R CMD BATCH --no-save --no-restore '--args {input.scan} "
+        "{input.ld} {output}' pmr_summary_egger.R"
 
 rule mrlocus:
     input:
