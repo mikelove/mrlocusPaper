@@ -128,7 +128,7 @@ sim <- c("A","High-N",LETTERS[2:9],paste0("Null-",c(.1,.2,.05)))
 key <- data.frame(value=c(h2,ve),
                   sim=factor(rep(sim,2),levels=sim),
                   id=rep(c(1,"high_n",3,2, 4,6,8, 5,7,9, "null1","null2","null3"),2),
-                  type=rep(c("eQTL h2","variance explained"),each=13),
+                  type=rep(c("h2g","h2med"),each=13),
                   group=factor(rep(rep(1:4,c(4,3,3,3)),2)))
 #write.table(key, file="sim_review.tsv", row.names=FALSE, sep="\t")
 library(ggplot2)
