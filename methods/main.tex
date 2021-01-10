@@ -282,8 +282,6 @@ reflect significant heterogeneity of the gene-to-trait effect.
 
 \subsubsection{Choice of hyperparameters}
 
-TODO fix
-
 The hyperparameter for the prior for $\beta_j^A$ is
 $\textrm{SD}_\beta$, which is set to 2 times the largest absolute value
 of $\widehat{\beta}_j^A$.
@@ -296,10 +294,12 @@ $\textrm{SD}_\alpha$ is set to 2 times the absolute value of this
 estimated slope coefficient.
 
 The hyperparameter for the prior for $\sigma$ is
-$\textrm{SD}_\sigma$, which is set by default to
-1 (but can be modified by the user). This corresponds to a very wide
-prior as the GWAS effects sizes are typically quite small in magnitude
-(as seen in the analyses in the Results).
+$\textrm{SD}_\sigma$, which is set to
+$\max(2 \, \textrm{sd}(\widehat{\beta}_j^B), \max_j
+(|\widehat{\beta}_j^B|))$, where $\textrm{sd}(.)$ denotes the sample
+standard deviation. That is, the larger value between (i) 2 times the
+standard deviation of the coefficients for B and (ii) the largest absolute
+value of coefficient for B.
 
 \subsubsection{One signal cluster}
 
