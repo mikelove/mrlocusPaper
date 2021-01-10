@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "hp"
+i <- "1"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -247,37 +247,41 @@ dev.off()
 
 ### examine bias ###
 
-pop_slope <- sqrt(ve/h2)
-bias <- dat2 %>%
-  filter(method %in% c("twmr","ptwas","mrlocus","ecaviar-mrlocus")) %>%
-  group_by(method) %>%
-  summarize(bias=mean(estimate)-pop_slope)
-## 1 twmr            -0.112
-## 2 ptwas           -0.0793
-## 3 mrlocus         -0.00367
-## 4 ecaviar-mrlocus -0.0527
-dat4 <- dat
-for (m in bias$method) {
-  idx <- dat4$method == m
-  sgn <- sign(dat4$estimate[idx])
-  b <- as.numeric(bias[bias$method == m,"bias"])
-  dat4$estimate[idx] <- dat4$estimate[idx] - sgn * b
-  dat4$min[idx] <- dat4$min[idx] - sgn * b
-  dat4$max[idx] <- dat4$max[idx] - sgn * b
+if (FALSE) {
+
+  pop_slope <- sqrt(ve/h2)
+  bias <- dat2 %>%
+    filter(method %in% c("twmr","ptwas","mrlocus","ecaviar-mrlocus")) %>%
+    group_by(method) %>%
+    summarize(bias=mean(estimate)-pop_slope)
+  ## 1 twmr            -0.112
+  ## 2 ptwas           -0.0793
+  ## 3 mrlocus         -0.00367
+  ## 4 ecaviar-mrlocus -0.0527
+  dat4 <- dat
+  for (m in bias$method) {
+    idx <- dat4$method == m
+    sgn <- sign(dat4$estimate[idx])
+    b <- as.numeric(bias[bias$method == m,"bias"])
+    dat4$estimate[idx] <- dat4$estimate[idx] - sgn * b
+    dat4$min[idx] <- dat4$min[idx] - sgn * b
+    dat4$max[idx] <- dat4$max[idx] - sgn * b
+  }
+  dat4$contain <- dat4$true > dat4$min & dat4$true < dat4$max
+  dat4$contain[is.na(dat$est_nozero)] <- NA
+  tab <- dat4 %>% filter(method %in% bias$method) %>%
+    filter(two_plus_instr == "yes") %>% group_by(method) %>%
+    summarize(cov=paste0("cov: ",100*round(mean(contain, na.rm=TRUE),2),"%"))
+  tab
+  mx <- max(abs(dat4$true))
+  tab$x <- "left"
+  tab$y <- "top"
+  dat3 <- dat4 %>%
+    filter(method %in% bias$method) %>%
+    filter(two_plus_instr == "yes") %>%
+    mutate(estimate = sign(true) * estimate,
+           min = sign(true) * min,
+           max = sign(true) * max,
+           true = abs(true))
+
 }
-dat4$contain <- dat4$true > dat4$min & dat4$true < dat4$max
-dat4$contain[is.na(dat$est_nozero)] <- NA
-tab <- dat4 %>% filter(method %in% bias$method) %>%
-  filter(two_plus_instr == "yes") %>% group_by(method) %>%
-  summarize(cov=paste0("cov: ",100*round(mean(contain, na.rm=TRUE),2),"%"))
-tab
-mx <- max(abs(dat4$true))
-tab$x <- "left"
-tab$y <- "top"
-dat3 <- dat4 %>%
-  filter(method %in% bias$method) %>%
-  filter(two_plus_instr == "yes") %>%
-  mutate(estimate = sign(true) * estimate,
-         min = sign(true) * min,
-         max = sign(true) * max,
-         true = abs(true))
