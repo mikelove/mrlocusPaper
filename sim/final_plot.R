@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "1"
+i <- "hp"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -47,7 +47,8 @@ ecav.mrlocus90 <- sapply(ecav.mrlocus, function(x) x[2,2])
 h2 <- as.numeric(sub(".*_(.*)h2_.*","\\1",files[1])) # heritability of gene exp
 ve <- as.numeric(sub(".*_(.*)ve$","\\1",files[1])) # twas_sim v.e. => now called h2med
 high_n_ttl <- if (i == "high_n") ", eQTL N=1000" else ""
-ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% h2med",high_n_ttl)
+hp_ttl <- if (i == "hp") ", horiz. pleiotropy" else ""
+ttl <- paste0("Simulation: ",100*h2,"% h2g, ",100*ve,"% h2med",high_n_ttl,hp_ttl)
 ttl
 
 idx <- c(3,5,6:nrow(final[[1]]))
@@ -173,7 +174,7 @@ if (FALSE) { # clean plot for 1 and high_n
   data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 }
 
-png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
+#png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800) # thresholds
 #png(file=paste0("../supp/figs/sim",i,"extra2.png"), res=150, width=1200, height=800) # other methods
 p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
@@ -186,8 +187,8 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
              stat="fmt_tb") +
   xlim(0,lex*mx) + ylim(0,lex*my) + # remove + for fig 2
   ggtitle(ttl)
-p1
-dev.off()
+#p1
+#dev.off()
 
 # any negative?
 #dat2 %>% filter(estimate < 0)
@@ -204,18 +205,20 @@ tab$x <- "left"
 tab$y <- "top"
 
 dat3 <- dat %>%
-  filter(two_plus_instr == "yes") %>%
+  filter(two_plus_instr == "yes" & !is.na(contain)) %>%
   mutate(estimate = sign(true) * estimate,
          min = sign(true) * min,
          max = sign(true) * max,
          true = abs(true))
 
 if (length(meths) == 11) { # for the plot with LDA and PMR
+  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","lda-mr-egger","pmr-sum-egger")
   dat3 <- dat3 %>% filter(method %in% meth.sub)
   tab <- tab %>% filter(method %in% meth.sub)
 }
 
 if (FALSE) { # clean plot for 1 and high_n
+  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus")
   dat3 <- dat3 %>% filter(method %in% meth.sub)
   tab <- tab %>% filter(method %in% meth.sub)
 }
@@ -229,8 +232,8 @@ p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   geom_abline(intercept=0, slope=1) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
-  coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
-  # coord_cartesian(xlim=c(0,1.2*mx), ylim=c(0,1.75*mx)) +
+  # coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
+  coord_cartesian(xlim=c(0,1.2*mx), ylim=c(0,1.75*mx)) +
   # coord_cartesian(xlim=c(.7*mx,1.1*mx), ylim=c(0,.9)) # for fig2
   ggtitle(ttl)
 p2
@@ -277,11 +280,11 @@ if (FALSE) {
   tab$x <- "left"
   tab$y <- "top"
   dat3 <- dat4 %>%
-    filter(method %in% bias$method) %>%
-    filter(two_plus_instr == "yes") %>%
+    filter(method %in% bias$method & two_plus_instr == "yes" & !is.na(est_nozero)) %>%
     mutate(estimate = sign(true) * estimate,
            min = sign(true) * min,
            max = sign(true) * max,
            true = abs(true))
-
+  ttl <- paste(ttl, "(bias removed)")
+  
 }

@@ -31,7 +31,7 @@ meths <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus")
 nsim <- unname(table(dir))
 
 dat <- data.frame(rep=unlist(lapply(1:3, function(i) rep(1:nsim[i],each=length(idx)))),
-                  h2=rep(h2,each=length(idx)),
+                  h2g=rep(h2,each=length(idx)),
                   true=0,
                   method=rep(meths,sum(nsim)),
                   estimate=as.vector(sapply(final, function(x) x$V2[idx])),
@@ -45,8 +45,8 @@ dat$min[dat$method == "mrlocus"] <- mrlocus10
 dat$max[dat$method == "mrlocus"] <- mrlocus90
 dat$min[dat$method == "ecaviar-mrlocus"] <- ecav.mrlocus10
 dat$max[dat$method == "ecaviar-mrlocus"] <- ecav.mrlocus90
-dat$h2 <- factor(dat$h2)
-levels(dat$h2) <- paste0("h2: ",levels(dat$h2),"%")
+dat$h2g <- factor(dat$h2g)
+levels(dat$h2g) <- paste0(levels(dat$h2g),"%")
 
 # check number of instruments
 num_instr <- unname(sapply(seq_along(files), function(k) {
@@ -85,7 +85,7 @@ dat$contain[is.na(dat$est_nozero)] <- NA
 
 library(dplyr)
 tab <- dat %>% filter(two_plus_instr=="yes") %>%
-  group_by(h2, method) %>%
+  group_by(h2g, method) %>%
   summarize(cov=paste0(100*round(mean(contain, na.rm=TRUE),2),"%"))
 tab
 tab$x <- .05
@@ -93,7 +93,7 @@ tab$y <- .95
 
 # also show MAE
 tab2 <- dat %>% filter(two_plus_instr=="yes") %>%
-  group_by(h2, method) %>%
+  group_by(h2g, method) %>%
   summarize(MAE=round(mean(abs(estimate), na.rm=TRUE),3))
 tab2
 tab2$x <- .05
@@ -101,25 +101,27 @@ tab2$y <- .8
 
 dat2 <- dat %>% filter(two_plus_instr=="yes")
 
-ord10 <- dat2 %>% filter(h2 == "h2: 10%" & method == "causal") %>%
+ord10 <- dat2 %>% filter(h2g == "10%" & method == "causal") %>%
   arrange(estimate) %>% pull(rep)
-ord20 <- dat2 %>% filter(h2 == "h2: 20%" & method == "causal") %>%
+ord20 <- dat2 %>% filter(h2g == "20%" & method == "causal") %>%
   arrange(estimate) %>% pull(rep)
-ord5 <- dat2 %>% filter(h2 == "h2: 5%" & method == "causal") %>%
+ord5 <- dat2 %>% filter(h2g == "5%" & method == "causal") %>%
   arrange(estimate) %>% pull(rep)
 
 dat2$replicate <- NA
-dat2$replicate[dat2$h2 == "h2: 10%"] <- match(dat2$rep[dat2$h2 == "h2: 10%"], ord10)
-dat2$replicate[dat2$h2 == "h2: 20%"] <- match(dat2$rep[dat2$h2 == "h2: 20%"], ord20)
-dat2$replicate[dat2$h2 == "h2: 5%"] <- match(dat2$rep[dat2$h2 == "h2: 5%"], ord5)
+dat2$replicate[dat2$h2g == "10%"] <- match(dat2$rep[dat2$h2g == "10%"], ord10)
+dat2$replicate[dat2$h2g == "20%"] <- match(dat2$rep[dat2$h2g == "20%"], ord20)
+dat2$replicate[dat2$h2g == "5%"] <- match(dat2$rep[dat2$h2g == "5%"], ord5)
+
+dat2 <- dat2 %>% filter(!is.na(contain))
 
 library(ggplot2)
 library(ggpmisc)
-png(file="../supp/figs/nullplot.png", res=125, width=1200, height=800)
+png(file="../supp/figs/nullplot.png", res=125, width=1400, height=800)
 ggplot(dat2, aes(estimate,replicate,xmin=min,xmax=max,color=contain)) +
   geom_pointrange(shape="square",size=.25) +
-  facet_grid(h2 ~ method, scales="free_y") +
-  coord_cartesian(xlim=c(-.5,.5)) + 
+  facet_grid(h2g ~ method, scales="free_y", labeller=label_both) +
+  coord_cartesian(xlim=c(-.45,.45)) + 
   geom_vline(xintercept=0) +
   scale_color_manual(values=c(2,1)) +
   geom_text_npc(data=tab, aes(npcx=x, npcy=y, label=cov)) +
