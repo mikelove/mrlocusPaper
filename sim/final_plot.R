@@ -159,6 +159,13 @@ if (length(meths) == 11) { # for the plot with LDA and PMR
   data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 }
 
+if (FALSE) {
+  # add LDA and PMR cols only
+  cols <- c(cols, c("lda-mr-egger"=palette.colors()[["reddishpurple"]],
+                    "pmr-sum-egger"=palette.colors()[["gray"]]))
+  shps <- c(shps, c("lda-mr-egger"=3,"pmr-sum-egger"=8))
+}
+
 if (FALSE) { # clean plot for 1 and high_n
   meth.sub <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus")
   dat2 <- dat2 %>% filter(method %in% meth.sub)
@@ -225,7 +232,7 @@ p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
   coord_cartesian(xlim=c(.6*mx,1.2*mx), ylim=c(0,1.75*mx)) +
   # coord_cartesian(xlim=c(0,1.2*mx), ylim=c(0,1.75*mx)) +
   # coord_cartesian(xlim=c(.7*mx,1.1*mx), ylim=c(0,.9)) # for fig2
-  ggtitle(paste(ttl,"(bias removed)"))
+  ggtitle(ttl)
 p2
 dev.off()
 
