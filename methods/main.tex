@@ -228,10 +228,12 @@ mean values from the colocalization step. For each
 nearly-LD-independent signal cluster $j$, MRLocus extracts one SNP,
 based on the largest posterior mean value for $\beta_{i,j}^A$
 (prioritizing the putative mediator A for SNP selection).
-TODO eCAVIAR
+For eCAVIAR, the SNP with the largest colocalization posterior
+probability (CLPP) is selected from each signal cluster among those
+SNPs which are valid instruments, i.e. with an absolute value of
+z-score as large as the value used for PLINK clumping \citep{plink}.
 TODO second round trimming
-MRLocus also has the
-non-default option to perform model-based clustering using 
+MRLocus also has the non-default option to perform model-based clustering using 
 an EM algorithm to determine how many SNPs per nearly-LD-independent
 signal cluster to pass to the slope fitting step \citep{mclust}, but
 this option was not extensively evaluated here.
@@ -299,9 +301,17 @@ $\max(2 \, \textrm{sd}(\widehat{\beta}_j^B), \max_j
 (|\widehat{\beta}_j^B|))$, where $\textrm{sd}(.)$ denotes the sample
 standard deviation. That is, the larger value between (i) 2 times the
 standard deviation of the coefficients for B and (ii) the largest absolute
-value of coefficient for B.
+value of coefficient for B. When the coefficients for B are widely
+dispersed, then taking two times the SD results in a wide prior for
+$\sigma$, and when the coefficients are not widely dispersed, then
+taking the absolute value of the largest coefficient ensures the prior
+width for $\sigma$ does not become too small.
 
-\subsubsection{One signal cluster}
+Prior predictive checks \citep{Gabry2019}, in which data is generated
+from the estimated prior using the data generating mechanism, are
+provided in the MRLocus package and demonstrated in the vignette.
+
+\subsubsection{Loci with only one signal cluster ($J=1$)}
 
 It is not recommended to use MRLocus with only one signal cluster.
 
