@@ -23,7 +23,7 @@ define the model for the slope fitting step.
 
 \subsection{Colocalization step} \label{sec:coloc}
 
-\subsubsection{Input data}
+\subsubsection{Input data} \label{sec:input}
 
 The first step performs colocalization of eQTL (A) and GWAS (B)
 signals across a number of nearly-LD-independent signal clusters
@@ -35,14 +35,14 @@ and the respective LD matrices for each cluster $j$:
 $\Sigma_j^A$ and $\Sigma_j^B$.
 Near LD independence is obtained by clumping with PLINK \citep{plink} on the
 putative mediator A with $r^2$ threshold of 0.1 and then trimming
-signal clusters (this term used for clumps after they are defined), in
-which the pair-wise $r^2$ of the index eSNP is greater than
+``signal clusters'' (the term we use for PLINK clumps after they
+are created), in which the pairwise $r^2$ of the index eSNP is greater than
 0.05. Trimming is performed with the \texttt{trimClusters} function in
 MRLocus, which removes signal clusters with $r^2 > 0.05$ to the first
-cluster, then the second cluster, etc.
-The clusters and the individual SNPs per cluster must be matched across
-study, and our procedure for performing this matching is described in
-the Methods section in the main text.
+cluster, then the second cluster, and so on until no pairs remain with
+$r^2 > 0.05$.
+The clusters and the individual SNPs per cluster must be matched
+across study.
 The estimated coefficients $\widehat{\beta}^X_{i,j}$ for
 $X \in \{A,B\}$ refer to either the estimated coefficients from a
 linear model of a continuous trait $y$ on genotype dosages
@@ -216,9 +216,15 @@ Mendelian Randomization methods, \citet{Berzuini2018} and
 pleiotropic effects (effects not mediated by the exposure) or on the
 mediation slope, respectively.
 
-\subsubsection{Colocalization with eCAVIAR}
+\subsubsection{Colocalization with eCAVIAR (optional alternative)}
 
-TODO Alternatively...
+Alternatively, MRLocus can accept colocalization results from eCAVIAR
+as input to the slope fitting step, as explored in the main
+text. eCAVIAR is run with default options, supplying the LD matrix,
+and z-scores for study A and B, and \texttt{-c 1}, i.e. setting the
+maximum number of causal SNPs to 1. The following section describes
+how the output from eCAVIAR colocalization can be used alternatively
+to the MRLocus colocalization output.
 
 \subsection{Slope fitting step} \label{sec:slope}
 
@@ -228,15 +234,19 @@ mean values from the colocalization step. For each
 nearly-LD-independent signal cluster $j$, MRLocus extracts one SNP,
 based on the largest posterior mean value for $\beta_{i,j}^A$
 (prioritizing the putative mediator A for SNP selection).
-For eCAVIAR, the SNP with the largest colocalization posterior
-probability (CLPP) is selected from each signal cluster among those
-SNPs which are valid instruments, i.e. with an absolute value of
-z-score as large as the value used for PLINK clumping \citep{plink}.
-TODO second round trimming
-MRLocus also has the non-default option to perform model-based clustering using 
-an EM algorithm to determine how many SNPs per nearly-LD-independent
-signal cluster to pass to the slope fitting step \citep{mclust}, but
-this option was not extensively evaluated here.
+MRLocus also has the non-default option to perform model-based
+clustering using an EM algorithm to determine how many SNPs per
+nearly-LD-independent signal cluster to pass to the slope fitting step
+\citep{mclust}, but this option was not extensively evaluated here.
+For eCAVIAR colocalization, the SNP with the largest colocalization
+posterior probability (CLPP) is selected from each signal cluster,
+among those SNPs which are valid instruments, i.e. with an absolute
+value of z-score as large as the value used for PLINK clumping
+\citep{plink}.  eCAVIAR alleles are flipped such that the alternate
+allele is the one corresponding to an increase in the measured
+phenotype in A (e.g. gene expression). Another round of $r^2$ trimming
+is performed, as in section \ref{sec:input}, so that all chosen SNPs
+for slope fitting have pairwise $r^2 < 0.05$.
 
 By default, $J$ SNPs are passed from the colocalization step to the
 slope fitting step, which should represent the candidate causal SNPs
