@@ -228,7 +228,7 @@ to the MRLocus colocalization output.
 
 \subsection{Slope fitting step} \label{sec:slope}
 
-The second step of MRLocus is to estimate the gene-to-trait effect
+The second step of MRLocus is to estimate the gene-to-trait effect $\alpha$
 (the slope in a Mendelian Randomization analysis) using the posterior
 mean values from the colocalization step. For each
 nearly-LD-independent signal cluster $j$, MRLocus extracts one SNP,
@@ -324,6 +324,21 @@ provided in the MRLocus package and demonstrated in the vignette.
 \subsubsection{Loci with only one signal cluster ($J=1$)}
 
 It is not recommended to use MRLocus with only one signal cluster.
+
+\subsubsection{Variation in $\alpha$ in simulations}
+
+We note that the value for true slope parameter $\alpha$ (x-axis in
+the simulation assessment plots) varies across iterations in the
+simulation for fixed h2med and h2g. The reason for this variation is
+that the $\alpha$ provided by the \texttt{twas\_sim} simulation
+framework corresponds to the gene-to-trait mediated effect, when eQTL
+effect sizes are standardized using the SD of gene expression in the
+eQTL sample (as would occur in real data analysis). The h2g and h2med
+in the \texttt{twas\_sim} simulator describe the population-level
+expression heritability and mediated trait heritability. As the eQTL
+sample size grows (e.g. already seen in the eQTL $N=1,000$
+simulation), the variation is reduced and we have $\alpha$ values
+converging to $\sqrt{\frac{h2med}{h2g}}$.
 
 \newpage
 
