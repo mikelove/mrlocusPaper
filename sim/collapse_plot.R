@@ -21,4 +21,4 @@ dat %>%
   summarize(mean=mean(number),median=median(number),n=n())
 # mean 33.8 -> 15.9
 # median 26 -> 13
-# n 1376 -> 1132
+# n 1517 -> 1250

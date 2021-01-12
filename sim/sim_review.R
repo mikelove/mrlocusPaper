@@ -4,15 +4,17 @@ filesvec <- function(i, ending) {
   } else if (i < 13) {
     ii <- i - 9
     dir <- file.path("out",paste0("null",ii))
-  } else {
+  } else if (i == 13) {
+    dir <- file.path("out","hp")
+  } else if (i == 14) {
     dir <- file.path("out","high_n")
   }
   files <- list.files(dir, pattern=ending)
   list(dir=dir, files=files)
 }
 
-idx <- c(1,13,2:12)
-nms <- c(1,"high_n",2:9,paste0("null",1:3))
+idx <- c(1,13:14,2:12)
+nms <- c(1,"hp","high_n",2:9,paste0("null",1:3))
 names(idx) <- nms
 
 i2 <- lapply(idx, function(i) {
@@ -122,14 +124,14 @@ load("sim_review.rda")
 ## .2  - 0    - null2
 ## .05 - 0    - null3
 
-h2 <- c(c(.1,.1,.2,.05),rep(c(.1,.2,.05),3))
-ve <- c(rep(c(.01,.005,.001),c(4,3,3)),c(0,0,0))
-sim <- c("A","High-N",LETTERS[2:9],paste0("Null-",c(.1,.2,.05)))
+h2 <- c(c(.1,.1,.1,.2,.05),rep(c(.1,.2,.05),3)) # now called h2g
+ve <- c(rep(c(.01,.005,.001),c(5,3,3)),c(0,0,0)) # now called h2med
+sim <- c("A","HP","High-N",LETTERS[2:9],paste0("Null-",c(.1,.2,.05)))
 key <- data.frame(value=c(h2,ve),
                   sim=factor(rep(sim,2),levels=sim),
-                  id=rep(c(1,"high_n",3,2, 4,6,8, 5,7,9, "null1","null2","null3"),2),
-                  type=rep(c("h2g","h2med"),each=13),
-                  group=factor(rep(rep(1:4,c(4,3,3,3)),2)))
+                  id=rep(c(1,"hp","high_n",3,2, 4,6,8, 5,7,9, "null1","null2","null3"),2),
+                  type=rep(c("h2g","h2med"),each=14),
+                  group=factor(rep(rep(1:4,c(5,3,3,3)),2)))
 #write.table(key, file="sim_review.tsv", row.names=FALSE, sep="\t")
 library(ggplot2)
 cols <- palette.colors(4, palette="Set 2")
@@ -143,7 +145,7 @@ ggplot(key, aes(sim, value, fill=group)) +
 dev.off()
 
 # subset
-key2 <- key[1:13,c("sim","id","group")]
+key2 <- key[1:14,c("sim","id","group")]
 
 library(ggbeeswarm)
 plotit <- function(x, dot=FALSE, bee=TRUE, noise=TRUE) {
@@ -157,7 +159,7 @@ plotit <- function(x, dot=FALSE, bee=TRUE, noise=TRUE) {
   dat$group <- key2$group[idx]
   dat$sim <- factor(dat$sim, levels=key2$sim)
   # shorten sim names
-  levels(dat$sim) <- c("A", "Hi-N", LETTERS[2:9], c("N.1","N.2","N.05"))
+  levels(dat$sim) <- c("A", "HP", "Hi-N", LETTERS[2:9], c("N.1","N.2","N.05"))
   g <- ggplot(dat, aes(sim, number, fill=group)) +
     geom_violin(show.legend=FALSE) +
     scale_fill_manual(values=cols)
@@ -175,7 +177,10 @@ plotit <- function(x, dot=FALSE, bee=TRUE, noise=TRUE) {
 
 # r2 of kept clusters plot
 pdf(file="../supp/figs/sim_cluster_r2.pdf", height=5, width=8)
-plotit(r2, noise=FALSE) + ggtitle("Pairwise r2 of clusters provided to eCAVIAR/MRLocus colocalization") + ylab("r2") + scale_y_log10() +
+plotit(r2, noise=FALSE) +
+  ggtitle("Pairwise r2 of clusters provided to eCAVIAR/MRLocus colocalization") +
+  ylab("r2") +
+  scale_y_log10() +
   geom_hline(yintercept=0.05, color="red", lty=2)
 dev.off()
 
@@ -215,7 +220,7 @@ overest <- lapply(idx, function(i) {
 })
 
 library(ggplot2)
-key3 <- key[1:13,]
+key3 <- key[1:14,]
 dat <- data.frame(ratio=unlist(overest),
                   id=factor(rep(names(overest), lengths(overest))))
 dat$h2g <- key3$value[match(dat$id, key2$id)]

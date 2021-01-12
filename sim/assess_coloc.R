@@ -1,6 +1,5 @@
 key <- read.table("sim_review.tsv", header=TRUE)
-key <- key[1:13,2:3]
-key <- rbind(key[1,,drop=FALSE], data.frame(sim="HP", id="hp"), key[2:13,])
+key <- key[1:14,2:3]
 
 library(pbapply)
 

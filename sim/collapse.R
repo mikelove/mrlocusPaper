@@ -1,6 +1,6 @@
 devtools::load_all("../../mrlocus")
 noparen <- function(z) sub("\\(1\\)","",z)
-sims <- c(1:9,paste0("null",1:3),"high_n")
+sims <- c(1:9,paste0("null",1:3),"high_n","hp")
 for (s in sims) {
   print(paste("---",s,"---"))
   dir <- file.path("out",s)
