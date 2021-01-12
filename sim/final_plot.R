@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "hp"
+i <- "high_n"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -174,7 +174,7 @@ if (FALSE) { # clean plot for 1 and high_n
   data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 }
 
-#png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
+png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
 #png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800) # thresholds
 #png(file=paste0("../supp/figs/sim",i,"extra2.png"), res=150, width=1200, height=800) # other methods
 p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
@@ -187,8 +187,8 @@ p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
              stat="fmt_tb") +
   xlim(0,lex*mx) + ylim(0,lex*my) + # remove + for fig 2
   ggtitle(ttl)
-#p1
-#dev.off()
+p1
+dev.off()
 
 # any negative?
 #dat2 %>% filter(estimate < 0)

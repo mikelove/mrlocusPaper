@@ -1,5 +1,6 @@
 key <- read.table("sim_review.tsv", header=TRUE)
 key <- key[1:13,2:3]
+key <- rbind(key[1,,drop=FALSE], data.frame(sim="HP", id="hp"), key[2:13,])
 
 library(pbapply)
 
@@ -65,7 +66,7 @@ load("assess_coloc.rda")
 library(reshape)
 dat <- melt(key, id=c("sim","id"), variable_name="method")
 names(dat)[4] <- "accuracy"
-dat$sim <- factor(dat$sim, levels=c("A","High-N",LETTERS[2:9],"Null-0.05","Null-0.1","Null-0.2"))
+dat$sim <- factor(dat$sim, levels=unique(dat$sim))
 library(ggplot2)
 pdf(file="../supp/figs/assess_coloc.pdf", width=10, height=5)
 ggplot(dat, aes(sim, accuracy, fill=method)) +
