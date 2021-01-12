@@ -4,6 +4,8 @@
 \usepackage{natbib}
 \bibliographystyle{unsrtnat}
 \usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{doi}
 \DeclareMathOperator{\se}{\textrm{se}}
 \title{Supplementary Methods}
 \author{Anqi Zhu$^\dagger$, Nana Matoba$^\dagger$, Emmaleigh Wilson, Amanda L. Tapia,
@@ -21,19 +23,26 @@ define the model for the slope fitting step.
 
 \subsection{Colocalization step} \label{sec:coloc}
 
-\subsubsection{Input data}
+\subsubsection{Input data} \label{sec:input}
 
 The first step performs colocalization of eQTL (A) and GWAS (B)
-signals across a number of LD-independent signal clusters
+signals across a number of nearly-LD-independent signal clusters
 $j \in 1,\dots,J$, using summary statistics from both studies:
 $\widehat{\beta}^A_{i,j}$ and $\se(\widehat{\beta}^A_{i,j})$,
 $\widehat{\beta}^B_{i,j}$ and $\se(\widehat{\beta}^B_{i,j})$
 for SNP $i \in 1,\dots,n_j$ in cluster $j$ for study A and B,
 and the respective LD matrices for each cluster $j$:
 $\Sigma_j^A$ and $\Sigma_j^B$.
-The clusters and the individual SNPs per cluster must be matched across
-study, and our procedure for performing this matching is described in
-the Methods section in the main text.
+Near LD independence is obtained by clumping with PLINK \citep{plink} on the
+putative mediator A with $r^2$ threshold of 0.1 and then trimming
+``signal clusters'' (the term we use for PLINK clumps after they
+are created), in which the pairwise $r^2$ of the index eSNP is greater than
+0.05. Trimming is performed with the \texttt{trimClusters} function in
+MRLocus, which removes signal clusters with $r^2 > 0.05$ to the first
+cluster, then the second cluster, and so on until no pairs remain with
+$r^2 > 0.05$.
+The clusters and the individual SNPs per cluster must be matched
+across study.
 The estimated coefficients $\widehat{\beta}^X_{i,j}$ for
 $X \in \{A,B\}$ refer to either the estimated coefficients from a
 linear model of a continuous trait $y$ on genotype dosages
@@ -150,7 +159,7 @@ scale parameter determined from previous studies.
 Here MRLocus diverges from eCAVIAR in two ways. First, we will use a
 generative model for the elements in the vector
 $\widehat{\beta}^X_{\centerdot,j}$ conditional on the true effect sizes
-$\beta^X_{\centerdot,j}$ within LD-independent signal cluster
+$\beta^X_{\centerdot,j}$ within nearly-LD-independent signal cluster
 $j$ (that is, MRLocus models effect sizes rather than $z$-scores).
 Second, we will use a univariate distribution for each
 $\widehat{\beta}^X_{i,j}$ instead of a multivariate distribution for
@@ -169,7 +178,7 @@ notation of \citet{horseshoe1}, where $\lambda_i$ provides the
 \emph{global} shrinkage parameter.
 
 The following hierarchical model is fit separately across
-LD-independent signal clusters $j \in 1,\dots,J$, and so in the
+nearly-LD-independent signal clusters $j \in 1,\dots,J$, and so in the
 following equations, the subscript for $j$ is omitted for clarity. In
 all equations below but the last, $i \in 1,\dots,n_j$. Here, for
 consistency with Stan code, the normal distribution is written as
@@ -207,22 +216,41 @@ Mendelian Randomization methods, \citet{Berzuini2018} and
 pleiotropic effects (effects not mediated by the exposure) or on the
 mediation slope, respectively.
 
+\subsubsection{Colocalization with eCAVIAR (optional alternative)}
+
+Alternatively, MRLocus can accept colocalization results from eCAVIAR
+as input to the slope fitting step, as explored in the main
+text. eCAVIAR is run with default options, supplying the LD matrix,
+and z-scores for study A and B, and \texttt{-c 1}, i.e. setting the
+maximum number of causal SNPs to 1. The following section describes
+how the output from eCAVIAR colocalization can be used alternatively
+to the MRLocus colocalization output.
+
 \subsection{Slope fitting step} \label{sec:slope}
 
-The second step of MRLocus is to estimate the gene-to-trait effect
-(the slope in a Mendelian Randomization analysis) using the
-posterior mean values from the colocalization step. For each
-LD-independent signal cluster $j$, MRLocus extracts one SNP, based on the
-largest posterior mean value for $\beta_{i,j}^A$ (prioritizing the
-putative mediator for SNP selection). MRLocus also has the
-non-default option to perform model-based clustering using 
-an EM algorithm to determine how many SNPs per LD-independent
-signal cluster to pass to the slope fitting step \citep{mclust}, but
-this option was not extensively evaluated here.
+The second step of MRLocus is to estimate the gene-to-trait effect $\alpha$
+(the slope in a Mendelian Randomization analysis) using the posterior
+mean values from the colocalization step. For each
+nearly-LD-independent signal cluster $j$, MRLocus extracts one SNP,
+based on the largest posterior mean value for $\beta_{i,j}^A$
+(prioritizing the putative mediator A for SNP selection).
+MRLocus also has the non-default option to perform model-based
+clustering using an EM algorithm to determine how many SNPs per
+nearly-LD-independent signal cluster to pass to the slope fitting step
+\citep{mclust}, but this option was not extensively evaluated here.
+For eCAVIAR colocalization, the SNP with the largest colocalization
+posterior probability (CLPP) is selected from each signal cluster,
+among those SNPs which are valid instruments, i.e. with an absolute
+value of z-score as large as the value used for PLINK clumping
+\citep{plink}.  eCAVIAR alleles are flipped such that the alternate
+allele is the one corresponding to an increase in the measured
+phenotype in A (e.g. gene expression). Another round of $r^2$ trimming
+is performed, as in section \ref{sec:input}, so that all chosen SNPs
+for slope fitting have pairwise $r^2 < 0.05$.
 
 By default, $J$ SNPs are passed from the colocalization step to the
 slope fitting step, which should represent the candidate causal SNPs
-from each LD-independent signal cluster. The posterior mean for
+from each nearly-LD-independent signal cluster. The posterior mean for
 $\beta_{i,j}^A$ and $\beta_{i,j}^B$ for these SNPs is then provided to
 the slope fitting step as variables $\widehat{\beta}_j^A$ and
 $\widehat{\beta}_j^B$. These two variables
@@ -237,7 +265,7 @@ effect).
 
 The primary two parameters of interest are the slope $\alpha$, 
 i.e. the predominant gene-to-trait effect demonstrated by the
-LD-independent signal clusters in the locus, and $\sigma$,
+nearly-LD-independent signal clusters in the locus, and $\sigma$,
 the dispersion of gene-to-trait effects from individual signal clusters
 around the predominant slope.
 The hierarchical model for the slope fitting step is given by:
@@ -278,23 +306,39 @@ $\textrm{SD}_\alpha$ is set to 2 times the absolute value of this
 estimated slope coefficient.
 
 The hyperparameter for the prior for $\sigma$ is
-$\textrm{SD}_\sigma$, which is set by default to
-1 (but can be modified by the user). This corresponds to a very wide
-prior as the GWAS effects sizes are typically quite small in magnitude
-(as seen in the analyses in the Results).
+$\textrm{SD}_\sigma$, which is set to
+$\max(2 \, \textrm{sd}(\widehat{\beta}_j^B), \max_j
+(|\widehat{\beta}_j^B|))$, where $\textrm{sd}(.)$ denotes the sample
+standard deviation. That is, the larger value between (i) 2 times the
+standard deviation of the coefficients for B and (ii) the largest absolute
+value of coefficient for B. When the coefficients for B are widely
+dispersed, then taking two times the SD results in a wide prior for
+$\sigma$, and when the coefficients are not widely dispersed, then
+taking the absolute value of the largest coefficient ensures the prior
+width for $\sigma$ does not become too small.
 
-\subsubsection{One signal cluster}
+Prior predictive checks \citep{Gabry2019}, in which data is generated
+from the estimated prior using the data generating mechanism, are
+provided in the MRLocus package and demonstrated in the vignette.
 
-In the case that the upstream clumping method only returns a single
-LD-independent signal cluster, MRLocus relies on a parametric
-bootstrap to estimate the slope. MRLocus samples the numerator and
-denominator of the slope from normal distributions 
-$N(\widehat{\beta}_1^B,\se_1^B)$ and $N(\widehat{\beta}_1^A, \se_1^A)$,
-using the posterior mean estimates from section \ref{sec:coloc}.
-The point estimate is then the median of the bootstrap slope
-estimates. Intervals are calculated using the MAD of the bootstrap
-slope estimates, e.g. the median $\pm 1.28$ times the MAD to construct
-an 80\% interval.
+\subsubsection{Loci with only one signal cluster ($J=1$)}
+
+It is not recommended to use MRLocus with only one signal cluster.
+
+\subsubsection{Variation in $\alpha$ in simulations}
+
+We note that the value for true slope parameter $\alpha$ (x-axis in
+the simulation assessment plots) varies across iterations in the
+simulation for fixed h2med and h2g. The reason for this variation is
+that the $\alpha$ provided by the \texttt{twas\_sim} simulation
+framework corresponds to the gene-to-trait mediated effect, when eQTL
+effect sizes are standardized using the SD of gene expression in the
+eQTL sample (as would occur in real data analysis). The h2g and h2med
+in the \texttt{twas\_sim} simulator describe the population-level
+expression heritability and mediated trait heritability. As the eQTL
+sample size grows (e.g. already seen in the eQTL $N=1,000$
+simulation), the variation is reduced and we have $\alpha$ values
+converging to $\sqrt{\frac{h2med}{h2g}}$.
 
 \newpage
 
