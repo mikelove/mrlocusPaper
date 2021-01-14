@@ -1,0 +1,6 @@
+id ref eff
+rs599839 A G
+rs1337247 C A
+rs621414 T C
+rs74584797 T C
+rs646110 C T

@@ -6,9 +6,9 @@ ld.filename <- cmd_args[3]
 out.filename <- cmd_args[4]
 
 if (FALSE) {
-  dir <- "Artery_MRAS_CAD"
-  tsv.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.tsv"
-  ld.filename <- "Artery_MRAS_CAD/Artery_MRAS_CAD.ld"
+  dir <- "Liver_SORT1_LDL"
+  tsv.filename <- "Liver_SORT1_LDL/Liver_SORT1_LDL.tsv"
+  ld.filename <- "Liver_SORT1_LDL/Liver_SORT1_LDL.ld"
 }
 
 set.seed(1)
@@ -19,7 +19,7 @@ out <- getTrimmedSumStats(dir, tsv.filename, ld.filename, r2_threshold=0.05)
 sum_stat <- out$sum_stat
 ld_mat <- out$ld_mat
 
-out1 <- collapseHighCorSNPs(sum_stat, ld_mat, plot=FALSE)
+out1 <- collapseHighCorSNPs(sum_stat, ld_mat, score="abs.z", plot=FALSE, snp_id="SNP")
 a2_plink <- "Major_plink"
 
 out2 <- flipAllelesAndGather(out1$sum_stat, out1$ld_mat,
