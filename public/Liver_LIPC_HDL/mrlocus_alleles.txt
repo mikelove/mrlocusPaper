@@ -1,4 +1,4 @@
-id ref eff
-rs261332 A G
-rs13329672 T C
-rs34990794 C T
+id ref eff collapsed
+rs261332 A G rs261332
+rs12708454 C A rs12708454
+rs80231933 G A rs80231933
