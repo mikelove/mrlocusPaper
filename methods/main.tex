@@ -220,11 +220,12 @@ mediation slope, respectively.
 
 Alternatively, MRLocus can accept colocalization results from eCAVIAR
 as input to the slope fitting step, as explored in the main
-text. eCAVIAR is run with default options, supplying the LD matrix,
-and z-scores for study A and B, and \texttt{-c 1}, i.e. setting the
-maximum number of causal SNPs to 1. The following section describes
-how the output from eCAVIAR colocalization can be used alternatively
-to the MRLocus colocalization output.
+text. eCAVIAR is run with default options on each
+nearly-LD-independent signal cluster separately, supplying the LD
+matrix, and z-scores for study A and B, and \texttt{-c 1},
+i.e. setting the maximum number of causal SNPs to 1. The following
+section describes how the output from eCAVIAR colocalization can be
+used alternatively to the MRLocus colocalization output.
 
 \subsection{Slope fitting step} \label{sec:slope}
 
@@ -242,7 +243,7 @@ For eCAVIAR colocalization, the SNP with the largest colocalization
 posterior probability (CLPP) is selected from each signal cluster,
 among those SNPs which are valid instruments, i.e. with an absolute
 value of z-score as large as the value used for PLINK clumping
-\citep{plink}.  eCAVIAR alleles are flipped such that the alternate
+\citep{plink}. eCAVIAR alleles are flipped such that the alternate
 allele is the one corresponding to an increase in the measured
 phenotype in A (e.g. gene expression). Another round of $r^2$ trimming
 is performed, as in section \ref{sec:input}, so that all chosen SNPs
