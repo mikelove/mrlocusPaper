@@ -94,10 +94,13 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/sim1extra2.png}
-  \caption{Accuracy of gene-to-trait effect estimation in simulation
-    A, including LDA-MR-Egger and PMR-Summary-Egger in
-    comparisons.}
+  \includegraphics[width=.5\textwidth]{figs/sim1extra2.png}
+  \includegraphics[width=.4\textwidth]{figs/cover1extra2.png}
+  \caption{Accuracy and interval coverage of gene-to-trait effect
+    estimation in simulation A, including LDA-MR-Egger and
+    PMR-Summary-Egger in comparisons. As PMR-Summary-Egger does not
+    provide a standard error for the causal effect, interval
+    coverage was only computed for LDA-MR-Egger.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -138,7 +141,19 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.37\textwidth]{figs/coverhpextra.png}
   \caption{Accuracy and interval coverage of methods on the simulation
     of partial mediation with horizontal pleiotropy, including
-    LDA-MR-Egger and PMR-Summary-Egger.}
+    LDA-MR-Egger and PMR-Summary-Egger. As PMR-Summary-Egger does not
+    provide a standard error for the causal effect, interval coverage
+    was only computed for LDA-MR-Egger.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.33\textwidth]{figs/simhigh_n.png}
+  \includegraphics[width=.5\textwidth]{figs/coverhigh_n.png}
+  \caption{Accuracy and interval coverage of TWMR, PTWAS, MRLocus, and
+  eCAVIAR-MRLocus on the same simulation settings as simulation A but
+  with increased $N_{\textrm{eQTL}} = 1000$ (instead of the default
+  value $N_{\textrm{eQTL}} = 500$).}
 \end{figure}
 
 \begin{figure}[!ht]
