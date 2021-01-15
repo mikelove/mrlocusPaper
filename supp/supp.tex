@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-\usepackage[margin=.75in]{geometry}
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \DeclareMathOperator{\se}{\textrm{se}}
 \usepackage{graphicx}
@@ -66,8 +66,11 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=\textwidth]{figs/sim_details}
-  \caption{Number of (A) true causal eQTL SNPs, (B) PLINK clumps, and
-    (C) DAP signal clusters per simulation.}
+  \caption{Number of (A) true causal eQTL SNPs, (B) PLINK clumps, 
+    (C) DAP signal clusters per simulation, and number of clusters
+    passing (D) 1st round LD trimming, (E) 2nd round LD trimming for
+    MRLocus colocalization, and (F) 2nd round LD trimming for eCAVIAR
+    colocalization.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -91,12 +94,51 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/sim1extra.png}
+  \includegraphics[width=.7\textwidth]{figs/sim1extra2.png}
   \caption{Accuracy of gene-to-trait effect estimation in simulation
     A, including LDA-MR-Egger and PMR-Summary-Egger in
-    comparisons. LDA-MR-Egger did not estimate SE for 6 of the 20
-    simulations, and PMR-Summary-Egger did not provide an effect
-    estimate for 14 of the 20 simulations.}
+    comparisons.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/corr_instr_sim}
+  \caption{Assessment of the effect of correlated instruments on the
+    false positive rate of MRLocus slope estimation. Increasing the
+    $r^2$ of adjacent signal clusters raised the rate of 80\% credible
+    intervals not covering the true value of the slope $\alpha =
+    0$. The number of signal clusters was varied among $\{4,6,8\}$.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/hp_example}
+  \caption{Example of one of the iterations of the simulation of
+    partial mediation with horizontal pleiotropy (HP), where three
+    large trait-only association signals are added to a simulation
+    with $h^2g = 10\%$ and $h^2med = 1\%$. Absolute Z-scores for the
+    GWAS population are calculated from estimated coefficients and
+    their standard errors, and colored by the true status in the
+    simulation.}
+  \label{sf:hp}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.33\textwidth]{figs/simhp.png}
+  \includegraphics[width=.5\textwidth]{figs/coverhp.png}
+  \caption{Accuracy and interval coverage of TWMR, PTWAS, MRLocus, and
+  eCAVIAR-MRLocus on the simulation of partial mediation with
+  horizontal pleiotropy (as in the example region in Supplementary
+  Figure~\ref{sf:hp}).}
+\end{figure}
+
+\begin{figure}[!ht]
+  \includegraphics[width=.5\textwidth]{figs/simhpextra.png}
+  \includegraphics[width=.37\textwidth]{figs/coverhpextra.png}
+  \caption{Accuracy and interval coverage of methods on the simulation
+    of partial mediation with horizontal pleiotropy, including
+    LDA-MR-Egger and PMR-Summary-Egger.}
 \end{figure}
 
 \begin{figure}[!ht]
