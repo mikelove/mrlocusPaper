@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "high_n"
+i <- "hp"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -111,17 +111,21 @@ dat$max[dat$method == x][idx] <- 0
 
 if (FALSE) {
   # add LDA and PMR (one plot only)
-  est.lda <- unname(sapply(files, function(f)
-    scan(paste0("ldamregger/",f,".ldamregger"),quiet=TRUE)[1]))
+  est.lda <- t(unname(sapply(files, function(f)
+    scan(paste0("ldamregger/",f,".ldamregger"),quiet=TRUE))))
   est.pmr <- unname(sapply(files, function(f) {
     load(paste0("pmr/",f,".pmr"));
     if (is.null(res)) NA else res$causal_effect
   }))
-  ests <- c(est.lda, est.pmr)
+  ests <- c(est.lda[,1], est.pmr)
+  se <- c(est.lda[,2], rep(0,nsim))
+  se[is.nan(se)] <- 0
+  ests[abs(ests) > 2] <- NA # remove two very large implausible estimates for these methods
   ests[is.na(ests)] <- 0
   dat.ext <- data.frame(rep=rep(1:nsim,2), true=rep(dat$true[dat$method=="causal"],2),
                         method=rep(c("lda-mr-egger","pmr-sum-egger"),each=nsim),
-                        estimate=ests, se=rep(1,2*nsim), est_nozero=ests, min=ests, max=ests,
+                        estimate=ests, se=se,
+                        est_nozero=ests, min=ests - q * se , max=ests + q * se,
                         two_plus_instr=rep(dat$two_plus_instr[dat$method=="causal"],2))
   dat <- rbind(dat, dat.ext)
   meths <- c(meths, c("lda-mr-egger", "pmr-sum-egger"))
@@ -151,12 +155,11 @@ if (length(meths) == 11) { # for the plot with LDA and PMR
   cols <- unname(palette.colors())[-c(1,5)]
   cols <- cols[c(1:3,3,4,4,5,5,5,6,7)]
   names(cols) <- meths
-  shps <- c(24,25,17,18,15,7,16,13,10,3,8)
+  shps <- c(24,25,17,18,15,7,16,13,10,18,8)
   names(shps) <- meths
-  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","lda-mr-egger","pmr-sum-egger")
+  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus","lda-mr-egger","pmr-sum-egger")
   dat2 <- dat2 %>% filter(method %in% meth.sub)
   tab <- tab %>% filter(method %in% meth.sub)
-  my <- 1.1 # exclude one large lda-mr estimate
   data.tb <- tibble(x=0, y=lex*my, tb=list(tab))
 }
 
@@ -164,7 +167,7 @@ if (FALSE) {
   # add LDA and PMR cols only
   cols <- c(cols, c("lda-mr-egger"=palette.colors()[["reddishpurple"]],
                     "pmr-sum-egger"=palette.colors()[["gray"]]))
-  shps <- c(shps, c("lda-mr-egger"=3,"pmr-sum-egger"=8))
+  shps <- c(shps, c("lda-mr-egger"=18,"pmr-sum-egger"=8))
 }
 
 if (FALSE) { # clean plot for 1 and high_n
@@ -175,7 +178,7 @@ if (FALSE) { # clean plot for 1 and high_n
 }
 
 png(file=paste0("../supp/figs/sim",i,".png"), res=150, width=800, height=800)
-#png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800) # thresholds
+png(file=paste0("../supp/figs/sim",i,"extra.png"), res=150, width=1200, height=800) # thresholds
 #png(file=paste0("../supp/figs/sim",i,"extra2.png"), res=150, width=1200, height=800) # other methods
 p1 <- ggplot(dat2, aes(true,estimate,color=method,shape=method)) +
   geom_point(size=2) +
@@ -211,8 +214,8 @@ dat3 <- dat %>%
          max = sign(true) * max,
          true = abs(true))
 
-if (length(meths) == 11) { # for the plot with LDA and PMR
-  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","lda-mr-egger","pmr-sum-egger")
+if (length(meths) == 11) { # for the plot with LDA
+  meth.sub <- c("causal","all","twmr","ptwas","mrlocus","ecaviar-mrlocus","lda-mr-egger")
   dat3 <- dat3 %>% filter(method %in% meth.sub)
   tab <- tab %>% filter(method %in% meth.sub)
 }
@@ -224,7 +227,7 @@ if (FALSE) { # clean plot for 1 and high_n
 }
 
 png(file=paste0("../supp/figs/cover",i,".png"), res=170, width=1200, height=800)
-#png(file=paste0("../supp/figs/cover",i,"extra.png"), res=170, width=1400, height=1200) # thresholds
+png(file=paste0("../supp/figs/cover",i,"extra.png"), res=170, width=1400, height=1200) # thresholds
 #png(file=paste0("../supp/figs/cover",i,"extra2.png"), res=170, width=1400, height=1200) # other methods
 #png(file=paste0("../supp/figs/cover",i,"_minus_bias.png"), res=170, width=1200, height=800)
 p2 <- ggplot(dat3, aes(true,estimate,ymin=min,ymax=max,color=contain)) +
