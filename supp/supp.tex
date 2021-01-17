@@ -292,146 +292,180 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.4\textwidth]{figs/cover1extra.png} \\
   \includegraphics[width=.52\textwidth]{figs/simhigh_nextra.png}
   \includegraphics[width=.4\textwidth]{figs/coverhigh_nextra.png}
-  \caption{Alternate thresholds...}
+  \caption{Assessment of methods at eQTL N=500 and N=1,000 at
+    alternative thresholds: p-value 0.0001 for PLINK clumping
+    (labeled \texttt{\_p1e-4}) and using a more lenient PIP threshold
+    of 0.1 (labeled \texttt{\_t0.1}).}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.9\textwidth]{figs/assess_coloc}
+  \caption{Assessment of colocalization accuracy across simulation
+    settings. Shown is the ratio of correctly identified causal eSNPs
+    for all signal clusters containing a true causal eSNP, aggregating
+    across all iterations. Additionally, if the method identified a
+    SNP with correlation of $> 0.95$ to the true causal eSNP, it was
+    counted as a correct identification.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.49\textwidth]{figs/cover1_minus_bias.png} 
+  \includegraphics[width=.49\textwidth]{figs/cover4_minus_bias.png} \\
+  \includegraphics[width=.49\textwidth]{figs/cover5_minus_bias.png}
+  \caption{Coverage of confidence and credible intervals after
+    removing estimator bias using the sample average for the estimator
+    and information about the true population-level gene-to-trait effect.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=.7\textwidth]{figs/runtime}
-  \caption{Runtime for TWMR, PTWAS, and MRLocus on the 240
-    simulations. The runtime for a single locus using a single core is
-    shown on the y-axis (log scale).}
+  \caption{Runtime for TWMR, PTWAS, and MRLocus on the 80 iterations
+    from simulation A and eQTL N=1,000 simulation.
+    The runtime for a single locus is shown on the y-axis (log
+    scale), with MRLocus colocalization using 4
+    cores. ``eCAVIAR-MRLocus'' indicates the time for MRLocus slope
+    fitting following eCAVIAR colocalization, while ``MRLocus''
+    indicates the time for both colocalization and slope fitting.}
 \end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/regionplot.MRAS_Artery_Tibial_CAD.20201218.png}
-%%   \caption{Colocalized signals in the \emph{MRAS} region. From top panel to
-%%     bottom, gene model (NCBI Refseq), eQTL for MRAS in artery tibial
-%%     (GTEx; N = 663) and CAD association within CARDIoGRAMplusC4D
-%%     (\Ncase = 60,801 and \Ncontrol = 123,504) (M. Nikpay et al.,
-%%     2015). LD was calculated to independent SNPs within 1KG EUR and
-%%     colored accordingly. Symbols indicate independent co-localized
-%%     ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significance
-%%     threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
-%%     respectively.}
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.MRAS_Artery_Tibial_CAD.20210114.edit.png}
+  \caption{Colocalized signals in the \emph{MRAS} region. From top panel to
+    bottom, gene model (NCBI Refseq), eQTL for MRAS in artery tibial
+    (GTEx; N = 663) and CAD association within CARDIoGRAMplusC4D
+    (\Ncase = 60,801 and \Ncontrol = 123,504) (M. Nikpay et al.,
+    2015). LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly. Dashed line indicates a significance
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.}
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/regionplot.PHACTR1_Artery_Tibial_CAD.20201218.edit.png}
-%%   \caption{Colocalized signals in the \emph{PHACTR1} region. From top
-%%     panel to bottom, gene model (NCBI Refseq), eQTL for PHACTR1 in
-%%     artery tibial (GTEx; N = 663) and CAD association within
-%%     CARDIoGRAMplusC4D (\Ncase = 60,801 and \Ncontrol = 123,504)
-%%     (M. Nikpay et al., 2015). LD was calculated to independent SNPs
-%%     within 1KG EUR and colored accordingly. Symbols indicate
-%%     independent co-localized ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed
-%%     line indicates a significance threshold at p = 0.001 or p =
-%%     5x$10^{-8}$ for eQTL and GWAS respectively.} 
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.PHACTR1_Artery_Tibial_CAD.20210114.edit.png}
+  \caption{Colocalized signals in the \emph{PHACTR1} region. From top
+    panel to bottom, gene model (NCBI Refseq), eQTL for PHACTR1 in
+    artery tibial (GTEx; N = 663) and CAD association within
+    CARDIoGRAMplusC4D (\Ncase = 60,801 and \Ncontrol = 123,504)
+    (M. Nikpay et al., 2015). LD was calculated to independent SNPs
+    within 1KG EUR and colored accordingly. Dashed
+    line indicates a significance threshold at p = 0.001 or p =
+    5x$10^{-8}$ for eQTL and GWAS respectively.} 
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Blood_HDL_UKBB.20201218.edit.png}
-%%   \caption{Colocalized signals in the \emph{LIPC} region for blood
-%%     eQTL.}
-%% \end{figure}  
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Blood_HDL_UKBB.20210114.edit.png}
+  \caption{Colocalized signals in the \emph{LIPC} region for blood
+    eQTL. From top panel to bottom, gene model (NCBI Refseq), eQTL for LIPC in blood
+    (N = 31,684) (Vosa et al. 2018) and HDL association within UKBB (N
+    = 315,133). LD was calculated to independent SNPs within 1KG EUR
+    and colored accordingly. Dashed line indicates a significance
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.}
+\end{figure}  
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/regionplot.CETP_Liver_HDL_UKBB.20201218.edit.png}
-%%   \caption{Colocalized signals in the \emph{CETP} region. From top
-%%     panel to bottom, gene model (NCBI Refseq), eQTL for CETP in liver
-%%     (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
-%%     = 315,133). LD was calculated to independent SNPs within 1KG EUR
-%%     and colored accordingly. Symbols indicate independent co-localized
-%%     ($r^2 > 0.4$) eQTL-GWAS pairs. Dashed line indicates a significance
-%%     threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
-%%     respectively.} 
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.CETP_Liver_HDL_UKBB.20210114.edit.png}
+  \caption{Colocalized signals in the \emph{CETP} region. From top
+    panel to bottom, gene model (NCBI Refseq), eQTL for CETP in liver
+    (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
+    = 315,133). LD was calculated to independent SNPs within 1KG EUR
+    and colored accordingly. Dashed line indicates a significance
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.} 
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Liver_HDL_UKBB.20201218.edit.png}
-%%   \caption{Colocalized signals in the \emph{LIPC} region for liver eQTL. From top
-%%     panel to bottom, gene model (NCBI Refseq), eQTL for LIPC in liver
-%%     (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
-%%     = 315,133). LD was calculated to independent SNPs within 1KG EUR
-%%     and colored accordingly. Symbols indicate independent co-localized
-%%     ($r^2> 0.4$) eQTL-GWAS pairs. Dashed line indicates a significance
-%%     threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
-%%     respectively.} 
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Liver_HDL_UKBB.20210114.edit.png}
+  \caption{Colocalized signals in the \emph{LIPC} region for liver eQTL. From top
+    panel to bottom, gene model (NCBI Refseq), eQTL for LIPC in liver
+    (N = 588) (Strunz et al., 2018) and HDL association within UKBB (N
+    = 315,133). LD was calculated to independent SNPs within 1KG EUR
+    and colored accordingly. Dashed line indicates a significance
+    threshold at p = 0.001 or p = 5x$10^{-8}$ for eQTL and GWAS
+    respectively.} 
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Artery_MRAS_CAD.20201217.png}
-%%   \caption{LD pattern across independent clusters from \emph{MRAS}
-%%     eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
-%%     independent clumps from \emph{MRAS} in artery tibial (columns) and
-%%     CAD GWAS SNPs (rows). Color bars at the top and left represent
-%%     cluster (pair) ID which is sorted by base position of index eQTL
-%%     SNPs. LD was calculated to independent SNPs within 1KG EUR and
-%%     colored accordingly.}
-%%   \label{fig:ld1}
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Artery_MRAS_CAD.20210114.png}
+  \caption{LD pattern across independent clusters from \emph{MRAS}
+    eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
+    independent clumps from \emph{MRAS} in artery tibial (columns) and
+    CAD GWAS SNPs (rows). Color bars at the top and left represent
+    cluster (pair) ID which is sorted by base position of index eQTL
+    SNPs. LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly.}
+  \label{fig:ld1}
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Artery_PHACTR1_CAD.20201217.png}
-%%   \caption{LD pattern across independent clusters from \emph{PHACTR1}
-%%     eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
-%%     independent clumps from \emph{PHACTR1} in artery tibial (columns)
-%%     and CAD GWAS SNPs (rows). Color bars at the top and left represent
-%%     cluster (pair) ID which is sorted by base position of index eQTL
-%%     SNPs. LD was calculated to independent SNPs within 1KG EUR and
-%%     colored accordingly.} 
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Artery_PHACTR1_CAD.20210114.png}
+  \caption{LD pattern across independent clusters from \emph{PHACTR1}
+    eQTL (Artery tibial) and CAD GWAS. LD ($r^2$) between SNPs in
+    independent clumps from \emph{PHACTR1} in artery tibial (columns)
+    and CAD GWAS SNPs (rows). Color bars at the top and left represent
+    cluster (pair) ID which is sorted by base position of index eQTL
+    SNPs. LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly.} 
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Blood_LIPC_HDL.20201217.png}
-%%   \caption{LD pattern across independent clusters from \emph{LIPC}
-%%     eQTL (Blood) and HDL GWAS.}
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Blood_LIPC_HDL.20210114.png}
+  \caption{LD pattern across independent clusters from \emph{LIPC}
+    eQTL (Blood) and HDL GWAS. LD ($r^2$) between SNPs in
+    independent clumps from \emph{PHACTR1} in artery tibial (columns)
+    and CAD GWAS SNPs (rows). Color bars at the top and left represent
+    cluster (pair) ID which is sorted by base position of index eQTL
+    SNPs. LD was calculated to independent SNPs within 1KG EUR and
+    colored accordingly.}
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Liver_CETP_HDL.20201217.png}
-%%   \caption{LD pattern across independent clusters from \emph{CETP}
-%%     eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
-%%     clumps from \emph{CETP} in liver (columns) and HDL GWAS SNPs
-%%     (rows). Color bars at the top and left represent cluster (pair) ID
-%%     which is sorted by base position of index eQTL SNPs. LD was
-%%     calculated to independent SNPs within 1KG EUR and colored
-%%     accordingly.} 
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Liver_CETP_HDL.20210114.png}
+  \caption{LD pattern across independent clusters from \emph{CETP}
+    eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
+    clumps from \emph{CETP} in liver (columns) and HDL GWAS SNPs
+    (rows). Color bars at the top and left represent cluster (pair) ID
+    which is sorted by base position of index eQTL SNPs. LD was
+    calculated to independent SNPs within 1KG EUR and colored
+    accordingly.} 
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Liver_LIPC_HDL.20201217.png}
-%%   \caption{LD pattern across independent clusters from \emph{LIPC}
-%%     eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
-%%     clumps from \emph{LIPC} in liver (columns) and HDL GWAS SNPs
-%%     (rows). Color bars at the top and left represent cluster (pair) ID
-%%     which is sorted by base position of index eQTL SNPs. LD was
-%%     calculated to independent SNPs within 1KG EUR and colored
-%%     accordingly.} 
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Liver_LIPC_HDL.20210114.png}
+  \caption{LD pattern across independent clusters from \emph{LIPC}
+    eQTL (liver) and HDL GWAS. LD ($r^2$) between SNPs in independent
+    clumps from \emph{LIPC} in liver (columns) and HDL GWAS SNPs
+    (rows). Color bars at the top and left represent cluster (pair) ID
+    which is sorted by base position of index eQTL SNPs. LD was
+    calculated to independent SNPs within 1KG EUR and colored
+    accordingly.} 
+\end{figure}
 
-%% \begin{figure}[!ht]
-%%   \centering
-%%   \includegraphics[width=.7\textwidth]{figs/region/heatmap_eQTLbase.Liver_SORT1_LDL.20201217.png}
-%%   \caption{LD pattern across independent clusters from \emph{SORT1}
-%%     eQTL (liver) and LDL GWAS. LD ($r^2$) between SNPs in independent
-%%     clumps from \emph{SORT1} in liver (columns) and LDL GWAS SNPs
-%%     (rows). Color bars at the top and left represent cluster (pair) ID
-%%     which is sorted by base position of index eQTL SNPs. LD was
-%%     calculated to independent SNPs within 1KG EUR and colored
-%%     accordingly.}
-%%   \label{fig:ld5}
-%% \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Liver_SORT1_LDL.20210114.png}
+  \caption{LD pattern across independent clusters from \emph{SORT1}
+    eQTL (liver) and LDL GWAS. LD ($r^2$) between SNPs in independent
+    clumps from \emph{SORT1} in liver (columns) and LDL GWAS SNPs
+    (rows). Color bars at the top and left represent cluster (pair) ID
+    which is sorted by base position of index eQTL SNPs. LD was
+    calculated to independent SNPs within 1KG EUR and colored
+    accordingly.}
+  \label{fig:ld5}
+\end{figure}
 
 \begin{figure}[!ht]
   \centering
