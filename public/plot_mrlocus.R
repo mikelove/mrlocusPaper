@@ -58,3 +58,24 @@ for (tissue in names(genes)) {
     }
   }
 }
+
+# dispersion
+method <- "mrlocus"
+dat <- data.frame(mean_beta_a=numeric(),
+                  alpha=numeric(),
+                  sigma=numeric())
+for (tissue in names(genes)) {
+  for (gene in genes[[tissue]]) {
+    trait <- traits[gene]
+    dir <- paste(tissue, gene, trait, sep="_")
+    load(file.path(dir, paste0(dir, ".", method)))
+    mean_beta_a <- mean(res$beta_hat_a)
+    alpha <- rstan::summary(res$stanfit, pars="alpha")$summary[1]
+    sigma <- rstan::summary(res$stanfit, pars="sigma")$summary[1]
+    dat <- rbind(dat, data.frame(mean_beta_a=mean_beta_a, alpha=alpha, sigma=sigma))
+  }
+}
+rownames(dat) <- paste(unlist(genes), rep(names(genes), lengths(genes)))
+dat$mean_mediated <- with(dat, alpha * mean_beta_a)
+dat$sigma_over_mm <- with(dat, sigma / abs(mean_mediated))
+write.csv(format(dat,digits=3), file="mrlocus_disp_table.txt", quote=FALSE)
