@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 
-i <- "hp"
+i <- "5"
 
 extra_methods <- (i %in% c("1","high_n"))
 
@@ -256,14 +256,18 @@ dev.off()
 if (FALSE) {
 
   pop_slope <- sqrt(ve/h2)
-  bias <- dat2 %>%
+  bias <- dat %>%
+    filter(two_plus_instr == "yes") %>%
+    mutate(estimate = sign(true) * estimate, true = abs(true)) %>%
     filter(method %in% c("twmr","ptwas","mrlocus","ecaviar-mrlocus")) %>%
     group_by(method) %>%
     summarize(bias=mean(estimate)-pop_slope)
-  ## 1 twmr            -0.112
-  ## 2 ptwas           -0.0793
-  ## 3 mrlocus         -0.00367
-  ## 4 ecaviar-mrlocus -0.0527
+  bias
+  ##          sim1     sim4    sim5
+  ## twmr     -0.112   -0.0833 -0.0438
+  ## ptwas    -0.0793  -0.0856 -0.0269
+  ## mrlocus  -0.00367 -0.0137 -0.0199
+  ## ecav-mrl -0.0527  -0.0365 -0.0282
   dat4 <- dat
   for (m in bias$method) {
     idx <- dat4$method == m
