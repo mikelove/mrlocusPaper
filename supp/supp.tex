@@ -89,7 +89,10 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{Ratio of estimated eQTL coefficient over true value across
     simulations, grouped by h2g parameter. Histograms represent the
     ratio gor all causal eSNPs with un-adjusted eQTL p-value less than
-    the clumping threshold (0.001).}
+    the clumping threshold (0.001). The median and inter-quartile
+    range (IQR) of the distributions (on the original ratio scale) are
+    (1.15, 0.37), (1.00, 0.35), and (1.01, 0.25), for
+    the 5\%, 10\%, and 20\% h2g settings, respectively.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -110,7 +113,10 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
     false positive rate of MRLocus slope estimation. Increasing the
     $r^2$ of adjacent signal clusters raised the rate of 80\% credible
     intervals not covering the true value of the slope $\alpha =
-    0$. The number of signal clusters was varied among $\{4,6,8\}$.}
+    0$. The number of signal clusters was varied among $\{4,6,8\}$.
+    Bars represent 95\% binomial-based confidence intervals, and 400
+    simulation iterations were performed for each combination of $r^2$
+    and the number of signal clusters.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -326,7 +332,13 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
     removing estimator bias using the sample average for the estimator
     and information about the true population-level gene-to-trait
     effect. Bias was removed and coverage recalculated for simulations
-    with h2g = 10\%: simulations A, D and G.}
+    with h2g = 10\%: simulations A, D and G. For TWMR, PTWAS, MRLocus,
+    and eCAVIAR-MRLocus, the bias in simulation A was
+    $\{-0.112, -0.079, -0.004, -0.052\}$ respectively.
+    For simulation D the bias was
+    $\{-0.083, -0.086, -0.014, -0.037\}$,
+    and for simulation G the bias was
+    $\{-0.044, -0.027, -0.020, -0.028\}$.}
 \end{figure}
 
 \begin{figure}[!ht]

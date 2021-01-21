@@ -223,7 +223,7 @@ library(ggplot2)
 key3 <- key[1:14,]
 dat <- data.frame(ratio=unlist(overest),
                   id=factor(rep(names(overest), lengths(overest))))
-dat$h2g <- key3$value[match(dat$id, key2$id)]
+dat$h2g <- key3$value[match(dat$id, key3$id)]
 pdf(file="../supp/figs/sim_overest.pdf", width=10, height=3)
 ggplot(dat, aes(ratio)) +
   geom_histogram(fill="dodgerblue", alpha=0.5, bins=20) +
@@ -232,3 +232,12 @@ ggplot(dat, aes(ratio)) +
   xlab("eQTL coefficient estimate:true ratio") +
   facet_wrap(~h2g, labeller=label_both)
 dev.off()
+
+dat %>% group_by(h2g) %>%
+  summarize(median=median(ratio),
+            iqr=IQR(ratio))
+##     h2g median   iqr
+##   <dbl>  <dbl> <dbl>
+## 1  0.05  1.15  0.370
+## 2  0.1   0.999 0.345
+## 3  0.2   1.01  0.248
