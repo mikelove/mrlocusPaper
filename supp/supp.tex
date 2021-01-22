@@ -385,20 +385,6 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Blood_HDL_UKBB.20210114.edit.png}
-  \caption{Colocalized signals in the \emph{LIPC} region for blood
-    eQTL. From top panel to bottom, gene model (NCBI Refseq), eQTL for
-    LIPC in blood (N = 31,684) (Vosa et al. 2018) and HDL association
-    within UKBB (N = 315,133). LD was calculated to
-    nearly-LD-independent index SNPs within 1KG EUR and colored
-    accordingly. Dashed line indicates a significance threshold at p =
-    0.001 or p = 5x$10^{-8}$ for eQTL and GWAS respectively.
-    Colored labels indicate eSNPs used for slope fitting with both
-    methods, eCAVIAR-MRLocus, or MRLocus.}
-\end{figure}  
-
-\begin{figure}[!ht]
-  \centering
   \includegraphics[width=.7\textwidth]{figs/region/regionplot.CETP_Liver_HDL_UKBB.20210114.edit.png}
   \caption{Colocalized signals in the \emph{CETP} region. From top
     panel to bottom, gene model (NCBI Refseq), eQTL for CETP in liver
@@ -427,6 +413,34 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
+  \includegraphics[width=.7\textwidth]{figs/region/regionplot.LIPC_Blood_HDL_UKBB.20210114.edit.png}
+  \caption{Colocalized signals in the \emph{LIPC} region for blood
+    eQTL. From top panel to bottom, gene model (NCBI Refseq), eQTL for
+    LIPC in blood (N = 31,684) (Vosa et al. 2018) and HDL association
+    within UKBB (N = 315,133). LD was calculated to
+    nearly-LD-independent index SNPs within 1KG EUR and colored
+    accordingly. Dashed line indicates a significance threshold at p =
+    0.001 or p = 5x$10^{-8}$ for eQTL and GWAS respectively.
+    Colored labels indicate eSNPs used for slope fitting with both
+    methods, eCAVIAR-MRLocus, or MRLocus.}
+\end{figure}  
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Liver_SORT1_LDL.20210114.png}
+  \caption{LD pattern across nearly-LD-independent signal clusters
+    from \emph{SORT1} eQTL (liver).
+    (A) $r^2$ between all SNPs in signal clusters. Color bars at the
+    top and left represent whether cluster was used for estimation of
+    gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
+    MRLocus, or neither (trimmed due to pairwise $r^2$ with other
+    signal clusters). (B) Pairwise $r^2$ for instruments selected for
+    slope fitting for eCAVIAR-MRLocus. (C) Pairwise $r^2$ for
+    instruments selected for slope fitting for MRLocus.}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
   \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Artery_MRAS_CAD.20210114.png}
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{MRAS} eQTL (artery).
@@ -444,20 +458,6 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Artery_PHACTR1_CAD.20210114.png}
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{PHACTR1} eQTL (artery).
-    (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
-    gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
-    MRLocus, or neither (trimmed due to pairwise $r^2$ with other
-    signal clusters). (B) Pairwise $r^2$ for instruments selected for
-    slope fitting for eCAVIAR-MRLocus. (C) Pairwise $r^2$ for
-    instruments selected for slope fitting for MRLocus.}
-\end{figure}
-
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Blood_LIPC_HDL.20210114.png}
-  \caption{LD pattern across nearly-LD-independent signal clusters
-    from \emph{LIPC} eQTL (blood).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
     top and left represent whether cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
@@ -497,9 +497,9 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Liver_SORT1_LDL.20210114.png}
+  \includegraphics[width=\textwidth]{figs/region/heatmap_eQTLbase.Blood_LIPC_HDL.20210114.png}
   \caption{LD pattern across nearly-LD-independent signal clusters
-    from \emph{SORT1} eQTL (liver).
+    from \emph{LIPC} eQTL (blood).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
     top and left represent whether cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
