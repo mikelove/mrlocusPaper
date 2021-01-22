@@ -1,0 +1,7 @@
+tissue	gene	trait	num_cluster	cum_pip	num_instruments	alpha se	I2
+Liver	SORT1	LDL	20	20.000	20	-0.036  0.001 0.853
+Artery	MRAS	CAD	15	12.944	13	0.128	0.019 0.000
+Artery	PHACTR1	CAD	16	16.000	16	-0.217	0.023 0.761
+Liver	CETP	HDL	3	0.526	2	-0.008  0.054 0.919
+Liver	LIPC	HDL	4	2.000	2	-0.178	0.028 0.000
+Blood	LIPC	HDL	17	17.000	17	0.088	0.005 0.289

@@ -36,7 +36,7 @@ dat <- dat %>% mutate(xmin=ifelse(is.na(xmin), alpha-q*se, xmin),
                       xmax=ifelse(is.na(xmax), alpha+q*se, xmax))
 
 dat <- dat %>% mutate(label=paste0(gene," (",tissue,")", " → ", trait))
-lvls <- unique(dat$label)
+lvls <- unique(dat$label)[c(6,1,2,4,5,3)]
 dat$label <- factor(dat$label, levels=lvls)
 
 png(file="../supp/figs/forest.png", width=1200, height=600, res=150)
