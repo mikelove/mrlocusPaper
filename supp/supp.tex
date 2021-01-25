@@ -54,13 +54,12 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=.7\textwidth]{figs/sim_types}
-  \caption{Diagram of the 12 types of \texttt{twas\_sim} simulations
-    performed, varying eQTL $h^2$ (top row) and trait variance explained
-    through gene expression (bottom row), with 20 replicates of each
-    setting resulting in 240 simulations total. Results for simulation
-    A are presented in Figure 2 in the main text, while results for
-    the remaining 11 simulation settings follow in Supplementary
-    Figures.}
+  \caption{Diagram of the 14 types of \texttt{twas\_sim} simulations
+    performed, varying expression heritability $h^2g$ (top row) and
+    expression mediated heritability $h^2med$ (bottom row). Results
+    for simulation A are presented in Figure 2 in the main text, while
+    results for the remaining 13 simulation settings follow in
+    Supplementary Figures.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -87,12 +86,12 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \centering
   \includegraphics[width=\textwidth]{figs/sim_overest}
   \caption{Ratio of estimated eQTL coefficient over true value across
-    simulations, grouped by h2g parameter. Histograms represent the
-    ratio gor all causal eSNPs with un-adjusted eQTL p-value less than
-    the clumping threshold (0.001). The median and inter-quartile
+    simulations, grouped by $h^2g$ parameter. Histograms represent the
+    ratio for all causal eSNPs with un-adjusted eQTL p-value less than
+    the clumping threshold (0.001). The median and interquartile
     range (IQR) of the distributions (on the original ratio scale) are
     (1.15, 0.37), (1.00, 0.35), and (1.01, 0.25), for
-    the 5\%, 10\%, and 20\% h2g settings, respectively.}
+    the 5\%, 10\%, and 20\% $h^2g$ settings, respectively.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -124,7 +123,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.5\textwidth]{figs/sim_cluster_r2}
   \caption{Pairwise $r^2$ across clusters for the instruments provided
     to MRLocus slope fitting, across all iterations and all simulated
-    datasets. Clusters were trimmed such that $r^2 < 0.05$}
+    datasets. Clusters were trimmed such that $r^2 < 0.05$.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -306,7 +305,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \includegraphics[width=.4\textwidth]{figs/cover1extra.png} \\
   \includegraphics[width=.52\textwidth]{figs/simhigh_nextra.png}
   \includegraphics[width=.4\textwidth]{figs/coverhigh_nextra.png}
-  \caption{Assessment of methods at eQTL N=500 and N=1,000 at
+  \caption{Assessment of methods at eQTL $N=500$ and $N=1000$ at
     alternative thresholds: p-value 0.0001 for PLINK clumping
     (labeled \texttt{\_p1e-4}) and using a more lenient PIP threshold
     of 0.1 (labeled \texttt{\_t0.1}).}
@@ -332,7 +331,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
     removing estimator bias using the sample average for the estimator
     and information about the true population-level gene-to-trait
     effect. Bias was removed and coverage recalculated for simulations
-    with h2g = 10\%: simulations A, D and G. For TWMR, PTWAS, MRLocus,
+    with $h^2g$ = 10\%: simulations A, D and G. For TWMR, PTWAS, MRLocus,
     and eCAVIAR-MRLocus, the bias in simulation A was
     $\{-0.112, -0.079, -0.004, -0.052\}$ respectively.
     For simulation D the bias was
@@ -345,7 +344,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \centering
   \includegraphics[width=.7\textwidth]{figs/runtime}
   \caption{Runtime for TWMR, PTWAS, and MRLocus on the 80 iterations
-    from simulation A and eQTL N=1,000 simulation.
+    from simulation A and eQTL $N=1000$ simulation.
     The runtime for a single locus is shown on the y-axis (log
     scale), with MRLocus colocalization using 4
     cores. ``eCAVIAR-MRLocus'' indicates the time for MRLocus slope
@@ -431,7 +430,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{SORT1} eQTL (liver).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
+    top and left represent whether the cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
     MRLocus, or neither (trimmed due to pairwise $r^2$ with other
     signal clusters). (B) Pairwise $r^2$ for instruments selected for
@@ -445,7 +444,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{MRAS} eQTL (artery).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
+    top and left represent whether the cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
     MRLocus, or neither (trimmed due to pairwise $r^2$ with other
     signal clusters). (B) Pairwise $r^2$ for instruments selected for
@@ -459,7 +458,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{PHACTR1} eQTL (artery).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
+    top and left represent whether the cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
     MRLocus, or neither (trimmed due to pairwise $r^2$ with other
     signal clusters). (B) Pairwise $r^2$ for instruments selected for
@@ -473,7 +472,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{CETP} eQTL (liver).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
+    top and left represent whether the cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
     MRLocus, or neither (trimmed due to pairwise $r^2$ with other
     signal clusters). (B) Pairwise $r^2$ for instruments selected for
@@ -487,7 +486,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{LIPC} eQTL (liver).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
+    top and left represent whether the cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
     MRLocus, or neither (trimmed due to pairwise $r^2$ with other
     signal clusters). (B) Pairwise $r^2$ for instruments selected for
@@ -501,7 +500,7 @@ LDL (UKBB) & \url{https://www.dropbox.com/s/4rnjzczwjgs5pgl/30780_irnt.gwas.impu
   \caption{LD pattern across nearly-LD-independent signal clusters
     from \emph{LIPC} eQTL (blood).
     (A) $r^2$ between all SNPs in signal clusters. Color bars at the
-    top and left represent whether cluster was used for estimation of
+    top and left represent whether the cluster was used for estimation of
     gene-to-trait effect with both methods, only eCAVIAR-MRLocus, only
     MRLocus, or neither (trimmed due to pairwise $r^2$ with other
     signal clusters). (B) Pairwise $r^2$ for instruments selected for
