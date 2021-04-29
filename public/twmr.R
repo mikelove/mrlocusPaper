@@ -52,6 +52,7 @@ gamma <- as.matrix(sum_stat$beta_gwas, ncol=1)
 C <- ld
 
 S<-t(beta)%*%solve(C)%*%beta
+### WARNING: hard coded sample sizes ###
 H<-(1-1/sqrt(3781))*S+(1/sqrt(3781))*diag(length(S[,1]))
 alpha<-solve(H)%*%(t(beta)%*%solve(C)%*%gamma)
 
@@ -59,6 +60,7 @@ alpha<-as.vector(alpha)
 
 C_inv <- solve(C)
 GCG_inv <- t(beta) %*% solve(C) %*% beta
+### WARNING: hard coded sample sizes ###
 GCG_inv<-(1-1/sqrt(3781))*GCG_inv+(1/sqrt(3781))*diag(length(GCG_inv[,1]))
 GCG_inv<-solve(GCG_inv)
 
